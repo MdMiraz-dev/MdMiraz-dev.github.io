@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Madrasah ERP & Management System - Live Interactive Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: #111827;
+      --card-border: #1f293d;
+      --accent-green: #10b981;
+      --accent-teal: #14b8a6;
+      --accent-gold: #f59e0b;
+      --accent-blue: #3b82f6;
+      --text: #f3f4f6;
+      --text-muted: #9ca3af;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Outfit', 'Hind Siliguri', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: rgba(17, 24, 39, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--card-border);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #059669, #10b981);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.35);
+    }
+    .logo-title {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+    .logo-subtitle {
+      font-size: 12px;
+      color: var(--accent-green);
+      font-weight: 500;
+    }
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+    }
+    .btn-outline {
+      background: transparent;
+      border-color: var(--card-border);
+      color: var(--text);
+    }
+    .btn-outline:hover {
+      background: #1f293d;
+      border-color: #374151;
+    }
+    .btn-green {
+      background: linear-gradient(135deg, #059669, #10b981);
+      color: #fff;
+    }
+    .btn-green:hover {
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 24px;
+      width: 100%;
+      flex: 1;
+    }
+    .hero-strip {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(20, 184, 166, 0.05));
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .hero-text h1 {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      background: linear-gradient(90deg, #10b981, #6ee7b7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-text p {
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--stat-color, var(--accent-green));
+    }
+    .stat-val {
+      font-size: 28px;
+      font-weight: 800;
+      color: #fff;
+      margin-top: 8px;
+    }
+    .stat-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 12px;
+      margin-bottom: 24px;
+      overflow-x: auto;
+    }
+    .tab-btn {
+      padding: 10px 18px;
+      border-radius: 10px;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .tab-btn.active {
+      background: #1f293d;
+      color: #10b981;
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+    .tab-pane {
+      display: none;
+    }
+    .tab-pane.active {
+      display: block;
+    }
+
+    /* Tab content styling */
+    .module-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 24px;
+    }
+    .module-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--card-border);
+    }
+    .module-title {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 14px;
+    }
+    th, td {
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    th {
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 0.5px;
+    }
+    .tag {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .tag-success { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+    .tag-warning { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+    .tag-info { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+
+    /* ID Card Preview */
+    .id-card-wrap {
+      max-width: 380px;
+      margin: 0 auto;
+      background: linear-gradient(135deg, #064e3b, #0f172a);
+      border: 2px solid #10b981;
+      border-radius: 18px;
+      padding: 24px;
+      color: #fff;
+      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.25);
+      text-align: center;
+      position: relative;
+    }
+    .id-avatar {
+      width: 86px;
+      height: 86px;
+      border-radius: 50%;
+      border: 3px solid #10b981;
+      margin: 12px auto;
+      background: #1e293b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+    }
+    .qr-box {
+      width: 100px;
+      height: 100px;
+      background: #fff;
+      border-radius: 8px;
+      margin: 16px auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px;
+    }
+    .qr-box svg { width: 100%; height: 100%; }
+
+    footer {
+      border-top: 1px solid var(--card-border);
+      padding: 20px 24px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo-area">
+      <div class="logo-badge"></div>
+      <div>
+        <div class="logo-title">Smart Madrasah ERP</div>
+        <div class="logo-subtitle">Next.js 14 • Firebase • Multi-Campus System</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <a href="/#projects" class="btn btn-outline">← Back to Portfolio</a>
+      <button class="btn btn-green" onclick="alert('আলহামদুলিল্লাহ! সম্পূর্ণ ডেমো সিস্টেমটি সক্রিয় রয়েছে।')"> System Active</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="hero-strip">
+      <div class="hero-text">
+        <h1>স্মার্ট মাদ্রাসা ম্যানেজমেন্ট সফটওয়্যার</h1>
+        <p>হিফজ ট্র্যাকার, ডিজিটাল আইডি কার্ড, কিউআর মিল স্ক্যানার ও রিয়েলটাইম ফি কালেকশন সিস্টেম।</p>
+      </div>
+      <div>
+        <span class="tag tag-success" style="font-size: 13px; padding: 6px 14px;">Cloud v2.4 Online</span>
+      </div>
+    </div>
+
+    <!-- Quick Metrics -->
+    <div class="stats-grid">
+      <div class="stat-card" style="--stat-color: #10b981;">
+        <div class="stat-label">মোট শিক্ষার্থী (Total Students)</div>
+        <div class="stat-val">৬৪২ জন</div>
+      </div>
+      <div class="stat-card" style="--stat-color: #3b82f6;">
+        <div class="stat-label">হিফজ সম্পন্ন (Hifz Completed)</div>
+        <div class="stat-val">৯৪.২%</div>
+      </div>
+      <div class="stat-card" style="--stat-color: #f59e0b;">
+        <div class="stat-label">চলতি মাসের ফি আদায়</div>
+        <div class="stat-val">৳ ৮,৪৫,০০০</div>
+      </div>
+      <div class="stat-card" style="--stat-color: #8b5cf6;">
+        <div class="stat-label">আজকের মেস মিল উপস্থিতি</div>
+        <div class="stat-val">৫৮৬/৬৪২</div>
+      </div>
+    </div>
+
+    <!-- Module Navigation -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="openTab('students', this)">👨‍ শিক্ষার্থী তালিকা (Students)</button>
+      <button class="tab-btn" onclick="openTab('hifz', this)"> হিফজ ট্র্যাকার (Hifz Tracker)</button>
+      <button class="tab-btn" onclick="openTab('idcard', this)"> ডিজিটাল আইডি কার্ড (ID Card)</button>
+      <button class="tab-btn" onclick="openTab('finance', this)"> ফি ও যাকাত ফান্ড (Finance)</button>
+    </div>
+
+    <!-- Tab 1: Students -->
+    <div id="students" class="tab-pane active">
+      <div class="module-card">
+        <div class="module-header">
+          <div class="module-title">চলতি শিক্ষাবর্ষের শিক্ষার্থী রেজিস্ট্রি</div>
+          <button class="btn btn-outline" onclick="addNewStudent()">+ নতুন ভর্তি ফরম</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>আইডি</th>
+              <th>শিক্ষার্থীর নাম</th>
+              <th>বিভাগ</th>
+              <th>পাড়া/স্তর</th>
+              <th>অভিভাবকের নম্বর</th>
+              <th>স্ট্যাটাস</th>
+            </tr>
+          </thead>
+          <tbody id="studentTbody">
+            <tr>
+              <td>#MD-1082</td>
+              <td><strong>মুহাম্মদ তালহা ইসলাম</strong></td>
+              <td>হিফজুল কুরআন</td>
+              <td>২৪তম পারা</td>
+              <td>+880 1712-894721</td>
+              <td><span class="tag tag-success">সক্রিয়</span></td>
+            </tr>
+            <tr>
+              <td>#MD-1083</td>
+              <td><strong>আব্দুর রহমান</strong></td>
+              <td>কিতাব বিভাগ (শরহে বেকায়া)</td>
+              <td>সাল ৩</td>
+              <td>+880 1823-991204</td>
+              <td><span class="tag tag-success">সক্রিয়</span></td>
+            </tr>
+            <tr>
+              <td>#MD-1084</td>
+              <td><strong>আব্দুল্লাহ আল মাহাদী</strong></td>
+              <td>হিফজুল কুরআন</td>
+              <td>১৮তম পারা</td>
+              <td>+880 1934-118833</td>
+              <td><span class="tag tag-warning">ছুটিতে</span></td>
+            </tr>
+            <tr>
+              <td>#MD-1085</td>
+              <td><strong>হুসাইন আহমেদ</strong></td>
+              <td>নূরানী ও নাজেরা</td>
+              <td>আমপারা সমাপ্ত</td>
+              <td>+880 1655-224490</td>
+              <td><span class="tag tag-success">সক্রিয়</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Tab 2: Hifz Tracker -->
+    <div id="hifz" class="tab-pane">
+      <div class="module-card">
+        <div class="module-header">
+          <div class="module-title">দৈনিক হিফজুল কুরআন সাবাক ও আমুখতা ট্র্যাকার</div>
+          <span class="tag tag-info">আজকের রেকর্ড আপডেট হয়েছে</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>শিক্ষার্থী</th>
+              <th>আজকের সবক (Lesson)</th>
+              <th>সাত সবক (Recent)</th>
+              <th>আমুক্তা (Revision)</th>
+              <th>মূল্যায়ন</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>মুহাম্মদ তালহা ইসলাম</td>
+              <td>সূরা আন-নূর (রুকু ৪)</td>
+              <td>পারা ১৮ (সম্পূর্ণ)</td>
+              <td>পারা ৫ থেকে ৮</td>
+              <td><span class="tag tag-success">মু্মতাজ (ممتاز)</span></td>
+            </tr>
+            <tr>
+              <td>আব্দুল্লাহ আল মাহাদী</td>
+              <td>সূরা আল-কাহাফ (রুকু ২)</td>
+              <td>পারা ১৫ (অর্ধেক)</td>
+              <td>পারা ১ থেকে ৩</td>
+              <td><span class="tag tag-success">জায়্যিদ জিদ্দান</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Tab 3: ID Card -->
+    <div id="idcard" class="tab-pane">
+      <div class="module-card" style="text-align: center;">
+        <div class="module-header">
+          <div class="module-title">স্মার্ট ডিজিটাল বারকোড ও কিউআর আইডি কার্ড জেনারেটর</div>
+        </div>
+        <div class="id-card-wrap">
+          <div style="font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: #6ee7b7;">দারুল উলুম মাদ্রাসা ও এতিমখানা</div>
+          <div class="id-avatar"></div>
+          <h2 style="font-size: 19px; margin-bottom: 4px;">মুহাম্মদ তালহা ইসলাম</h2>
+          <div style="color: #6ee7b7; font-size: 13px; font-weight: 600;">বিভাগ: হিফজুল কুরআন (রোল: ০৮)</div>
+          <div class="qr-box">
+            <svg viewBox="0 0 100 100">
+              <rect width="100" height="100" fill="#ffffff"/>
+              <rect x="10" y="10" width="25" height="25" fill="#090d16"/>
+              <rect x="15" y="15" width="15" height="15" fill="#ffffff"/>
+              <rect x="65" y="10" width="25" height="25" fill="#090d16"/>
+              <rect x="70" y="15" width="15" height="15" fill="#ffffff"/>
+              <rect x="10" y="65" width="25" height="25" fill="#090d16"/>
+              <rect x="15" y="70" width="15" height="15" fill="#ffffff"/>
+              <rect x="45" y="45" width="15" height="15" fill="#090d16"/>
+              <rect x="40" y="20" width="10" height="10" fill="#090d16"/>
+              <rect x="70" y="55" width="15" height="20" fill="#090d16"/>
+              <rect x="20" y="45" width="15" height="10" fill="#090d16"/>
+            </svg>
+          </div>
+          <div style="font-size: 12px; color: #9ca3af;">কার্ড আইডি: MD-2026-TALHA-QR</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 4: Finance -->
+    <div id="finance" class="tab-pane">
+      <div class="module-card">
+        <div class="module-header">
+          <div class="module-title">ফি কালেকশন ও হিসাব নিকাশ</div>
+          <button class="btn btn-green" onclick="alert('ইনভয়েস পিডিএফ জেনারেট হচ্ছে...')"> রসিদ ডাউনলোড</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>রসিদ নং</th>
+              <th>শিক্ষার্থী/দাতা</th>
+              <th>খাত</th>
+              <th>পরিমাণ</th>
+              <th>পেমেন্ট গেটওয়ে</th>
+              <th>তারিখ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>#REC-9081</td>
+              <td>মুহাম্মদ তালহা ইসলাম</td>
+              <td>বোর্ডিং ও খোরপোশ ফি</td>
+              <td>৳ ৩,৫০০</td>
+              <td><span class="tag tag-success">বিকাশ (bKash)</span></td>
+              <td>আজ, ২:৩০ PM</td>
+            </tr>
+            <tr>
+              <td>#REC-9080</td>
+              <td>আলহাজ্ব শফিকুল ইসলাম</td>
+              <td>লিল্লাহ বোর্ডিং যাকাত ফান্ড</td>
+              <td>৳ ২৫,০০০</td>
+              <td><span class="tag tag-success">ব্যাংক ট্রান্সফার</span></td>
+              <td>গতকাল</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Smart Madrasah ERP • Crafted with  by Merajul Islam (MdMiraz-dev) • All Rights Reserved
+  </footer>
+
+  <script>
+    function openTab(tabId, btn) {
+      document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    function addNewStudent() {
+      const name = prompt('শিক্ষার্থীর নাম লিখুন:');
+      if (name) {
+        const tbody = document.getElementById('studentTbody');
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>#MD-${Math.floor(1000 + Math.random() * 9000)}</td>
+          <td><strong>${name}</strong></td>
+          <td>হিফজুল কুরআন</td>
+          <td>নতুন ভর্তি</td>
+          <td>+880 1700-000000</td>
+          <td><span class="tag tag-success">সক্রিয়</span></td>
+        `;
+        tbody.prepend(tr);
+        alert('শিক্ষার্থী সফলভাবে যুক্ত করা হয়েছে!');
+      }
+    }
+  </script>
+</body>
+</html>

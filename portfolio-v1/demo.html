@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎬 ওয়েবসাইট সিনেমাটিক অ্যানিমেশন ভিডিও ডেমো | Merajul Islam</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #090B0E;
+            color: #FFFFFF;
+            font-family: 'Plus Jakarta Sans', 'Hind Siliguri', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 14px 40px;
+        }
+
+        .header-box {
+            text-align: center;
+            max-width: 600px;
+            margin-bottom: 24px;
+        }
+
+        .brand-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 42, 59, 0.12);
+            border: 1px solid rgba(255, 42, 59, 0.4);
+            border-radius: 999px;
+            padding: 6px 16px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #FF2A3B;
+            margin-bottom: 12px;
+            letter-spacing: 0.05em;
+        }
+
+        .header-title {
+            font-size: 1.65rem;
+            font-weight: 800;
+            line-height: 1.3;
+            margin-bottom: 8px;
+        }
+
+        .header-title span {
+            color: #FF2A3B;
+        }
+
+        .header-desc {
+            font-size: 0.95rem;
+            color: #9CA3AF;
+            line-height: 1.5;
+        }
+
+        /* Video Container */
+        .video-card {
+            width: 100%;
+            max-width: 420px;
+            background: #11141A;
+            border: 1.5px solid rgba(255, 42, 59, 0.5);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 0 35px rgba(255, 42, 59, 0.22), 0 25px 70px rgba(0, 0, 0, 0.9);
+            position: relative;
+        }
+
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            padding-top: 177.7%; /* 9:16 aspect ratio */
+            background: #000;
+        }
+
+        .video-wrapper video {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Features List Box */
+        .features-card {
+            width: 100%;
+            max-width: 420px;
+            background: #12151D;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 24px 20px;
+            margin-top: 24px;
+        }
+
+        .features-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .feature-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .feature-icon {
+            font-size: 1.2rem;
+            line-height: 1;
+            margin-top: 2px;
+        }
+
+        .feature-text h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #FF5E62;
+            margin-bottom: 3px;
+        }
+
+        .feature-text p {
+            font-size: 0.84rem;
+            color: #9CA3AF;
+            line-height: 1.45;
+        }
+
+        /* Back to Live Site Button */
+        .btn-return {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: #FF2A3B;
+            color: #FFFFFF;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.95rem;
+            padding: 14px 28px;
+            border-radius: 12px;
+            margin-top: 24px;
+            box-shadow: 0 8px 25px rgba(255, 42, 59, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-return:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(255, 42, 59, 0.6);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-box">
+        <div class="brand-badge">⚡ 60 FPS ULTRA-HD CINEMATIC MASTERPIECE</div>
+        <h1 class="header-title">ওয়েবসাইটের <span>সিনেমাটিক অ্যানিমেশন</span> ভিডিও ডেমো</h1>
+        <p class="header-desc">হোম, অ্যাবাউট, প্রজেক্ট ও স্কিল সেকশনের স্মুথ ইনার্শিয়া ট্রানজিশন, ৪টি অরবিটাল রিং ও সিনেমাটিক মোশনের সেরা প্রযুক্তির ভিডিও ডেমো নিচে প্লে করে দেখুন।</p>
+    </div>
+
+    <!-- Video Player Box -->
+    <div class="video-card">
+        <div class="video-wrapper">
+            <video controls autoplay loop muted playsinline poster="images/demo_scene1.jpg">
+                <source src="videos/cinematic_masterpiece.mp4" type="video/mp4">
+                <source src="videos/cinematic_demo.mp4" type="video/mp4">
+                আপনার ব্রাউজার ভিডিওটি সাপোর্ট করছে না।
+            </video>
+        </div>
+    </div>
+
+    <!-- Features Explanation Card -->
+    <div class="features-card">
+        <h3 class="features-title">✨ ভিডিওতে প্রদর্শিত ৪টি সিনেমাটিক ইফেক্ট:</h3>
+
+        <div class="feature-item">
+            <span class="feature-icon">💫</span>
+            <div class="feature-text">
+                <h4>১. বাই-ডিরেকশনাল ৪টি অরবিটাল রিং</h4>
+                <p>ছবির চারপাশের ৪টি রিং ডান ও বাম বিপরীতমুখী হয়ে অবিরাম ঘুরছে, যা একটি ফিউচারিস্টিক লুক দিচ্ছে।</p>
+            </div>
+        </div>
+
+        <div class="feature-item">
+            <span class="feature-icon">⚡</span>
+            <div class="feature-text">
+                <h4>২. স্মুথ ইনার্শিয়া গ্লাইড ট্রানজিশন</h4>
+                <p>হোম থেকে অ্যাবাউট বা প্রজেক্টে যাওয়ার সময় হঠাৎ করে না গিয়ে মাখনের মতো সফট কার্ভে মসৃণভাবে যাবে।</p>
+            </div>
+        </div>
+
+        <div class="feature-item">
+            <span class="feature-icon">🎴</span>
+            <div class="feature-text">
+                <h4>৩. স্টেগার্ড কার্ড এন্ট্রান্স ও নিয়ন লাইট সুইপ</h4>
+                <p>নতুন সেকশনে আসার সাথে সাথে কার্ডগুলো নিচ থেকে স্কেল হয়ে লাল গ্লো সহ স্ক্রিনে ভেসে উঠবে।</p>
+            </div>
+        </div>
+
+        <div class="feature-item">
+            <span class="feature-icon">📊</span>
+            <div class="feature-text">
+                <h4>৪. ডায়নামিক স্কিল প্রগ্রেস বার ফিল-আপ</h4>
+                <p>স্কিল সেকশনে পৌঁছালে প্রতিটি প্রগ্রেস বার ০% থেকে অ্যানিমেট হয়ে টার্গেট পয়েন্টে গিয়ে জ্বলজ্বল করবে।</p>
+            </div>
+        </div>
+    </div>
+
+    <a href="/" class="btn-return">
+        ← লাইভ পোর্টফোলিওতে ফিরে যান
+    </a>
+
+</body>
+</html>

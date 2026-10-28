@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MERAJUL ISLAM (MIRAZ) | Full-Stack Web & Software Developer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=26">
+    <link rel="icon" type="image/png" href="images/my_avatar.png">
+</head>
+<body>
+    <!-- Site Entry Animated Logo Intro Overlay -->
+    <div class="site-intro-overlay" id="siteIntroOverlay">
+        <div class="intro-content">
+            <div class="intro-logo-icon">
+                <svg width="52" height="52" viewBox="0 0 24 24" fill="none">
+                    <path d="M4 8L8 4L12 8L8 12L4 8Z" fill="#FF2A3B"/>
+                    <path d="M12 8L16 4L20 8L16 12L12 8Z" fill="#FF2A3B" opacity="0.8"/>
+                    <path d="M8 12L12 8L16 12L12 16L8 12Z" fill="#FF2A3B"/>
+                    <path d="M12 16L16 12L20 16L16 20L12 16Z" fill="#FF2A3B" opacity="0.6"/>
+                </svg>
+            </div>
+            <h1 class="intro-brand-title">
+                <span class="intro-letter">M</span><span class="intro-letter">I</span><span class="intro-letter">R</span><span class="intro-letter">A</span><span class="intro-letter">Z</span><span class="intro-dot-dev">.DEV</span>
+            </h1>
+            <div class="intro-loader-bar">
+                <div class="intro-bar-fill"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ambient Background Lighting -->
+    <div class="ambient-glow glow-top-left"></div>
+    <div class="ambient-glow glow-top-right"></div>
+    <div class="ambient-glow glow-center"></div>
+
+    <!-- Main Outer Container -->
+    <div class="main-wrapper">
+        <!-- Central Portfolio Frame (The exact Pinterest website UI) -->
+        <main class="portfolio-container" id="portfolio">
+            
+            <!-- Navbar -->
+            <nav class="navbar">
+                <a href="#home" class="brand-logo">
+                    <span class="logo-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M4 8L8 4L12 8L8 12L4 8Z" fill="#FF2A3B"/>
+                            <path d="M12 8L16 4L20 8L16 12L12 8Z" fill="#FF2A3B" opacity="0.8"/>
+                            <path d="M8 12L12 8L16 12L12 16L8 12Z" fill="#FF2A3B"/>
+                            <path d="M12 16L16 12L20 16L16 20L12 16Z" fill="#FF2A3B" opacity="0.6"/>
+                        </svg>
+                    </span>
+                    <span class="brand-name">MIRAZ<span class="text-red">.DEV</span></span>
+                </a>
+
+                <div class="nav-links" id="navLinks">
+                    <a href="#home" class="nav-item active">Home</a>
+                    <a href="#about" class="nav-item">About</a>
+                    <a href="#projects" class="nav-item">Projects</a>
+                    <a href="#skills" class="nav-item">Skills</a>
+                    <a href="#contact" class="nav-item">Contact</a>
+                </div>
+
+                <div class="nav-btn-group">
+                    <a href="Merajul_Islam_CV.pdf" download="Merajul_Islam_CV.pdf" target="_blank" class="btn btn-secondary nav-cv-btn">Download CV</a>
+                    <a href="#contact" class="btn btn-primary nav-hire-btn">Hire Me</a>
+                </div>
+
+                <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle Navigation">
+                    <span></span><span></span><span></span>
+                </button>
+            </nav>
+
+            <!-- Hero Section -->
+            <!-- Page 1: Home Page -->
+            <div class="portfolio-page-view active-page" id="page-home">
+            <section class="hero-section" id="home">
+                <!-- Full Hero Section Ambient Rising Smoke & Fire Embers Atmosphere (Zero Candle Body - Across Entire Page) -->
+                <div class="hero-full-smoke-atmosphere" aria-hidden="true">
+                    <video class="hero-full-smoke-video" id="heroSmokeVideo" autoplay loop muted playsinline>
+                        <source src="videos/pure_smoke.mp4?v=2" type="video/mp4">
+                    </video>
+                    <!-- Interactive Dynamic Smoke & Embers Canvas (Bursts & Surges on Click/Tap) -->
+                    <canvas class="hero-interactive-smoke-canvas" id="heroSmokeCanvas"></canvas>
+                </div>
+
+                <div class="hero-content">
+                    <div class="hero-badge">
+                        <span class="badge-dot"></span>
+                        <span class="badge-text" id="badgeTypewriter">FULL-STACK WEB & SOFTWARE DEVELOPER</span><span class="badge-cursor">|</span>
+                    </div>
+
+                    <h1 class="hero-headline">
+                        <span class="hero-hi-line">Hi, I'm</span>
+                        <span class="hero-name-together">MERAJUL ISLAM</span>
+                        <span class="hero-craft-line">Building Websites&nbsp;&amp;</span>
+                        <span class="hero-dynamic-row">
+                            <span class="text-red glow-text" id="typewriter">Software</span>
+                        </span>
+                    </h1>
+
+                    <p class="hero-subtext">
+                        I design and build fast, responsive websites and scalable custom software solutions to help businesses grow.
+                    </p>
+
+                    <div class="hero-cta-group">
+                        <a href="#contact" class="btn btn-primary btn-arrow">
+                            Hire Me <span class="arrow">→</span>
+                        </a>
+                        <a href="#projects" class="btn btn-secondary btn-arrow">
+                            View Portfolio <span class="arrow">→</span>
+                        </a>
+                    </div>
+                    <div class="hero-social-links">
+                        <!-- YouTube (Miraz Learning Story) -->
+                        <a href="https://www.youtube.com/@MDMiraz-489" target="_blank" rel="noopener noreferrer" class="social-icon-btn btn-yt" aria-label="YouTube" title="Miraz Learning Story on YouTube">
+                            <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                            </svg>
+                        </a>
+                        <!-- Facebook (Merajul Islam) -->
+                        <a href="https://www.facebook.com/mdmiraz.dev" target="_blank" rel="noopener noreferrer" class="social-icon-btn btn-fb" aria-label="Facebook" title="Merajul Islam on Facebook">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                            </svg>
+                        </a>
+                        <!-- Instagram (Md Miraz) -->
+                        <a href="https://www.instagram.com/_mdmiraz489" target="_blank" rel="noopener noreferrer" class="social-icon-btn btn-ig" aria-label="Instagram" title="Md Miraz on Instagram (@_mdmiraz489)">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                            </svg>
+                        </a>
+                        <!-- WhatsApp (Direct Chat) -->
+                        <a href="https://wa.me/8801339564967?text=Assalamu%20Alaikum%20Miraz%2C%20I%20visited%20your%20portfolio!" target="_blank" rel="noopener noreferrer" class="social-icon-btn btn-wa" aria-label="WhatsApp" title="Chat on WhatsApp (+880 1339-564967)">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0012.04 2zm0 18.15c-1.49 0-2.95-.4-4.22-1.16l-.3-.18-3.13.82.83-3.05-.2-.31a8.16 8.16 0 01-1.25-4.36c0-4.52 3.68-8.2 8.2-8.2 2.19 0 4.25.85 5.8 2.4 1.55 1.55 2.4 3.61 2.4 5.8 0 4.52-3.68 8.2-8.13 8.24z"/>
+                            </svg>
+                        </a>
+                        <!-- Official GitHub Portfolio -->
+                        <a href="https://github.com/MdMiraz-dev" target="_blank" rel="noopener noreferrer" class="social-icon-btn btn-gh" aria-label="GitHub" title="GitHub: @MdMiraz-dev (https://github.com/MdMiraz-dev)">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+                            </svg>
+                        </a>
+                        <!-- Email -->
+                        <a href="mailto:mdmirazahmed3690@gmail.com" class="social-icon-btn btn-mail" aria-label="Email" title="Direct Email: mdmirazahmed3690@gmail.com">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                <polyline points="22,6 12,13 2,6"/>
+                            </svg>
+                        </a>
+                    </div>
+
+                    <div class="scroll-down-indicator">
+                        <div class="mouse-icon">
+                            <span class="mouse-wheel"></span>
+                        </div>
+                        <span class="scroll-label">SCROLL DOWN</span>
+                    </div>
+                </div>
+
+                <!-- Hero Large Circular Avatar with 4 Concentric Bi-Directional Orbital Rings -->
+                <div class="hero-avatar-wrapper">
+                    <div class="orbital-ring ring-outer"></div>
+                    <div class="orbital-ring ring-dashed"></div>
+                    <div class="orbital-ring ring-dots"></div>
+                    <div class="orbital-ring ring-inner"></div>
+                    <div class="avatar-frame">
+                        <img src="images/my_avatar_large.png?v=4" alt="Merajul Islam" class="avatar-img">
+                    </div>
+                </div>
+            </section>
+
+            </div>
+
+            <!-- Page 2: About Page (Clean, Focused, Dedicated) -->
+            <div class="portfolio-page-view" id="page-about">
+            <section class="section-container" id="about">
+                <div class="section-header">
+                    <span class="section-dot"></span>
+                    <h3 class="section-title">ABOUT ME</h3>
+                </div>
+
+                <div class="about-card reveal">
+                    <div class="about-content-grid">
+                        <div class="about-text-col">
+                            <h4 class="about-tagline">
+                                Crafting Modern Websites, Custom Software &amp; <span class="text-red">AI Automations</span>
+                            </h4>
+                            <p class="about-desc">
+                                I am <strong>Merajul Islam</strong>, a dedicated Web &amp; Software Developer specializing primarily in building fast, modern, and high-converting <strong>Websites</strong>. Alongside web and software engineering, I develop smart <strong>AI Automations</strong> to streamline workflows, and create digital visual assets including <strong>AI-generated videos, custom logos, and graphic design</strong>.
+                            </p>
+                            <div class="about-highlights-list">
+                                <div class="about-highlight-item">
+                                    <span class="highlight-check">✓</span>
+                                    <span><strong>Website Development (Main Focus):</strong> Modern, high-speed, fully responsive websites tailored for business growth.</span>
+                                </div>
+                                <div class="about-highlight-item">
+                                    <span class="highlight-check">✓</span>
+                                    <span><strong>Custom Software Development:</strong> Robust software tools, management systems, and desktop applications built for efficiency.</span>
+                                </div>
+                                <div class="about-highlight-item">
+                                    <span class="highlight-check">✓</span>
+                                    <span><strong>AI Automation:</strong> Intelligent, automated workflows that eliminate repetitive tasks and save valuable time.</span>
+                                </div>
+                                <div class="about-highlight-item">
+                                    <span class="highlight-check">✓</span>
+                                    <span><strong>AI Video Creation:</strong> Engaging, high-impact video content and visual storytelling powered by advanced AI.</span>
+                                </div>
+                                <div class="about-highlight-item">
+                                    <span class="highlight-check">✓</span>
+                                    <span><strong>Logo &amp; Graphic Design:</strong> Professional brand logos, social media visuals, and creative graphics.</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mystic Flame Video Showcase -->
+                        <div class="about-mystic-video-col">
+                            <div class="mystic-candle-showcase">
+                                <video class="mystic-candle-video" id="mysticCandleVideo" autoplay loop muted playsinline poster="images/candle_thumb.jpg">
+                                    <source src="videos/pure_smoke.mp4?v=2" type="video/mp4">
+                                    Your browser does not support HTML5 video.
+                                </video>
+                                <div class="mystic-candle-overlay"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            </div>
+
+            <!-- Page 2B: Testimonials Page (Separate Dedicated Page) -->
+            <div class="portfolio-page-view" id="page-testimonials">
+            <section class="section-container" id="testimonials">
+                <div class="section-header testimonial-header-row">
+                    <div class="header-title-box">
+                        <span class="section-dot"></span>
+                        <h3 class="section-title">CLIENT TESTIMONIALS</h3>
+                    </div>
+                    <button class="btn btn-outline btn-sm review-modal-open-btn" id="openReviewModalBtn" type="button">
+                        Leave a Review
+                    </button>
+                </div>
+
+                <div class="testimonials-grid" id="testimonialsGrid">
+                    <!-- Testimonial 1 -->
+                    <div class="testimonial-card reveal">
+                        <div class="quote-mark">“</div>
+                        <p class="testimonial-quote">
+                            Outstanding work! He understood our vision perfectly and delivered beyond expectations.
+                        </p>
+                        <div class="testimonial-footer">
+                            <img src="images/testimonial_daniel.png" alt="Daniel Johnson" class="client-avatar">
+                            <div class="client-info">
+                                <h5 class="client-name">Daniel Johnson</h5>
+                                <p class="client-role">CEO, TechFlow</p>
+                            </div>
+                        </div>
+                        <div class="rating-stars">★★★★★</div>
+                    </div>
+
+                    <!-- Testimonial 2 -->
+                    <div class="testimonial-card reveal">
+                        <div class="quote-mark">“</div>
+                        <p class="testimonial-quote">
+                            "Professional, creative and dedicated. Highly recommended for any design project."
+                        </p>
+                        <div class="testimonial-footer">
+                            <img src="images/testimonial_sophia.png" alt="Sophia Williams" class="client-avatar">
+                            <div class="client-info">
+                                <h5 class="client-name">Sophia Williams</h5>
+                                <p class="client-role">Founder, Studio Pro</p>
+                            </div>
+                        </div>
+                        <div class="rating-stars">★★★★★</div>
+                    </div>
+
+                    <!-- Testimonial 3 -->
+                    <div class="testimonial-card reveal">
+                        <div class="quote-mark">“</div>
+                        <p class="testimonial-quote">
+                            "His attention to detail and development skills are top-notch. Will work together again!"
+                        </p>
+                        <div class="testimonial-footer">
+                            <img src="images/testimonial_james.png" alt="James Carter" class="client-avatar">
+                            <div class="client-info">
+                                <h5 class="client-name">James Carter</h5>
+                                <p class="client-role">Marketing Head</p>
+                            </div>
+                        </div>
+                        <div class="rating-stars">★★★★★</div>
+                    </div>
+                </div>
+            </section>
+            </div>
+
+            <!-- Page 3: Projects Page -->
+            <div class="portfolio-page-view" id="page-projects">
+                                    <section class="section-container" id="projects">
+                <div class="section-header">
+                    <span class="section-dot"></span>
+                    <h3 class="section-title">FEATURED PROJECTS</h3>
+                </div>
+
+                <!-- GitHub Projects Category Filter Bar -->
+                <div class="project-filter-bar">
+                    <button type="button" class="project-filter-btn active" data-filter="all">
+                        <span>All Projects</span> <span class="filter-count">9</span>
+                    </button>
+                    <button type="button" class="project-filter-btn" data-filter="website">
+                        <span>Websites & Web Apps</span> <span class="filter-count">5</span>
+                    </button>
+                    <button type="button" class="project-filter-btn" data-filter="automation">
+                        <span>AI Automation</span> <span class="filter-count">4</span>
+                    </button>
+                </div>
+
+                <div class="projects-grid">
+                    <!-- Project 1: MIRAZ Luxury Store (Website) -->
+                    <div class="project-card reveal" data-category="website">
+                        <span class="project-badge badge-web">Live E-Commerce Store</span>
+                        <div class="project-thumb-box">
+                            <img src="images/project_miraz_store.png" alt="MIRAZ Luxury Lifestyle Store" class="project-img">
+                            <div class="project-hover-overlay">
+                                <a href="https://miraz-store.onrender.com" target="_blank" rel="noopener noreferrer" class="preview-btn">লাইভ ওয়েবসাইট দেখুন</a>
+                            </div>
+                        </div>
+                        <h4 class="project-name">MIRAZ – Luxury Lifestyle Store</h4>
+                        <p class="project-category">Full-Stack E-Commerce Brand</p>
+                        <p class="project-desc">বাংলাদেশের প্রিমিয়াম লাক্সারি লাইফস্টাইল ব্র্যান্ড (পারফিউম, আতর, ফ্যাশন, কসমেটিক ও শোপিস)। ভিডিও রিলস, ইন্টারেক্টিভ ক্যাটালগ ও হোয়াটসঅ্যাপ অর্ডার ইন্টিগ্রেশন।</p>
+                        <div class="project-tags">
+                            <span class="project-tag">Full-Stack</span>
+                            <span class="project-tag">Live on Render</span>
+                            <span class="project-tag">Luxury Brand</span>
+                            <span class="project-tag">E-Commerce</span>
+                        </div>
+                        <div class="project-btn-group">
+                            <a href="https://miraz-store.onrender.com" target="_blank" rel="noopener noreferrer" class="project-action-link btn-live">লাইভ দেখুন</a>
+                            <a href="https://github.com/MdMiraz-dev/miraz-store" target="_blank" rel="noopener noreferrer" class="project-action-link btn-code">GitHub Repo</a>
+                        </div>
+                    </div>
+
+                    <!-- Project 2: Official Scholar & Identity Portal (Website) -->
+                    <div class="project-card reveal" data-category="website">
+                        <span class="project-badge badge-web">Official Portal</span>
+                        <div class="project-thumb-box">
+                            <img src="images/project_scholar_portal.png" alt="Official Scholar Portal" class="project-img">
+                            <div class="project-hover-overlay">
+                                <a href="https://mdmiraz-dev.github.io/" target="_blank" rel="noopener noreferrer" class="preview-btn">লাইভ ওয়েবসাইট</a>
+                            </div>
+                        </div>
+                        <h4 class="project-name">Official Scholar Portal</h4>
+                        <p class="project-category">Identity & Portfolio Platform</p>
+                        <p class="project-desc">অফিসিয়াল ইসলামিক স্কলার (দাওরায়ে হাদিস) ও টেকনোলজি পোর্টফোলিও। গুগল নলেজ গ্রাফ ও এআই এসইও (SEO) স্কিমা সমৃদ্ধ।</p>
+                        <div class="project-tags">
+                            <span class="project-tag">HTML5 / CSS3</span>
+                            <span class="project-tag">JSON-LD</span>
+                            <span class="project-tag">Knowledge Graph</span>
+                            <span class="project-tag">GitHub Pages</span>
+                        </div>
+                        <div class="project-btn-group">
+                            <a href="https://mdmiraz-dev.github.io/" target="_blank" rel="noopener noreferrer" class="project-action-link btn-live">লাইভ দেখুন</a>
+                            <a href="https://github.com/MdMiraz-dev/mdmiraz-dev.github.io" target="_blank" rel="noopener noreferrer" class="project-action-link btn-code">GitHub Repo</a>
+                        </div>
+                    </div>
+
+                    <!-- Project 3: Local Coffee Shop & Artisan Bakery (Website) -->
+                    <div class="project-card reveal" data-category="website">
+                        <span class="project-badge badge-web">Live Bakery Website</span>
+                        <div class="project-thumb-box">
+                            <img src="images/project_coffee_shop.png" alt="Local Coffee Shop & Bakery" class="project-img">
+                            <div class="project-hover-overlay">
+                                <a href="projects/coffee-shop/index.html" target="_blank" rel="noopener noreferrer" class="preview-btn">লাইভ ওয়েবসাইট দেখুন</a>
+                            </div>
+                        </div>
+                        <h4 class="project-name">Local Coffee Shop & Bakery</h4>
+                        <p class="project-category">5-Page Artisan Café Web Experience</p>
+                        <p class="project-desc">একটি নান্দনিক ও রেসপন্সিভ ৫-পেজ ক্যাফে প্ল্যাটফর্ম (Home, About, Menu, Gallery, Contact)। স্পেশাল ডিসকাউন্ট কুপন সিস্টেম, ইন্টারঅ্যাক্টিভ মেনু ও মোবাইল-ফ্রেন্ডলি নেভিগেশন।</p>
+                        <div class="project-tags">
+                            <span class="project-tag">HTML5 / CSS3</span>
+                            <span class="project-tag">JavaScript</span>
+                            <span class="project-tag">Responsive Design</span>
+                            <span class="project-tag">Interactive Menu</span>
+                        </div>
+                        <div class="project-btn-group">
+                            <a href="projects/coffee-shop/index.html" target="_blank" rel="noopener noreferrer" class="project-action-link btn-live">লাইভ দেখুন</a>
+                            <a href="projects/coffee-shop/menu.html" target="_blank" rel="noopener noreferrer" class="project-action-link btn-code">মেনু দেখুন</a>
+                        </div>
+                    </div>
+
+                    <!-- Project 4: Smart Madrasah ERP & Management System (Website) -->
+                    <div class="project-card reveal" data-category="website">
+                        <span class="project-badge badge-web">Enterprise Madrasah ERP</span>
+                        <div class="project-thumb-box">
+                            <img src="images/project_madrasha_erp.png" alt="Smart Madrasah ERP System" class="project-img">
+                            <div class="project-hover-overlay">
+                                <a href="madrasha-erp-demo.html" target="_blank" rel="noopener noreferrer" class="preview-btn">লাইভ ইআরপি ডেমো</a>
+                            </div>
+                        </div>
+                        <h4 class="project-name">Smart Madrasah ERP System</h4>
+                        <p class="project-category">Next.js 14 & Firebase Multi-Campus Platform</p>
+                        <p class="project-desc">হিফজুল কুরআন সাবাক ও আমুখতা ট্র্যাকার, ডিজিটাল বারকোড ও কিউআর আইডি কার্ড জেনারেটর, মেস মিল এটেনডেন্স এবং রিয়েলটাইম ফি ও যাকাত কালেকশন সিস্টেম।</p>
+                        <div class="project-tags">
+                            <span class="project-tag">Next.js 14</span>
+                            <span class="project-tag">Firebase Cloud</span>
+                            <span class="project-tag">Tailwind CSS</span>
+                            <span class="project-tag">QR Attendance</span>
+                        </div>
+                        <div class="project-btn-group">
+                            <a href="madrasha-erp-demo.html" target="_blank" rel="noopener noreferrer" class="project-action-link btn-live">লাইভ ডেমো</a>
+                            <a href="https://github.com/MdMiraz-dev" target="_blank" rel="noopener noreferrer" class="project-action-link btn-code">GitHub Profile</a>
+                        </div>
+                    </div>
+
+                    <!-- Project 5: Miraz 3D WebGL Developer Portfolio (Website) -->
+                    <div class="project-card reveal" data-category="website">
+                        <span class="project-badge badge-web">3D WebGL Portfolio</span>
+                        <div class="project-thumb-box">
+                            <img src="images/project_3d_portfolio.png" alt="Miraz 3D WebGL Portfolio" class="project-img">
+                            <div class="project-hover-overlay">
+                                <a href="projects/3d-portfolio/index.html" target="_blank" rel="noopener noreferrer" class="preview-btn">লাইভ ৩ডি এক্সপেরিয়েন্স</a>
+                            </div>
+                        </div>
+                        <h4 class="project-name">Miraz 3D Developer Portfolio</h4>
+                        <p class="project-category">Three.js & Draco 3D Interactive World</p>
+                        <p class="project-desc">অত্যাধুনিক ৩ডি ওয়েবজিএল (WebGL) ইন্টারঅ্যাক্টিভ ইঞ্জিনিয়ার পোর্টফোলিও। ডাইনামিক লাইটিং, ড্রাকো ৩ডি মেশ কম্প্রেশন, স্পেশাল সাউন্ড এফেক্ট ও রিয়েলটাইম ক্যামেরা কন্ট্রোল।</p>
+                        <div class="project-tags">
+                            <span class="project-tag">Three.js</span>
+                            <span class="project-tag">WebGL 3D</span>
+                            <span class="project-tag">Draco Mesh</span>
+                            <span class="project-tag">Sound FX</span>
+                        </div>
+                        <div class="project-btn-group">
+                            <a href="projects/3d-portfolio/index.html" target="_blank" rel="noopener noreferrer" class="project-action-link btn-live">লাইভ ৩ডি দেখুন</a>
+                            <a href="https://github.com/MdMiraz-dev" target="_blank" rel="noopener noreferrer" class="project-action-link btn-code">Developer Profile</a>
+                        </div>
+                    </div>
+
+                    <!-- Project 6: Smart Lab Command Center (Automation) -->
+                    <div class="project-card reveal" data-category="automation">
+                        <span class="project-badge badge-auto">IoT & Automation</span>
+                        <div class="project-thumb-box">
+                            <img src="images/project_smart_lab.png" alt="Smart Lab Command Center" class="project-img">
+                            <div class="project-hover-overlay">
+                                <a href="smart-lab-demo.html" class="preview-btn">লাইভ ডেমো</a>
+                            </div>
+                        </div>
+                        <h4 class="project-name">Smart Lab Command Center</h4>
+                        <p class="project-category">Lab Monitoring & Curfew Automation</p>
+                        <p class="project-desc">আস-সুন্নাহ ফাউন্ডেশন কম্পিউটার ল্যাবের অটো-মনিটরিং ও রাত ৯:০০ টার অটো-কারফিউ শাটডাউন সিস্টেম। রিলস ডিটেকশন ও সেন্ট্রাল ড্যাশবোর্ড।</p>
+                        <div class="project-tags">
+                            <span class="project-tag">Python 3.12</span>
+                            <span class="project-tag">FastAPI</span>
+                            <span class="project-tag">WebSockets</span>
+                            <span class="project-tag">IoT Curfew</span>
+                        </div>
+                        <div class="project-btn-group">
+                            <a href="smart-lab-demo.html" class="project-action-link btn-live">লাইভ ডেমো</a>
+                            <a href="https://github.com/MdMiraz-dev/SBMC-Projects/tree/main/02-smart-lab-command-center" target="_blank" rel="noopener noreferrer" class="project-action-link btn-code">GitHub Repo</a>
+                        </div>
+                    </div>
+
+                    <!-- Project 7: Lead Automation & Scoring Engine (Automation) -->
+                    <div class="project-card reveal" data-category="automation">
+                        <span class="project-badge badge-auto">Enterprise AI Automation</span>
+                        <div class="project-thumb-box">
+                            <img src="images/project_lead_automation.png" alt="Lead Automation & Scoring Engine" class="project-img">
+                            <div class="project-hover-overlay">
+                                <a href="lead-automation-demo.html" class="preview-btn">লাইভ টেস্ট</a>
+                            </div>
+                        </div>
+                        <h4 class="project-name">Lead Automation Service</h4>
+                        <p class="project-category">Autonomous Lead Scoring & AI Drafts</p>
+                        <p class="project-desc">বিটুবি (B2B) ইনবাউন্ড লিড অটো-ভ্যালিডেশন, টিয়ার স্কোরিং এবং এক্সিকিউটিভ এআই ফলো-আপ ইমেইল ড্রাফটিং স্বয়ংক্রিয় ব্যাকএন্ড সিস্টেম।</p>
+                        <div class="project-tags">
+                            <span class="project-tag">Python</span>
+                            <span class="project-tag">Strict Pydantic</span>
+                            <span class="project-tag">AI Pipelines</span>
+                            <span class="project-tag">SBMC Core</span>
+                        </div>
+                        <div class="project-btn-group">
+                            <a href="lead-automation-demo.html" class="project-action-link btn-live">লাইভ ডেমো</a>
+                            <a href="https://github.com/MdMiraz-dev/SBMC-Projects/blob/main/automation_service.py" target="_blank" rel="noopener noreferrer" class="project-action-link btn-code">GitHub Repo</a>
+                        </div>
+                    </div>
+
+                    <!-- Project 8: Meta Graph API Automation Bot (Automation) -->
+                    <div class="project-card reveal" data-category="automation">
+                        <span class="project-badge badge-auto">Social Media AI Bot</span>
+                        <div class="project-thumb-box">
+                            <img src="images/project_meta_bot.png" alt="Meta Graph API Automation Agent" class="project-img">
+                            <div class="project-hover-overlay">
+                                <a href="meta-bot-demo.html" class="preview-btn">লাইভ চ্যাট</a>
+                            </div>
+                        </div>
+                        <h4 class="project-name">Meta Automation Agent</h4>
+                        <p class="project-category">Meta Graph API & Social Auto-Reply</p>
+                        <p class="project-desc">ফেসবুক পেজ অটো-মেসেজিং, ইনস্ট্যান্ট কমেন্ট রিপ্লাই বট এবং ভাইরাল এআই রিলস ভিডিও প্রোডাকশনের স্বয়ংক্রিয় কনটেন্ট পাইপলাইন।</p>
+                        <div class="project-tags">
+                            <span class="project-tag">Meta Graph API</span>
+                            <span class="project-tag">Webhooks</span>
+                            <span class="project-tag">Autonomous Agents</span>
+                            <span class="project-tag">AI Reels</span>
+                        </div>
+                        <div class="project-btn-group">
+                            <a href="meta-bot-demo.html" class="project-action-link btn-live">লাইভ ডেমো</a>
+                            <a href="https://github.com/MdMiraz-dev" target="_blank" rel="noopener noreferrer" class="project-action-link btn-code">GitHub Profile</a>
+                        </div>
+                    </div>
+
+                    <!-- Project 9: Hermes + OpenClaw Unified Super-Agent (Automation) -->
+                    <div class="project-card reveal" data-category="automation">
+                        <span class="project-badge badge-auto">Autonomous AI Agent</span>
+                        <div class="project-thumb-box">
+                            <img src="images/project_hermes_agent.png" alt="Hermes + OpenClaw Super-Agent" class="project-img">
+                            <div class="project-hover-overlay">
+                                <a href="hermes-agent-demo.html" class="preview-btn">লাইভ কমান্ড ডেমো</a>
+                            </div>
+                        </div>
+                        <h4 class="project-name">Hermes + OpenClaw Super-Agent</h4>
+                        <p class="project-category">Nous Hermes 3 & Multi-Channel Gateway</p>
+                        <p class="project-desc">সম্পূর্ণ স্বয়ংক্রিয় এআই এজেন্ট সিস্টেম যা Nous Research Hermes 3 লোকাল এলএলএম এবং OpenClaw গেটওয়ে (হোয়াটসঅ্যাপ, টেলিগ্রাম, ওয়েবহুক) দিয়ে স্বয়ংক্রিয় কাজ সম্পাদন করে।</p>
+                        <div class="project-tags">
+                            <span class="project-tag">Hermes 3 LLM</span>
+                            <span class="project-tag">OpenClaw Gateway</span>
+                            <span class="project-tag">WhatsApp/Telegram</span>
+                            <span class="project-tag">Autonomous Tools</span>
+                        </div>
+                        <div class="project-btn-group">
+                            <a href="hermes-agent-demo.html" class="project-action-link btn-live">লাইভ ডেমো</a>
+                            <a href="https://github.com/MdMiraz-dev" target="_blank" rel="noopener noreferrer" class="project-action-link btn-code">GitHub Profile</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-action-center">
+                    <a href="https://github.com/MdMiraz-dev?tab=repositories" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-arrow" id="viewAllProjectsBtn">
+                        Explore All Repositories on GitHub <span class="arrow">→</span>
+                    </a>
+                </div>
+            </section>
+
+            </div>
+
+            <!-- Page 4: Skills Page -->
+            <div class="portfolio-page-view" id="page-skills">
+            <section class="section-container" id="skills">
+                <div class="section-header">
+                    <span class="section-dot"></span>
+                    <h3 class="section-title">SKILLS</h3>
+                </div>
+
+                <div class="skills-grid">
+                    <!-- Skill 1: Web Development -->
+                    <div class="skill-card reveal">
+                        <div class="skill-icon-box">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF2A3B" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="2" y1="12" x2="22" y2="12"/>
+                                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                            </svg>
+                        </div>
+                        <div class="skill-meta">
+                            <h4 class="skill-name">Web Development</h4>
+                            <p class="skill-desc">Building fast, responsive, and modern websites & web apps.</p>
+                        </div>
+                        <div class="skill-progress-wrap">
+                            <div class="skill-bar-track">
+                                <div class="skill-bar-fill" style="width: 95%;"></div>
+                            </div>
+                            <span class="skill-percent">95%</span>
+                        </div>
+                    </div>
+
+                    <!-- Skill 2: Software & App Development -->
+                    <div class="skill-card reveal">
+                        <div class="skill-icon-box">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF2A3B" stroke-width="2">
+                                <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                                <line x1="12" y1="18" x2="12.01" y2="18"/>
+                            </svg>
+                        </div>
+                        <div class="skill-meta">
+                            <h4 class="skill-name">Software & Apps</h4>
+                            <p class="skill-desc">Developing custom software, desktop & mobile applications.</p>
+                        </div>
+                        <div class="skill-progress-wrap">
+                            <div class="skill-bar-track">
+                                <div class="skill-bar-fill" style="width: 92%;"></div>
+                            </div>
+                            <span class="skill-percent">92%</span>
+                        </div>
+                    </div>
+
+                    <!-- Skill 3: AI & Workflow Automation -->
+                    <div class="skill-card reveal">
+                        <div class="skill-icon-box">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF2A3B" stroke-width="2">
+                                <rect x="4" y="4" width="16" height="16" rx="2"/>
+                                <rect x="9" y="9" width="6" height="6"/>
+                                <line x1="9" y1="1" x2="9" y2="4"/>
+                                <line x1="15" y1="1" x2="15" y2="4"/>
+                                <line x1="9" y1="20" x2="9" y2="23"/>
+                                <line x1="15" y1="20" x2="15" y2="23"/>
+                                <line x1="20" y1="9" x2="23" y2="9"/>
+                                <line x1="20" y1="14" x2="23" y2="14"/>
+                                <line x1="1" y1="9" x2="4" y2="9"/>
+                                <line x1="1" y1="14" x2="4" y2="14"/>
+                            </svg>
+                        </div>
+                        <div class="skill-meta">
+                            <h4 class="skill-name">AI Automation</h4>
+                            <p class="skill-desc">Automating complex workflows, tasks & custom AI processes.</p>
+                        </div>
+                        <div class="skill-progress-wrap">
+                            <div class="skill-bar-track">
+                                <div class="skill-bar-fill" style="width: 90%;"></div>
+                            </div>
+                            <span class="skill-percent">90%</span>
+                        </div>
+                    </div>
+
+                    <!-- Skill 4: AI Video Creation -->
+                    <div class="skill-card reveal">
+                        <div class="skill-icon-box">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF2A3B" stroke-width="2">
+                                <polygon points="23 7 16 12 23 17 23 7"/>
+                                <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+                            </svg>
+                        </div>
+                        <div class="skill-meta">
+                            <h4 class="skill-name">AI Video Creation</h4>
+                            <p class="skill-desc">Generating AI video content, animations & visual storytelling.</p>
+                        </div>
+                        <div class="skill-progress-wrap">
+                            <div class="skill-bar-track">
+                                <div class="skill-bar-fill" style="width: 88%;"></div>
+                            </div>
+                            <span class="skill-percent">88%</span>
+                        </div>
+                    </div>
+
+                    <!-- Skill 5: Logo Design -->
+                    <div class="skill-card reveal">
+                        <div class="skill-icon-box">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF2A3B" stroke-width="2">
+                                <path d="M12 19l7-7 3 3-7 7-3-3z"/>
+                                <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/>
+                                <path d="M2 2l7.586 7.586"/>
+                                <circle cx="11" cy="11" r="2"/>
+                            </svg>
+                        </div>
+                        <div class="skill-meta">
+                            <h4 class="skill-name">Logo Design</h4>
+                            <p class="skill-desc">Designing modern vector logos and strong brand identities.</p>
+                        </div>
+                        <div class="skill-progress-wrap">
+                            <div class="skill-bar-track">
+                                <div class="skill-bar-fill" style="width: 85%;"></div>
+                            </div>
+                            <span class="skill-percent">85%</span>
+                        </div>
+                    </div>
+
+                    <!-- Skill 6: Graphic Design -->
+                    <div class="skill-card reveal">
+                        <div class="skill-icon-box">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF2A3B" stroke-width="2">
+                                <circle cx="13.5" cy="6.5" r=".5"/>
+                                <circle cx="17.5" cy="10.5" r=".5"/>
+                                <circle cx="8.5" cy="7.5" r=".5"/>
+                                <circle cx="6.5" cy="12.5" r=".5"/>
+                                <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.5 17.5 2 12 2z"/>
+                            </svg>
+                        </div>
+                        <div class="skill-meta">
+                            <h4 class="skill-name">Graphic Design</h4>
+                            <p class="skill-desc">Crafting social media visuals, marketing banners & graphics.</p>
+                        </div>
+                        <div class="skill-progress-wrap">
+                            <div class="skill-bar-track">
+                                <div class="skill-bar-fill" style="width: 78%;"></div>
+                            </div>
+                            <span class="skill-percent">78%</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            </div>
+
+            <!-- Page 5: Contact Page -->
+            <div class="portfolio-page-view" id="page-contact">
+            <section class="section-container contact-section" id="contact">
+                <div class="section-header">
+                    <span class="section-dot"></span>
+                    <h3 class="section-title">LET'S WORK TOGETHER</h3>
+                </div>
+
+                <div class="contact-card reveal">
+                    <div class="contact-text">
+                        <h4 class="contact-title">Have a project in mind?</h4>
+                        <p class="contact-subtitle">I'm available for freelance projects, full-time roles, and collaborations.</p>
+                        <div class="contact-direct-links">
+                            <a href="mailto:mdmirazahmed3690@gmail.com" class="contact-pill-link mail-pill" title="Send email to mdmirazahmed3690@gmail.com">
+                                 <strong>mdmirazahmed3690@gmail.com</strong>
+                            </a>
+                            <a href="https://wa.me/8801339564967?text=Assalamu%20Alaikum%20Miraz%2C%20I%20have%20a%20project!" target="_blank" class="contact-pill-link wa-pill" title="WhatsApp Chat">
+                                 WhatsApp: <strong>01339564967</strong>
+                            </a>
+                            <a href="https://github.com/MdMiraz-dev" target="_blank" rel="noopener noreferrer" class="contact-pill-link gh-pill" title="GitHub Profile">
+                                 GitHub: <strong>MdMiraz-dev</strong>
+                            </a>
+                            <a href="https://www.facebook.com/mdmiraz.dev" target="_blank" class="contact-pill-link fb-pill" title="Facebook Profile">
+                                 Facebook: <strong>mdmiraz.dev</strong>
+                            </a>
+                        </div>
+                    </div>
+                    <form class="contact-form" id="contactForm">
+                        <div class="form-row">
+                            <input type="text" id="contactName" placeholder="Your Name" required class="form-input">
+                            <input type="email" id="contactEmail" placeholder="Your Email" required class="form-input">
+                        </div>
+                        <textarea id="contactMessage" placeholder="Tell me about your project..." rows="3" required class="form-input"></textarea>
+                        <button type="submit" class="btn btn-primary btn-submit" id="contactSubmitBtn">
+                            Send Message <span class="arrow">→</span>
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            </div>
+
+                    <!-- Bottom Showcase Banner -->
+    <footer class="showcase-bottom-banner">
+        <div class="bottom-card perfect-for-card">
+            <div class="bottom-card-header">
+                
+                <span class="text-red font-bold">Perfect For</span>
+            </div>
+            <ul class="check-list">
+                <li><span class="check-icon">✓</span> Freelance Designers</li>
+                <li><span class="check-icon">✓</span> Web Developers</li>
+                <li><span class="check-icon">✓</span> Software Developers</li>
+                <li><span class="check-icon">✓</span> Creative Agencies</li>
+            </ul>
+        </div>
+
+        <div class="bottom-card save-layout-card">
+            <div class="save-title">
+                 Save this <span class="text-red">layout</span>
+            </div>
+            <p class="save-subtitle">for your next portfolio website.</p>
+            <div class="creator-tag">
+                <a href="https://github.com/MdMiraz-dev" target="_blank" rel="noopener noreferrer" style="color:inherit; text-decoration:none;">@MIRAZ<span class="text-red">.DEV</span></a> <span class="tag-divider">|</span> <a href="https://www.facebook.com/mdmiraz.dev" target="_blank" rel="noopener noreferrer" style="color:inherit; text-decoration:none;">@Miraz<span class="text-red">Dev</span></a>
+            </div>
+        </div>
+    </footer>
+        </main>
+
+        <!-- Right Side Showcase: Live Lunar Night Background with Merajul Islam in Foreground -->
+        <aside class="side-showcase">
+            <div class="lunar-portrait-showcase" id="lunarShowcase">
+                <!-- Background Live Moon Video -->
+                <div class="lunar-video-layer">
+                    <video class="lunar-bg-video" id="lunarBgVideo" autoplay loop muted playsinline poster="images/moon_thumb.jpg">
+                        <source src="videos/moon_art.mp4" type="video/mp4">
+                        Your browser does not support HTML5 video.
+                    </video>
+                </div>
+
+                <!-- Foreground Merajul Islam (Transparent Cutout) -->
+                <div class="lunar-character-layer">
+                    <img src="images/merajul_real_portrait.png?v=10" alt="Merajul Islam Miraz" class="lunar-character-img">
+                </div>
+
+                <!-- Atmospheric Night Lighting & Shadow Overlay (Cohesive Nocturnal Mood) -->
+                <div class="lunar-atmosphere-overlay"></div>
+
+                <!-- Rising Realistic Volcanic Smoke & Fire Embers Effect (Zero Candle - Natural Integration) -->
+                <div class="lunar-smoke-effect-layer" aria-hidden="true">
+                    <video class="lunar-smoke-video" id="lunarSmokeVideo" autoplay loop muted playsinline>
+                        <source src="videos/lunar_smoke_effect.mp4?v=2" type="video/mp4">
+                    </video>
+                </div>
+
+                </div>
+        </aside>
+    </div>
+
+    
+
+
+    <!-- Interactive Client Review Modal -->
+    <div class="review-modal-backdrop" id="reviewModal" aria-hidden="true">
+        <div class="review-modal-box">
+            <div class="review-modal-header">
+                <div class="review-modal-title-group">
+                    <span class="review-modal-badge">CLIENT FEEDBACK</span>
+                    <h3 class="review-modal-title">Leave a Review for Miraz</h3>
+                    <p class="review-modal-desc">Share your experience working with Merajul Islam (Miraz).</p>
+                </div>
+                <button class="review-modal-close" id="closeReviewModalBtn" aria-label="Close modal">&times;</button>
+            </div>
+
+            <form id="clientReviewForm" class="review-form">
+                <div class="form-group">
+                    <label for="reviewClientName" class="form-label">Your Name <span class="text-red">*</span></label>
+                    <input type="text" id="reviewClientName" class="form-input" placeholder="e.g. John Doe" required maxlength="60">
+                </div>
+
+                <div class="form-group">
+                    <label for="reviewClientRole" class="form-label">Your Designation / Company <span class="form-hint">(Optional)</span></label>
+                    <input type="text" id="reviewClientRole" class="form-input" placeholder="e.g. CEO, Apex Tech or Freelance Client" maxlength="60">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Rating <span class="text-red">*</span></label>
+                    <div class="star-rating-selector" id="starRatingSelector">
+                        <span class="star-btn active" data-rating="1">★</span>
+                        <span class="star-btn active" data-rating="2">★</span>
+                        <span class="star-btn active" data-rating="3">★</span>
+                        <span class="star-btn active" data-rating="4">★</span>
+                        <span class="star-btn active" data-rating="5">★</span>
+                        <span class="star-rating-text" id="starRatingLabel">5.0 / 5.0 (Exceptional)</span>
+                    </div>
+                    <input type="hidden" id="reviewRatingInput" value="5">
+                </div>
+
+                <div class="form-group">
+                    <label for="reviewMessage" class="form-label">Your Review <span class="text-red">*</span></label>
+                    <textarea id="reviewMessage" class="form-textarea" rows="4" placeholder="How was your experience with Miraz? Tell others about the quality, communication, and speed..." required maxlength="500"></textarea>
+                </div>
+
+                <div class="review-form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelReviewBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="submitReviewBtn">
+                        <span>Submit Review</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div class="toast" id="toast">Message sent successfully!</div>
+
+    <script src="script.js?v=20"></script>
+</body>
+</html>

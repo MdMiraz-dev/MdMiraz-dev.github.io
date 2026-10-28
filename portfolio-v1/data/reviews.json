@@ -1,0 +1,47 @@
+[
+  {
+    "id": "rev-1792917535306",
+    "name": "miraz",
+    "role": "websait",
+    "review": "vere good",
+    "rating": 4,
+    "avatar": "https://api.dicebear.com/7.x/initials/svg?seed=miraz&backgroundColor=FF2A3B&textColor=ffffff",
+    "date": "2026-10-25"
+  },
+  {
+    "id": "rev-1792916387817",
+    "name": "Sarah Jenkins",
+    "role": "Product Manager",
+    "review": "Miraz built our company web portal seamlessly. Highly skilled developer!",
+    "rating": 5,
+    "avatar": "https://api.dicebear.com/7.x/initials/svg?seed=Sarah%20Jenkins&backgroundColor=FF2A3B&textColor=ffffff",
+    "date": "2026-10-25"
+  },
+  {
+    "id": "rev-1",
+    "name": "Daniel Johnson",
+    "role": "CEO, TechFlow",
+    "review": "Outstanding work! He understood our vision perfectly and delivered beyond expectations.",
+    "rating": 5,
+    "avatar": "images/testimonial_daniel.png",
+    "date": "2026-10-15"
+  },
+  {
+    "id": "rev-2",
+    "name": "Sophia Williams",
+    "role": "Founder, Studio Pro",
+    "review": "Professional, creative and dedicated. Highly recommended for any web & development project.",
+    "rating": 5,
+    "avatar": "images/testimonial_sophia.png",
+    "date": "2026-10-20"
+  },
+  {
+    "id": "rev-3",
+    "name": "James Carter",
+    "role": "Marketing Head",
+    "review": "His attention to detail and development skills are top-notch. Will work together again!",
+    "rating": 5,
+    "avatar": "images/testimonial_james.png",
+    "date": "2026-10-24"
+  }
+]

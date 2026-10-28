@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hermes + OpenClaw Unified Super-Agent - Interactive Command Center</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Outfit:wght@400;600;700;800&family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: #111827;
+      --card-border: #1f293d;
+      --accent-cyan: #06b6d4;
+      --accent-purple: #a855f7;
+      --accent-green: #10b981;
+      --text: #f3f4f6;
+      --text-muted: #9ca3af;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Outfit', 'Hind Siliguri', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: rgba(17, 24, 39, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--card-border);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #7c3aed, #06b6d4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 0 20px rgba(124, 58, 237, 0.4);
+    }
+    .logo-title {
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .logo-subtitle {
+      font-size: 12px;
+      color: var(--accent-cyan);
+      font-weight: 500;
+    }
+    .btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--card-border);
+      background: transparent;
+      color: #fff;
+      transition: all 0.2s ease;
+    }
+    .btn:hover { background: #1f293d; }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+      flex: 1;
+      width: 100%;
+    }
+    .hero-strip {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(6, 182, 212, 0.08));
+      border: 1px solid rgba(168, 85, 247, 0.3);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .hero-strip h1 {
+      font-size: 24px;
+      font-weight: 800;
+      background: linear-gradient(90deg, #c084fc, #38bdf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .terminal-window {
+      background: #070a12;
+      border: 1px solid #1f293d;
+      border-radius: 14px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+      overflow: hidden;
+      margin-bottom: 24px;
+      font-family: 'Fira Code', monospace;
+    }
+    .terminal-header {
+      background: #0f172a;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #1e293b;
+    }
+    .terminal-dots {
+      display: flex;
+      gap: 8px;
+    }
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    .dot-red { background: #ef4444; }
+    .dot-yellow { background: #f59e0b; }
+    .dot-green { background: #10b981; }
+    .terminal-body {
+      padding: 20px;
+      min-height: 280px;
+      max-height: 420px;
+      overflow-y: auto;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .terminal-input-bar {
+      display: flex;
+      border-top: 1px solid #1e293b;
+      background: #0b1120;
+    }
+    .terminal-prompt {
+      padding: 12px 16px;
+      color: var(--accent-cyan);
+      font-weight: 600;
+    }
+    .terminal-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #fff;
+      font-family: 'Fira Code', monospace;
+      font-size: 14px;
+      padding: 12px 16px 12px 0;
+    }
+    .t-cyan { color: #38bdf8; }
+    .t-green { color: #34d399; }
+    .t-purple { color: #c084fc; }
+    .t-gray { color: #64748b; }
+
+    .channels-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+    .channel-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 18px;
+    }
+    .channel-title {
+      font-weight: 700;
+      font-size: 16px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .channel-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo-area">
+      <div class="logo-badge"></div>
+      <div>
+        <div class="logo-title">Hermes + OpenClaw Super-Agent</div>
+        <div class="logo-subtitle">Autonomous Local Brain & Multi-Channel Gateway</div>
+      </div>
+    </div>
+    <a href="/#projects" class="btn">← Back to Portfolio</a>
+  </header>
+
+  <div class="container">
+    <div class="hero-strip">
+      <div>
+        <h1>Unified Autonomous Super-Agent</h1>
+        <p style="color: var(--text-muted); font-size: 14px; margin-top: 4px;">
+          Nous Research Hermes 3 লোকাল এলএলএম ইঞ্জিন এবং OpenClaw মাল্টি-চ্যানেল অটোমেশন গেটওয়ে।
+        </p>
+      </div>
+      <div>
+        <button class="btn" style="background: rgba(16, 185, 129, 0.2); border-color: #10b981; color: #34d399;" onclick="runPreset('status')">● Agent Status: Online</button>
+      </div>
+    </div>
+
+    <!-- Terminal -->
+    <div class="terminal-window">
+      <div class="terminal-header">
+        <div class="terminal-dots">
+          <div class="dot dot-red"></div>
+          <div class="dot dot-yellow"></div>
+          <div class="dot dot-green"></div>
+        </div>
+        <div style="font-size: 12px; color: #94a3b8;">hermes@cluster:~/openclaw-agent</div>
+        <div style="font-size: 12px; color: #10b981;">v3.0.4 - READY</div>
+      </div>
+      <div class="terminal-body" id="termBody">
+        <div class="t-cyan">[HERMES] Initializing Nous Hermes 3 8B Local Brain... OK</div>
+        <div class="t-purple">[OPENCLAW] Binding Multi-Channel Gateway: WhatsApp, Telegram, REST API, CLI... OK</div>
+        <div class="t-green">[SYSTEM] Super-Agent core initialized. Ready to execute autonomous tasks.</div>
+        <div class="t-gray">--------------------------------------------------------------------------</div>
+        <div>Type commands below or click quick presets: <span class="t-cyan" style="cursor:pointer;" onclick="runPreset('scan')">`scan`</span>, <span class="t-cyan" style="cursor:pointer;" onclick="runPreset('social')">`social`</span>, <span class="t-cyan" style="cursor:pointer;" onclick="runPreset('deploy')">`deploy`</span></div>
+      </div>
+      <form class="terminal-input-bar" onsubmit="handleCmd(event)">
+        <span class="terminal-prompt">hermes&gt;</span>
+        <input type="text" id="cmdInput" class="terminal-input" placeholder="Type a command (e.g. scan, status, social, deploy) and press Enter..." autofocus autocomplete="off">
+      </form>
+    </div>
+
+    <!-- Channels -->
+    <div class="channels-grid">
+      <div class="channel-card">
+        <div class="channel-title"> WhatsApp Gateway</div>
+        <div class="channel-desc">স্বয়ংক্রিয় ক্লায়েন্ট ইনবক্স ম্যানেজমেন্ট ও ভয়েস-টু-টেক্সট প্রসেসিং।</div>
+      </div>
+      <div class="channel-card">
+        <div class="channel-title"> Telegram Bot</div>
+        <div class="channel-desc">অ্যাডমিন রিমোট কমান্ড, সার্ভার অ্যালার্ট ও অটোমেশন স্ক্রিপ্ট কন্ট্রোলার।</div>
+      </div>
+      <div class="channel-card">
+        <div class="channel-title"> Hermes 3 Engine</div>
+        <div class="channel-desc">সম্পূর্ণ অফলাইন/প্রাইভেট লোকাল এলএলএম রিজনিং ও টুল-ইউজ ক্যাপাবিলিটি।</div>
+      </div>
+      <div class="channel-card">
+        <div class="channel-title"> Webhooks & API</div>
+        <div class="channel-desc">Render, Vercel ও কাস্টম সার্ভারের সাথে রিয়েলটাইম ইভেন্ট সিঙ্কিং।</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const term = document.getElementById('termBody');
+    const input = document.getElementById('cmdInput');
+
+    function log(msg, cls = '') {
+      const d = document.createElement('div');
+      if (cls) d.className = cls;
+      d.innerHTML = msg;
+      term.appendChild(d);
+      term.scrollTop = term.scrollHeight;
+    }
+
+    function runPreset(c) {
+      input.value = c;
+      handleCmd({ preventDefault: () => {} });
+    }
+
+    function handleCmd(e) {
+      e.preventDefault();
+      const val = input.value.trim().toLowerCase();
+      if (!val) return;
+      log(`hermes> ${val}`, 't-cyan');
+      input.value = '';
+
+      if (val === 'status') {
+        log('● CPU: 12% | RAM: 4.2GB/16GB | GPU VRAM: 5.8GB (Hermes 3 Q4_K_M)', 't-green');
+        log('● Channels: Telegram (Connected), Webhook (Listening :8080), WhatsApp (Active)');
+      } else if (val === 'scan') {
+        log('[SCAN] Auditing active workspaces in D:\\ ...', 't-purple');
+        setTimeout(() => {
+          log('  Found 9 live modules: Miraz Store, Madrasha ERP, SBMC Lab, Coffee Shop, 3D WebGL...');
+          log('  All modules verified with 100% health.', 't-green');
+        }, 500);
+      } else if (val === 'social') {
+        log('[SOCIAL] Fetching Meta & Facebook Auto-Pilot status...', 't-purple');
+        setTimeout(() => {
+          log('  Connected to: https://www.facebook.com/miraz.antigravity');
+          log('  Render Worker: https://fecbook.onrender.com (HTTP 200 OK)');
+          log('  Instant Messenger Reply: ENABLED (<1s latency)', 't-green');
+        }, 600);
+      } else if (val === 'deploy') {
+        log('[DEPLOY] Initiating zero-downtime deployment...', 't-cyan');
+        setTimeout(() => {
+          log('  Bundle compiled successfully (1.02 MB).');
+          log('  Cloudflare Edge synced. Live on global CDN.', 't-green');
+        }, 800);
+      } else if (val === 'clear') {
+        term.innerHTML = '';
+      } else {
+        log(`Executing autonomous plan for: "${val}"...`, 't-purple');
+        setTimeout(() => {
+          log(`[Hermes 3]: Task analyzed. Executed tool sequence successfully.`, 't-green');
+        }, 600);
+      }
+    }
+  </script>
+</body>
+</html>

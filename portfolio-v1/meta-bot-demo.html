@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Meta Automation Agent | Live Chat & Reels Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #080C14;
+            color: #FFFFFF;
+            font-family: 'Plus Jakarta Sans', 'Hind Siliguri', sans-serif;
+            min-height: 100vh;
+            padding: 20px 16px 50px;
+        }
+
+        .container { max-width: 900px; margin: 0 auto; }
+
+        /* Top Nav */
+        .top-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #0E1422;
+            border: 1px solid rgba(24, 119, 242, 0.3);
+            border-radius: 16px;
+            padding: 14px 20px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #FFFFFF;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.85rem;
+            padding: 8px 16px;
+            border-radius: 10px;
+            transition: 0.2s;
+        }
+        .btn-back:hover { background: rgba(24, 119, 242, 0.2); border-color: #1877F2; }
+
+        .btn-gh {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #1877F2;
+            color: #FFFFFF;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.85rem;
+            padding: 8px 18px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(24, 119, 242, 0.4);
+        }
+
+        /* Hero */
+        .hero { text-align: center; margin-bottom: 24px; }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(24, 119, 242, 0.15);
+            border: 1px solid rgba(24, 119, 242, 0.5);
+            color: #38BDF8;
+            padding: 6px 16px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            margin-bottom: 12px;
+        }
+        .title { font-size: 1.85rem; font-weight: 800; margin-bottom: 6px; }
+        .title span { color: #1877F2; }
+        .desc { font-size: 0.95rem; color: #9CA3AF; max-width: 650px; margin: 0 auto; }
+
+        /* Messenger Phone Card */
+        .messenger-box {
+            background: #101524;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+            max-width: 520px;
+            margin: 0 auto;
+        }
+
+        .chat-header {
+            background: #1877F2;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: #FFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            border: 2px solid #FFF;
+        }
+        .chat-title { font-size: 1rem; font-weight: 800; color: #FFF; }
+        .chat-status { font-size: 0.75rem; color: #E0E7FF; display: flex; align-items: center; gap: 5px; }
+
+        .chat-body {
+            padding: 18px;
+            height: 380px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: #0B0E17;
+        }
+
+        .msg {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 14px;
+            font-size: 0.88rem;
+            line-height: 1.45;
+            animation: fadeIn 0.25s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .msg.bot {
+            background: #1F273D;
+            color: #FFFFFF;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        .msg.user {
+            background: #1877F2;
+            color: #FFFFFF;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .typing {
+            font-style: italic;
+            font-size: 0.78rem;
+            color: #9CA3AF;
+            display: none;
+        }
+
+        /* Quick Pills */
+        .quick-pills {
+            padding: 10px 14px;
+            background: #121828;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+        }
+        .pill-btn {
+            white-space: nowrap;
+            background: rgba(24, 119, 242, 0.15);
+            border: 1px solid rgba(24, 119, 242, 0.4);
+            color: #60A5FA;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .pill-btn:hover { background: #1877F2; color: #FFF; }
+
+        /* Input Area */
+        .chat-input-bar {
+            display: flex;
+            padding: 12px 14px;
+            background: #121828;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            gap: 10px;
+        }
+        .chat-input {
+            flex-grow: 1;
+            background: #090B12;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            padding: 10px 16px;
+            color: #FFF;
+            font-size: 0.88rem;
+            outline: none;
+            font-family: inherit;
+        }
+        .btn-send {
+            background: #1877F2;
+            color: #FFF;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Top Nav -->
+        <div class="top-nav">
+            <a href="/#projects" class="btn-back">← লাইভ পোর্টফোলিওতে ফিরে যান</a>
+            <div style="font-weight: 700; color: #60A5FA; font-size: 0.9rem;">
+                 Meta Graph API & Autonomous Messenger Bot
+            </div>
+            <a href="https://github.com/MdMiraz-dev" target="_blank" rel="noopener noreferrer" class="btn-gh">
+                💻 GitHub-এ প্রোফাইল দেখুন
+            </a>
+        </div>
+
+        <!-- Hero -->
+        <div class="hero">
+            <div class="badge"> META GRAPH API • WEBHOOKS • AUTONOMOUS AGENT</div>
+            <h1 class="title">Meta Automation <span>& Social Bot</span></h1>
+            <p class="desc">
+                ফেসবুক পেজ অটো-মেসেজিং, ইনস্ট্যান্ট কমেন্ট রিপ্লাই এবং ভাইরাল রিলস ভিডিও প্রোডাকশনের স্বয়ংক্রিয় এআই ওয়ার্কফ্লো। নিচে মেসেজ পাঠিয়ে লাইভ পরীক্ষা করে দেখুন!
+            </p>
+        </div>
+
+        <!-- Messenger Box -->
+        <div class="messenger-box">
+            <div class="chat-header">
+                <div class="avatar"></div>
+                <div>
+                    <div class="chat-title">Miraz Antigravity (AI Page) ✔️</div>
+                    <div class="chat-status"> সাধারণত কয়েক সেকেন্ডের মধ্যে উত্তর দেয়</div>
+                </div>
+            </div>
+
+            <div class="chat-body" id="chatBody">
+                <div class="msg bot">
+                    আসসালামু আলাইকুম! মেরাজুল ইসলামের ফেসবুক অটোমেশন বটে আপনাকে স্বাগতম। আপনি কি কোনো প্রশ্ন বা ব্যবসায়িক অটোমেশন করতে চান? নিচের অপশনগুলোতে ক্লিক করতে পারেন!
+                </div>
+                <div class="typing" id="typingIndicator">বট টাইপ করছে...</div>
+            </div>
+
+            <!-- Quick Suggestions -->
+            <div class="quick-pills">
+                <button class="pill-btn" onclick="sendQuick('ব্যবসার জন্য কি অটোমেশন বানিয়ে দেন?')">💡 বিজনেস অটোমেশন</button>
+                <button class="pill-btn" onclick="sendQuick('আপনার সাথে মিটিং করতে চাই')">📅 সিডিউল মিটিং</button>
+                <button class="pill-btn" onclick="sendQuick('AI Reels কিভাবে অটোমেট করেন?')">🎬 AI রিলস ওয়ার্কফ্লো</button>
+            </div>
+
+            <!-- Input Bar -->
+            <div class="chat-input-bar">
+                <input type="text" id="userInput" class="chat-input" placeholder="এখানে মেসেজ লিখুন..." onkeypress="handleKey(event)">
+                <button class="btn-send" onclick="sendUserMsg()">➤</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const responses = {
+            "business": "জ্বি অবশ্যই! যেকোনো ফেসবুক পেজের কমেন্ট অটো-রিপ্লাই, মেসেঞ্জার লিড ক্যাপচার, এবং ডেটাবেজে স্বয়ংক্রিয়ভাবে কাস্টমার এন্ট্রি করার পূর্ণাঙ্গ মেটা গ্রাফ এপিআই (Meta Graph API) পাইপলাইন তৈরি করা হয়।",
+            "meeting": "চমৎকার! মেরাজুল ইসলামের সাথে স্ট্র্যাটেজি মিটিং করতে আপনি সরাসরি ইমেইল করতে পারেন: mdmirazahmed3690@gmail.com অথবা হোয়াটসঅ্যাপ/ফেসবুকে মেসেজ ড্রপ করতে পারেন।",
+            "reels": "আমরা Google Antigravity ও Hermes এজেন্ট ব্যবহার করে ট্রেন্ডিং টপিক স্ক্র্যাপিং, স্ক্রিপ্ট রাইটিং, ভয়েস জেনারেশন এবং স্বয়ংক্রিয়ভাবে ইনস্টাগ্রাম/ফেসবুকে রিলস শিডিউল করি!",
+            "default": "ধন্যবাদ আপনার বার্তার জন্য! আমাদের অটোমেশন সিস্টেম এটি তাৎক্ষণিকভাবে রিসিভ করেছে। আমরা দ্রুতই আপনার সাথে বিস্তারিত যোগাযোগ করব।"
+        };
+
+        function sendQuick(text) {
+            document.getElementById('userInput').value = text;
+            sendUserMsg();
+        }
+
+        function handleKey(e) {
+            if (e.key === 'Enter') sendUserMsg();
+        }
+
+        function sendUserMsg() {
+            const input = document.getElementById('userInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const chat = document.getElementById('chatBody');
+            const userMsg = document.createElement('div');
+            userMsg.className = 'msg user';
+            userMsg.textContent = text;
+            chat.appendChild(userMsg);
+            input.value = '';
+            chat.scrollTop = chat.scrollHeight;
+
+            const typing = document.getElementById('typingIndicator');
+            typing.style.display = 'block';
+
+            setTimeout(() => {
+                typing.style.display = 'none';
+                const botMsg = document.createElement('div');
+                botMsg.className = 'msg bot';
+
+                let reply = responses.default;
+                const lower = text.toLowerCase();
+                if (lower.includes('বিজনেস') || lower.includes('অটোমেশন') || lower.includes('ব্যবসা')) {
+                    reply = responses.business;
+                } else if (lower.includes('মিটিং') || lower.includes('কথা') || lower.includes('যোগাযোগ')) {
+                    reply = responses.meeting;
+                } else if (lower.includes('রিল') || lower.includes('reels') || lower.includes('ভিডিও')) {
+                    reply = responses.reels;
+                }
+
+                botMsg.textContent = reply;
+                chat.appendChild(botMsg);
+                chat.scrollTop = chat.scrollHeight;
+            }, 800);
+        }
+    </script>
+</body>
+</html>

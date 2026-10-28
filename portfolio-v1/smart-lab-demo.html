@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚨 Smart Lab Command Center | Live Automation Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Hind+Siliguri:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #080A0F;
+            color: #FFFFFF;
+            font-family: 'Plus Jakarta Sans', 'Hind Siliguri', sans-serif;
+            min-height: 100vh;
+            padding: 20px 16px 50px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Top Nav */
+        .top-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #10141E;
+            border: 1px solid rgba(255, 42, 59, 0.3);
+            border-radius: 16px;
+            padding: 14px 20px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #FFFFFF;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.85rem;
+            padding: 8px 16px;
+            border-radius: 10px;
+            transition: 0.2s;
+        }
+        .btn-back:hover { background: rgba(255, 42, 59, 0.2); border-color: #FF2A3B; }
+
+        .btn-gh {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #FF2A3B;
+            color: #FFFFFF;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.85rem;
+            padding: 8px 18px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(255, 42, 59, 0.4);
+        }
+
+        /* Header */
+        .header-box {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 42, 59, 0.15);
+            border: 1px solid rgba(255, 42, 59, 0.5);
+            color: #FF2A3B;
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: 0.05em;
+        }
+        .title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+        .title span { color: #FF2A3B; }
+        .subtitle {
+            font-size: 0.95rem;
+            color: #9CA3AF;
+            max-width: 720px;
+            margin: 0 auto;
+        }
+
+        /* Live Metrics Bar */
+        .metrics-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+        .metric-card {
+            background: #111522;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .metric-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            background: rgba(255, 42, 59, 0.12);
+            border: 1px solid rgba(255, 42, 59, 0.3);
+        }
+        .metric-val { font-size: 1.35rem; font-weight: 800; color: #FFF; font-family: 'JetBrains Mono', monospace; }
+        .metric-lbl { font-size: 0.78rem; color: #9CA3AF; text-transform: uppercase; font-weight: 600; }
+
+        /* Simulator Controls */
+        .controls-box {
+            background: #121826;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 18px;
+            padding: 18px 20px;
+            margin-bottom: 28px;
+        }
+        .controls-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #FF5E62;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .sim-btn {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #FFF;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: inherit;
+        }
+        .sim-btn:hover { background: rgba(255, 42, 59, 0.2); border-color: #FF2A3B; }
+        .sim-btn.danger { background: rgba(255, 42, 59, 0.85); border-color: #FF2A3B; }
+        .sim-btn.danger:hover { background: #FF2A3B; }
+
+        /* Curfew Banner Overlay (Hidden by default) */
+        .curfew-banner {
+            display: none;
+            background: #7F1D1D;
+            border: 2px solid #EF4444;
+            color: #FFF;
+            padding: 16px 20px;
+            border-radius: 14px;
+            margin-bottom: 24px;
+            text-align: center;
+            animation: pulse-border 1.5s infinite;
+        }
+        @keyframes pulse-border {
+            0%, 100% { box-shadow: 0 0 15px rgba(239, 68, 68, 0.5); }
+            50% { box-shadow: 0 0 35px rgba(239, 68, 68, 0.9); }
+        }
+
+        /* Workstation Grid */
+        .grid-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .grid-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+        }
+        .workstations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 16px;
+        }
+        .pc-card {
+            background: #101420;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 14px;
+            position: relative;
+            transition: 0.2s;
+        }
+        .pc-card:hover {
+            border-color: rgba(255, 42, 59, 0.4);
+            transform: translateY(-3px);
+        }
+        .pc-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .pc-id {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #00F2FE;
+        }
+        .pc-status {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 999px;
+            background: rgba(34, 197, 94, 0.15);
+            color: #22C55E;
+            border: 1px solid rgba(34, 197, 94, 0.4);
+        }
+        .pc-status.alert {
+            background: rgba(239, 68, 68, 0.25);
+            color: #EF4444;
+            border-color: #EF4444;
+            animation: pulse-status 1s infinite alternate;
+        }
+        @keyframes pulse-status {
+            from { opacity: 0.7; } to { opacity: 1; }
+        }
+        .pc-student {
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: #FFF;
+        }
+        .pc-app {
+            font-size: 0.76rem;
+            color: #9CA3AF;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .pc-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+        .bar-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.72rem;
+            color: #9CA3AF;
+        }
+        .bar-bg {
+            flex-grow: 1;
+            margin-left: 8px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+        .bar-fill {
+            height: 100%;
+            background: #00F2FE;
+            border-radius: 999px;
+        }
+        .bar-fill.high { background: #FF2A3B; }
+        .pc-actions {
+            display: flex;
+            gap: 6px;
+        }
+        .pc-btn {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #FFF;
+            padding: 6px 8px;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+        }
+        .pc-btn:hover { background: rgba(255, 42, 59, 0.2); }
+
+        /* Full Screen Lock Overlay */
+        .lock-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 0, 0, 0.95);
+            z-index: 9999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 24px;
+        }
+        .lock-icon { font-size: 4rem; margin-bottom: 16px; animation: bounce 1s infinite alternate; }
+        @keyframes bounce { from { transform: scale(1); } to { transform: scale(1.1); } }
+        .lock-title { font-size: 2.2rem; font-weight: 800; color: #EF4444; margin-bottom: 8px; }
+        .lock-desc { font-size: 1.1rem; color: #D1D5DB; max-width: 600px; margin-bottom: 24px; }
+        .btn-unlock {
+            background: #22C55E;
+            color: #000;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 800;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Top Nav -->
+        <div class="top-nav">
+            <a href="/#projects" class="btn-back">← লাইভ পোর্টফোলিওতে ফিরে যান</a>
+            <div style="font-weight: 700; color: #9CA3AF; font-size: 0.9rem;">
+                🏛️ As-Sunnah Foundation Computer Lab Control Panel
+            </div>
+            <a href="https://github.com/MdMiraz-dev/SBMC-Projects/tree/main/02-smart-lab-command-center" target="_blank" rel="noopener noreferrer" class="btn-gh">
+                💻 GitHub-এ সোর্স কোড দেখুন
+            </a>
+        </div>
+
+        <!-- Header -->
+        <div class="header-box">
+            <div class="badge"> LIVE REAL-TIME AUTOMATION DEMO</div>
+            <h1 class="title">Smart Lab <span>Command Center</span></h1>
+            <p class="subtitle">
+                পাইথন ৩.১২, FastAPI ও WebSockets দিয়ে তৈরি অটোমেশন সিস্টেম। এটি রিয়েল-টাইমে ল্যাবের সব পিসি মনিটর করে, ফেসবুক রিলস/শর্টস ডিটেক্ট করে এবং রাত ৯:০০ টায় স্বয়ংক্রিয়ভাবে স্ক্রিন লক ও শাটডাউন কার্যকর করে।
+            </p>
+        </div>
+
+        <!-- Metrics -->
+        <div class="metrics-bar">
+            <div class="metric-card">
+                <div class="metric-icon"></div>
+                <div>
+                    <div class="metric-val" id="totalPCs">12</div>
+                    <div class="metric-lbl">মোট ওয়ার্কস্টেশন</div>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon"></div>
+                <div>
+                    <div class="metric-val" style="color: #22C55E;" id="onlinePCs">11</div>
+                    <div class="metric-lbl">সক্রিয় স্টুডেন্ট পিসি</div>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon">🚨</div>
+                <div>
+                    <div class="metric-val" style="color: #EF4444;" id="alertCount">0</div>
+                    <div class="metric-lbl">ট্যাম্পার / রিলস অ্যালার্ট</div>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon">⏰</div>
+                <div>
+                    <div class="metric-val" id="labClock" style="color: #00F2FE;">20:54:12</div>
+                    <div class="metric-lbl">ল্যাব সময় (কারফিউ রাত ৯:০০)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Curfew Warning Banner -->
+        <div class="curfew-banner" id="curfewBanner">
+            <h3 style="font-size: 1.3rem; margin-bottom: 4px;">⚠️ সতর্কবার্তা: রাত ৯:০০ টার কার্ফিউ নিয়ম কার্যকর হতে চলেছে!</h3>
+            <p id="curfewText">সকল শিক্ষার্থীকে তাদের প্রজেক্ট ফাইল সেভ করার অনুরোধ করা হচ্ছে।</p>
+        </div>
+
+        <!-- Interactive Simulator Controls -->
+        <div class="controls-box">
+            <div class="controls-title">
+                <span>🎛️ অটোমেশন অ্যাকশন টেস্ট করুন (নিচের বাটনে ক্লিক করে লাইভ দেখুন):</span>
+            </div>
+            <div class="btn-group">
+                <button class="sim-btn" onclick="triggerWarning('20:50')">
+                    🔔 ২০:৫০ (১০ মিনিট ওয়ার্নিং টেস্ট)
+                </button>
+                <button class="sim-btn" onclick="triggerWarning('20:58')">
+                    ⚠️ ২০:৫৮ (২ মিনিট ফাইনাল সেভ রিমাইন্ডার)
+                </button>
+                <button class="sim-btn danger" onclick="triggerCurfewLock()">
+                    🔒 ২১:০০ অটো-কারফিউ স্ক্রিন লক কার্যকর করুন
+                </button>
+                <button class="sim-btn" onclick="simulateReelsTamper()" style="border-color: #EF4444; color: #FFAAAA;">
+                    🚨 রিলস/শর্টস অ্যাডিকশন ডিটেকশন সিমুলেট
+                </button>
+                <button class="sim-btn" onclick="resetLab()">
+                    🔄 রিসেট / নরমাল মোড
+                </button>
+            </div>
+        </div>
+
+        <!-- Workstations Grid -->
+        <div class="grid-header">
+            <h2 class="grid-title">💻 লাইভ ল্যাব ওয়ার্কস্টেশন গ্রিড (As-Sunnah Lab-01)</h2>
+            <span style="font-size: 0.82rem; color: #22C55E;">● WebSocket Heartbeat Connected</span>
+        </div>
+
+        <div class="workstations-grid" id="pcsContainer">
+            <!-- Rendered by JS -->
+        </div>
+    </div>
+
+    <!-- Curfew Fullscreen Overlay -->
+    <div class="lock-overlay" id="lockOverlay">
+        <div class="lock-icon">🔒</div>
+        <h2 class="lock-title">9:00 PM CURFEW LOCK ACTIVATED</h2>
+        <p class="lock-desc">
+            আস-সুন্নাহ কম্পিউটার ল্যাবের আজকের কার্যদিবস সমাপ্ত হয়েছে। কেন্দ্রীয় অটোমেশন সিস্টেমের মাধ্যমে ল্যাবের সকল কম্পিউটার স্ক্রিন লক করা হয়েছে এবং বিদ্যুৎ সাশ্রয়ের জন্য স্বয়ংক্রিয় পাওয়ার-অফ শুরু হচ্ছে।
+        </p>
+        <button class="btn-unlock" onclick="closeLockOverlay()">
+            🔓 ইনস্ট্রাক্টর ওভাররাইড (ল্যাব চালু করুন)
+        </button>
+    </div>
+
+    <script>
+        const students = [
+            { id: "LAB-PC-01", name: "Zubair Ahmed", app: "VS Code (Python 3.12)", cpu: 24, ram: 42, status: "ONLINE" },
+            { id: "LAB-PC-02", name: "Tanvir Hasan", app: "Chrome (Documentation)", cpu: 18, ram: 38, status: "ONLINE" },
+            { id: "LAB-PC-03", name: "Mahmudul Haque", app: "Terminal (Pytest Suite)", cpu: 35, ram: 55, status: "ONLINE" },
+            { id: "LAB-PC-04", name: "Merajul Islam", app: "FastAPI Backend Server", cpu: 45, ram: 60, status: "ONLINE" },
+            { id: "LAB-PC-05", name: "Abdullah Al Noman", app: "Figma UI Prototype", cpu: 22, ram: 40, status: "ONLINE" },
+            { id: "LAB-PC-06", name: "Salman Faris", app: "Git Push to GitHub", cpu: 15, ram: 34, status: "ONLINE" },
+            { id: "LAB-PC-07", name: "Ibrahim Khalil", app: "Postman API Tests", cpu: 28, ram: 48, status: "ONLINE" },
+            { id: "LAB-PC-08", name: "Raihan Kabir", app: "VS Code (Tailwind CSS)", cpu: 20, ram: 36, status: "ONLINE" },
+            { id: "LAB-PC-09", name: "Shakil Ahmed", app: "Docker Container Daemon", cpu: 52, ram: 68, status: "ONLINE" },
+            { id: "LAB-PC-10", name: "Junaid Siddique", app: "Jupyter Notebook", cpu: 32, ram: 50, status: "ONLINE" },
+            { id: "LAB-PC-11", name: "Nasim Uddin", app: "PostgreSQL Database CLI", cpu: 19, ram: 41, status: "ONLINE" },
+            { id: "LAB-PC-12", name: "Lab Spare PC", app: "Desktop Idle", cpu: 5, ram: 18, status: "STANDBY" }
+        ];
+
+        function renderPCs() {
+            const container = document.getElementById('pcsContainer');
+            container.innerHTML = students.map((pc, idx) => `
+                <div class="pc-card" id="card-${idx}">
+                    <div class="pc-top">
+                        <span class="pc-id">${pc.id}</span>
+                        <span class="pc-status ${pc.status === 'ALERT' ? 'alert' : ''}">${pc.status}</span>
+                    </div>
+                    <div class="pc-student">${pc.name}</div>
+                    <div class="pc-app"><span>🪟</span> <span id="app-${idx}">${pc.app}</span></div>
+                    <div class="pc-bars">
+                        <div class="bar-row">
+                            <span>CPU: ${pc.cpu}%</span>
+                            <div class="bar-bg"><div class="bar-fill ${pc.cpu > 50 ? 'high' : ''}" style="width: ${pc.cpu}%;"></div></div>
+                        </div>
+                        <div class="bar-row">
+                            <span>RAM: ${pc.ram}%</span>
+                            <div class="bar-bg"><div class="bar-fill" style="width: ${pc.ram}%;"></div></div>
+                        </div>
+                    </div>
+                    <div class="pc-actions">
+                        <button class="pc-btn" onclick="warnPC(${idx})">⚠️ ওয়ার্নিং</button>
+                        <button class="pc-btn" onclick="lockSinglePC(${idx})">🔒 লক</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        renderPCs();
+
+        // Clock
+        let simHour = 20, simMin = 54, simSec = 12;
+        setInterval(() => {
+            simSec++;
+            if (simSec >= 60) { simSec = 0; simMin++; }
+            if (simMin >= 60) { simMin = 0; simHour++; }
+            const h = String(simHour).padStart(2, '0');
+            const m = String(simMin).padStart(2, '0');
+            const s = String(simSec).padStart(2, '0');
+            document.getElementById('labClock').textContent = `${h}:${m}:${s}`;
+        }, 1000);
+
+        function triggerWarning(time) {
+            const banner = document.getElementById('curfewBanner');
+            const text = document.getElementById('curfewText');
+            banner.style.display = 'block';
+            if (time === '20:50') {
+                simHour = 20; simMin = 50; simSec = 0;
+                text.textContent = '১০ মিনিটের মধ্যে ল্যাব বন্ধ হবে। সকল কাজ সংরক্ষণ করুন।';
+            } else {
+                simHour = 20; simMin = 58; simSec = 0;
+                text.textContent = 'আর মাত্র ২ মিনিট বাকি! সব ফাইল দ্রুত সেভ করে কম্পিউটার বন্ধের প্রস্তুতি নিন।';
+            }
+        }
+
+        function triggerCurfewLock() {
+            simHour = 21; simMin = 0; simSec = 0;
+            document.getElementById('lockOverlay').style.display = 'flex';
+        }
+
+        function closeLockOverlay() {
+            document.getElementById('lockOverlay').style.display = 'none';
+        }
+
+        function simulateReelsTamper() {
+            const targetIdx = 1; // PC-02
+            students[targetIdx].status = "ALERT";
+            students[targetIdx].app = "⚠️ Facebook Reels (Social Distraction Detected!)";
+            students[targetIdx].cpu = 78;
+            document.getElementById('alertCount').textContent = "1";
+            renderPCs();
+            alert("🚨 ডিস্ট্রাকশন ডিটেকশন অ্যালার্ট!\nLAB-PC-02 (Tanvir Hasan)-এ নিষিদ্ধ সোশ্যাল মিডিয়া রিলস শনাক্ত করা হয়েছে। সেন্ট্রাল কনসোলে নোটিফিকেশন প্রেরণ করা হয়েছে!");
+        }
+
+        function resetLab() {
+            document.getElementById('curfewBanner').style.display = 'none';
+            document.getElementById('lockOverlay').style.display = 'none';
+            document.getElementById('alertCount').textContent = "0";
+            students.forEach((pc, i) => {
+                pc.status = i === 11 ? "STANDBY" : "ONLINE";
+                if (i === 1) pc.app = "Chrome (Documentation)";
+            });
+            renderPCs();
+        }
+
+        function warnPC(idx) {
+            alert(`ওয়ার্নিং মেসেজ পাঠানো হয়েছে: ${students[idx].id} (${students[idx].name})-এর স্ক্রিনে নোটিফিকেশন প্রদর্শন করা হয়েছে।`);
+        }
+
+        function lockSinglePC(idx) {
+            alert(`${students[idx].id} (${students[idx].name})-এর কম্পিউটার তাৎক্ষণিক লক করা হয়েছে!`);
+        }
+    </script>
+</body>
+</html>

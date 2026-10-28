@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Lead Automation & Scoring Engine | Live Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Hind+Siliguri:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #090B12;
+            color: #FFFFFF;
+            font-family: 'Plus Jakarta Sans', 'Hind Siliguri', sans-serif;
+            min-height: 100vh;
+            padding: 20px 16px 50px;
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        /* Top Nav */
+        .top-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #111422;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 16px;
+            padding: 14px 20px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #FFFFFF;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.85rem;
+            padding: 8px 16px;
+            border-radius: 10px;
+            transition: 0.2s;
+        }
+        .btn-back:hover { background: rgba(168, 85, 247, 0.2); border-color: #A855F7; }
+
+        .btn-gh {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #A855F7;
+            color: #FFFFFF;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.85rem;
+            padding: 8px 18px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
+        }
+
+        /* Hero */
+        .hero { text-align: center; margin-bottom: 28px; }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(168, 85, 247, 0.15);
+            border: 1px solid rgba(168, 85, 247, 0.5);
+            color: #C084FC;
+            padding: 6px 16px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            margin-bottom: 12px;
+        }
+        .title { font-size: 1.85rem; font-weight: 800; margin-bottom: 6px; }
+        .title span { color: #A855F7; }
+        .desc { font-size: 0.95rem; color: #9CA3AF; max-width: 700px; margin: 0 auto; }
+
+        /* Grid */
+        .demo-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        @media (max-width: 860px) {
+            .demo-layout { grid-template-columns: 1fr; }
+        }
+
+        /* Input Form Card */
+        .card {
+            background: #111524;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 18px;
+            padding: 22px;
+        }
+        .card-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #FFF;
+        }
+
+        .form-group { margin-bottom: 14px; }
+        .form-label { display: block; font-size: 0.8rem; font-weight: 700; color: #CBD5E1; margin-bottom: 6px; }
+        .form-input {
+            width: 100%;
+            background: #0A0D18;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 10px;
+            padding: 10px 14px;
+            color: #FFF;
+            font-size: 0.9rem;
+            font-family: inherit;
+        }
+        .form-input:focus { outline: none; border-color: #A855F7; }
+
+        .preset-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+        .btn-preset {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #CBD5E1;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.76rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-preset:hover { background: rgba(168, 85, 247, 0.2); border-color: #A855F7; color: #FFF; }
+
+        .btn-run {
+            width: 100%;
+            background: #A855F7;
+            color: #FFF;
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 4px 18px rgba(168, 85, 247, 0.4);
+            transition: 0.2s;
+        }
+        .btn-run:hover { background: #9333EA; }
+
+        /* Output Card */
+        .output-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .tier-badge {
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+        }
+        .tier-enterprise {
+            background: rgba(234, 179, 8, 0.2);
+            border: 1px solid #EAB308;
+            color: #FACC15;
+        }
+        .tier-growth {
+            background: rgba(168, 85, 247, 0.2);
+            border: 1px solid #A855F7;
+            color: #C084FC;
+        }
+        .tier-standard {
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid #3B82F6;
+            color: #60A5FA;
+        }
+
+        .score-circle-box {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: #0A0D18;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 18px;
+        }
+        .score-num {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #22C55E;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .email-preview-box {
+            background: #080A12;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            line-height: 1.6;
+            color: #E2E8F0;
+            white-space: pre-wrap;
+            max-height: 280px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Top Nav -->
+        <div class="top-nav">
+            <a href="/#projects" class="btn-back">← লাইভ পোর্টফোলিওতে ফিরে যান</a>
+            <div style="font-weight: 700; color: #C084FC; font-size: 0.9rem;">
+                 Autonomous Lead Qualification & Scoring Service
+            </div>
+            <a href="https://github.com/MdMiraz-dev/SBMC-Projects/blob/main/automation_service.py" target="_blank" rel="noopener noreferrer" class="btn-gh">
+                💻 GitHub-এ পাইথন সোর্স কোড দেখুন
+            </a>
+        </div>
+
+        <!-- Hero -->
+        <div class="hero">
+            <div class="badge"> PYTHON 3.12 • STRICT PYDANTIC • AI DRAFTING PIPELINE</div>
+            <h1 class="title">Lead Automation <span>& Scoring Service</span></h1>
+            <p class="desc">
+                বিটুবি ইনবাউন্ড লিড ভ্যালিডেশন, রিয়েল-টাইম টিয়ার ক্লাসিফিকেশন এবং কনটেক্সচুয়াল এক্সিকিউটিভ এআই ফলো-আপ ইমেইল অটো-ড্রাফটিং ব্যাকএন্ড সিস্টেম।
+            </p>
+        </div>
+
+        <!-- Demo Grid -->
+        <div class="demo-layout">
+            <!-- Left: Input Form -->
+            <div class="card">
+                <div class="card-title">📝 লিড ডাটা ইনপুট করুন:</div>
+
+                <div class="preset-row">
+                    <button class="btn-preset" onclick="loadPreset('enterprise')">💎 $75,000 Enterprise Lead</button>
+                    <button class="btn-preset" onclick="loadPreset('growth')"> $18,000 Growth Lead</button>
+                    <button class="btn-preset" onclick="loadPreset('standard')">🏢 $6,000 Standard Lead</button>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">ক্লায়েন্ট / লিড নাম</label>
+                    <input type="text" id="leadName" class="form-input" value="Farhan Rahman">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">বিজনেস ইমেইল</label>
+                    <input type="email" id="leadEmail" class="form-input" value="farhan@apex-tech.com">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">কোম্পানির নাম</label>
+                    <input type="text" id="leadCompany" class="form-input" value="Apex Global Technologies">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">ইনভেস্টমেন্ট বাজেট (USD $)</label>
+                    <input type="number" id="leadBudget" class="form-input" value="75000">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">ইন্ডাস্ট্রি / অপারেটিং সেক্টর</label>
+                    <input type="text" id="leadIndustry" class="form-input" value="Fintech & AI Automation">
+                </div>
+
+                <button class="btn-run" onclick="runLeadAutomation()">
+                     রান পাইথন এআই অটোমেশন পাইপলাইন
+                </button>
+            </div>
+
+            <!-- Right: Automation Output -->
+            <div class="card">
+                <div class="output-header">
+                    <div class="card-title" style="margin-bottom:0;">🎯 অটোমেশন আউটপুট:</div>
+                    <span class="tier-badge tier-enterprise" id="tierBadge">ENTERPRISE</span>
+                </div>
+
+                <div class="score-circle-box">
+                    <div class="score-num" id="scoreNum">98</div>
+                    <div>
+                        <div style="font-weight: 800; font-size: 0.95rem; color:#FFF;">কোয়ালিফিকেশন স্কোর (১০০ এর মধ্যে)</div>
+                        <div style="font-size: 0.78rem; color:#9CA3AF;" id="qualNotes">হাই-ভ্যালু ক্লায়েন্ট • তাৎক্ষণিক সি-লেভেল মিটিং ড্রাফট তৈরি করা হয়েছে</div>
+                    </div>
+                </div>
+
+                <div style="font-size: 0.82rem; font-weight: 700; color:#A855F7; margin-bottom:8px;">
+                    ✉️ স্বয়ংক্রিয়ভাবে জেনারেট হওয়া এআই ফলো-আপ ইমেইল ড্রাফট:
+                </div>
+
+                <div class="email-preview-box" id="emailDraft">Subject: Strategic AI Architecture & Executive Consultation for Apex Global Technologies
+
+Dear Farhan Rahman,
+
+Thank you for connecting with SBMC Technical Operations. Given your focus in Fintech & AI Automation and your estimated investment scale of $75,000.00, we would like to offer an executive-tier strategy session with our Principal Solutions Architect.
+
+We specialize in mission-critical AI automation, strict security boundaries, and enterprise SLAs. Would you be open to a 25-minute discovery call this Thursday at 3:00 PM?
+
+Warm regards,
+Executive Solutions Team
+SBMC Technical Operations</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function loadPreset(type) {
+            if (type === 'enterprise') {
+                document.getElementById('leadName').value = "David Miller";
+                document.getElementById('leadEmail').value = "david.m@cybercloud.io";
+                document.getElementById('leadCompany').value = "CyberCloud Systems Inc.";
+                document.getElementById('leadBudget').value = "85000";
+                document.getElementById('leadIndustry').value = "Cloud Cybersecurity";
+            } else if (type === 'growth') {
+                document.getElementById('leadName').value = "Tanvir Hasan";
+                document.getElementById('leadEmail').value = "tanvir@dhakafinance.com";
+                document.getElementById('leadCompany').value = "Dhaka Smart Financial";
+                document.getElementById('leadBudget').value = "22000";
+                document.getElementById('leadIndustry').value = "Digital Banking";
+            } else {
+                document.getElementById('leadName').value = "Rashidul Karim";
+                document.getElementById('leadEmail').value = "rashid@localretail.com";
+                document.getElementById('leadCompany').value = "Karim Retail Group";
+                document.getElementById('leadBudget').value = "8000";
+                document.getElementById('leadIndustry').value = "Retail E-Commerce";
+            }
+            runLeadAutomation();
+        }
+
+        function runLeadAutomation() {
+            const name = document.getElementById('leadName').value.trim() || 'Client';
+            const company = document.getElementById('leadCompany').value.trim() || 'Company';
+            const budget = parseFloat(document.getElementById('leadBudget').value) || 0;
+            const industry = document.getElementById('leadIndustry').value.trim() || 'General';
+
+            const badge = document.getElementById('tierBadge');
+            const scoreNum = document.getElementById('scoreNum');
+            const qualNotes = document.getElementById('qualNotes');
+            const draftBox = document.getElementById('emailDraft');
+
+            let tier = "STANDARD";
+            let score = 72;
+            let badgeClass = "tier-standard";
+            let notes = "স্ট্যান্ডার্ড প্রজেক্ট • সেলস টিম কনসালটেশন ড্রাফট তৈরি হয়েছে";
+
+            if (budget >= 50000) {
+                tier = "ENTERPRISE";
+                score = 98;
+                badgeClass = "tier-enterprise";
+                notes = "হাই-ভ্যালু ক্লায়েন্ট • তাৎক্ষণিক সি-লেভেল স্ট্র্যাটেজি মিটিং ড্রাফট তৈরি হয়েছে";
+            } else if (budget >= 15000) {
+                tier = "GROWTH";
+                score = 86;
+                badgeClass = "tier-growth";
+                notes = "গ্রোথ টায়ার প্রজেক্ট • আর্কিটেকচার রোডম্যাপ ফলো-আপ ড্রাফট প্রস্তুত";
+            }
+
+            badge.className = `tier-badge ${badgeClass}`;
+            badge.textContent = tier;
+            scoreNum.textContent = score;
+            qualNotes.textContent = notes;
+
+            draftBox.textContent = `Subject: Strategic AI Architecture & Executive Consultation for ${company}
+
+Dear ${name},
+
+Thank you for connecting with SBMC Technical Operations. Given your focus in ${industry} and your estimated investment scale of $${budget.toLocaleString('en-US', {minimumFractionDigits: 2})}, we would like to offer an executive-tier strategy session with our Principal Solutions Architect.
+
+We specialize in mission-critical AI automation, strict security boundaries, and enterprise SLAs. Would you be open to a 25-minute discovery call this Thursday at 3:00 PM?
+
+Warm regards,
+Executive Solutions Team
+SBMC Technical Operations`;
+        }
+    </script>
+</body>
+</html>
