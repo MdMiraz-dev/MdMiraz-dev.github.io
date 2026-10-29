@@ -1,0 +1,8 @@
+{
+  "name": "Local Coffee Shop & Bakery",
+  "description": "An exceptionally crafted 5-page website for a Local Coffee Shop & Bakery featuring Home, About, Menu, Gallery, Contact, responsive mobile navigation, and interactive features.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
