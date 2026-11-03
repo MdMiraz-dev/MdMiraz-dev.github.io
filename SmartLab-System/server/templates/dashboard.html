@@ -1,0 +1,2296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Lab Command Center — As-Sunnah Computer Lab</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen antialiased">
+    <!-- Top Navigation -->
+    <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <!-- Portfolio Navigation & Author -->
+            <!-- Multi-Instructor Seat Indicator -->
+            <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-indigo-950/60 border border-indigo-500/40 text-xs">
+                <span class="flex h-2 w-2 relative">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+                </span>
+                <span class="text-indigo-200 font-medium">👥 3 Teachers Connected (Multi-Seat View)</span>
+                <button onclick="copyInstructorLink()" title="অন্য টিচারদের লিংক পাঠিয়ে একসাথে মনিটর করুন" class="ml-2 px-2 py-0.5 rounded bg-indigo-600/40 hover:bg-indigo-600 text-[11px] font-bold text-indigo-100 transition border border-indigo-400/30">
+                    🔗 Share Monitor Link
+                </button>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="../index.html" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition shadow-sm">
+                    <span>&larr;</span> Portfolio (mdmiraz.com)
+                </a>
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-medium border border-emerald-500/20">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    Live Interactive Demo
+                </span>
+            </div>
+            <!-- Brand & Lab Identifier -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 via-teal-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-emerald-500/20 flex-shrink-0">
+                    <span class="text-xl">🖥️</span>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="font-extrabold text-lg text-white">Smart Lab Command Center</h1>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                            As-Sunnah Lab Edition
+                        </span>
+                    </div>
+                    <p class="text-xs text-slate-400">Live Workstation Telemetry • Distraction Detection • 21:00 Curfew Enforcer</p>
+                </div>
+            </div>
+
+            <!-- Top Right: Curfew Clock & Live Badge -->
+            <!-- Top Right: Curfew Clock & Live Badge -->
+            <div class="flex flex-wrap items-center gap-3">
+                <!-- Action Buttons: Daily Report & Telegram -->
+                <button onclick="openDailyReportModal()" class="px-3 py-1.5 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/40 text-indigo-300 text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                    <span>📊 Daily Report Card</span>
+                </button>
+                <button onclick="openTelegramModal()" class="px-3 py-1.5 rounded-xl bg-sky-600/20 hover:bg-sky-600/30 border border-sky-500/40 text-sky-300 text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                    <span>🤖 Telegram Remote</span>
+                </button>
+
+                <!-- Live Clock & Schedule -->
+                <div class="px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 flex items-center gap-2 font-mono text-xs">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span id="liveClock" class="text-white font-bold">--:--:--</span>
+                    <span class="text-slate-500">|</span>
+                    <span class="text-indigo-400">Curfew: <strong>21:00</strong> → <strong class="text-emerald-400">08:00 AM</strong></span>
+                </div>
+
+                <div id="connectionBadge" class="px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-semibold flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+                    <span>Connecting WS...</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+        <!-- Master Metrics Strip -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4">
+                <span class="text-xs text-slate-400 font-medium">Registered PCs</span>
+                <div id="statTotal" class="text-2xl font-extrabold text-white mt-1">0</div>
+            </div>
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4">
+                <span class="text-xs text-emerald-400 font-medium">Online & Active</span>
+                <div id="statOnline" class="text-2xl font-extrabold text-emerald-400 mt-1">0</div>
+            </div>
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4">
+                <span class="text-xs text-rose-400 font-medium">Distracted (Reels)</span>
+                <div id="statDistracted" class="text-2xl font-extrabold text-rose-400 mt-1">0</div>
+            </div>
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4">
+                <span class="text-xs text-indigo-400 font-medium">AI Productivity</span>
+                <div id="statProductivity" class="text-2xl font-extrabold text-indigo-300 mt-1">100%</div>
+            </div>
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4">
+                <span class="text-xs text-amber-400 font-medium">Tampered / Silent</span>
+                <div id="statTampered" class="text-2xl font-extrabold text-amber-400 mt-1">0</div>
+            </div>
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4">
+                <span class="text-xs text-purple-400 font-medium">Curfew Schedule</span>
+                <div id="statCurfew" class="text-xs font-bold text-purple-300 mt-2">21:00 - 08:00 AM</div>
+            </div>
+        </div>
+
+        <!-- Master Command Control Bar -->
+        <div class="bg-gradient-to-r from-slate-900 via-slate-900/90 to-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 flex flex-wrap items-center justify-between gap-3 shadow-xl">
+            <div class="flex items-center justify-between gap-2 mb-1">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Institutional Controls:</span>
+                    <span class="text-[10px] font-mono text-emerald-400/90 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">● Instant Live Feedback</span>
+                </div>
+                <span class="text-[11px] text-slate-500 font-mono hidden sm:inline">Click buttons below to trigger lab cluster automation</span>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+                <!-- Feature 2: Focus Mode Master Toggle -->
+                <button onclick="toggleFocusMode()" id="focusModeBtn" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-90 active:ring-2 active:ring-teal-500 border border-slate-700 text-slate-300 text-xs font-bold transition-all duration-150 flex items-center gap-1.5 shadow-sm cursor-pointer select-none">
+                    <span>🎯 Focus Mode: OFF</span>
+                </button>
+
+                <!-- Feature 4: USB Storage Policy Master Toggle -->
+                <button onclick="toggleUsbPolicy()" id="usbPolicyBtn" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-90 active:ring-2 active:ring-amber-500 border border-slate-700 text-slate-300 text-xs font-bold transition-all duration-150 flex items-center gap-1.5 shadow-sm cursor-pointer select-none">
+                    <span>💾 USB: ALLOWED</span>
+                </button>
+
+                <!-- Feature 3: File Broadcast & Collect -->
+                <button onclick="openBroadcastFileModal()" id="broadcastFileBtn" class="px-3.5 py-2 rounded-xl bg-teal-600/20 hover:bg-teal-600/30 active:scale-90 active:ring-2 active:ring-teal-500 border border-teal-500/40 text-teal-300 text-xs font-bold transition-all duration-150 flex items-center gap-1.5 shadow-sm cursor-pointer select-none">
+                    <span>📤 Broadcast File</span>
+                </button>
+                <button onclick="triggerCollectAssignments()" id="collectAssignmentsBtn" class="px-3.5 py-2 rounded-xl bg-cyan-600/20 hover:bg-cyan-600/30 active:scale-90 active:ring-2 active:ring-cyan-500 border border-cyan-500/40 text-cyan-300 text-xs font-bold transition-all duration-150 flex items-center gap-1.5 shadow-sm cursor-pointer select-none">
+                    <span>📥 Collect Assignments</span>
+                </button>
+
+                <!-- Master Push Power Actions -->
+                <button onclick="broadcastCommand('LOCK')" id="lockAllBtn" class="px-3.5 py-2 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 active:scale-90 active:ring-2 active:ring-purple-500 border border-purple-500/40 text-purple-300 text-xs font-bold transition-all duration-150 flex items-center gap-1.5 shadow-sm cursor-pointer select-none">
+                    <span>🔒 Lock All</span>
+                </button>
+                <button onclick="broadcastCommand('UNLOCK')" id="unlockAllBtn" class="px-3.5 py-2 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 active:scale-90 active:ring-2 active:ring-emerald-500 border border-emerald-500/40 text-emerald-300 text-xs font-bold transition-all duration-150 flex items-center gap-1.5 shadow-sm cursor-pointer select-none">
+                    <span>🔓 Unlock All</span>
+                </button>
+                <button onclick="confirmLabShutdown()" id="shutdownAllBtn" class="px-3.5 py-2 rounded-xl bg-rose-600/20 hover:bg-rose-600/30 active:scale-90 active:ring-2 active:ring-rose-500 border border-rose-500/40 text-rose-300 text-xs font-bold transition-all duration-150 flex items-center gap-1.5 shadow-sm cursor-pointer select-none">
+                    <span>⚡ Shutdown All</span>
+                </button>
+                <button onclick="promptBroadcastMessage()" id="noticeBtn" class="px-3.5 py-2 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 active:scale-90 active:ring-2 active:ring-indigo-500 border border-indigo-500/40 text-indigo-300 text-xs font-bold transition-all duration-150 flex items-center gap-1.5 shadow-sm cursor-pointer select-none">
+                    <span>📢 Notice</span>
+                </button>
+                <button onclick="toggleCurfewOverride()" id="overrideBtn" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-90 active:ring-2 active:ring-purple-500 border border-slate-700 text-slate-300 text-xs font-semibold transition-all duration-150 flex items-center gap-1.5 cursor-pointer select-none">
+                    <span>⚙️ Curfew Override</span>
+                </button>
+            </div>
+
+            <!-- Instant Action Confirmation HUD Bar -->
+            <div id="actionFeedbackBar" class="mt-3 p-3 rounded-xl bg-slate-950/80 border border-slate-800 flex items-center justify-between text-xs font-mono transition-all duration-300">
+                <div class="flex items-center gap-2.5">
+                    <span id="actionFeedbackDot" class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span class="text-slate-400">Action HUD:</span>
+                    <strong id="actionFeedbackText" class="text-emerald-300">System Ready • Click any button above for live automated action</strong>
+                </div>
+                <span id="actionFeedbackTime" class="text-[11px] text-slate-500 font-mono">Live</span>
+            </div>
+        </div>
+
+        <!-- Tamper Alert Banner (Appears when disconnections/heartbeat drop occurs) -->
+        <div id="tamperAlertSection" class="hidden space-y-3">
+            <div class="p-4 rounded-2xl bg-amber-950/60 border border-amber-500/40 text-amber-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg">
+                <div class="flex items-center gap-3">
+                    <span class="text-2xl animate-bounce">⚠️</span>
+                    <div>
+                        <h4 class="font-bold text-sm text-amber-100">Tamper & Disconnect Alert Detected!</h4>
+                        <p id="tamperAlertText" class="text-xs text-amber-300 mt-0.5">One or more student workstations have stopped reporting telemetry.</p>
+                    </div>
+                </div>
+                <div id="tamperBadges" class="flex flex-wrap items-center gap-2"></div>
+            </div>
+        </div>
+
+        <!-- Live Workstation Grid Header -->
+        <div class="flex items-center justify-between pt-2">
+            <div>
+                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                    <span>Workstations Grid Overview</span>
+                    <span id="gridCountBadge" class="px-2 py-0.5 rounded-full text-[11px] font-mono bg-slate-800 text-indigo-300">0 PCs</span>
+                </h3>
+                <p class="text-xs text-slate-400">Click any workstation for direct lock, student messaging, or graceful shutdown.</p>
+            </div>
+            <div class="flex items-center gap-2 text-xs">
+                <span class="inline-flex items-center gap-1 text-slate-400"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> Normal</span>
+                <span class="inline-flex items-center gap-1 text-slate-400"><span class="w-2 h-2 rounded-full bg-rose-500"></span> Distracted</span>
+                <span class="inline-flex items-center gap-1 text-slate-400"><span class="w-2 h-2 rounded-full bg-amber-500"></span> Tampered</span>
+                <span class="inline-flex items-center gap-1 text-slate-400"><span class="w-2 h-2 rounded-full bg-purple-500"></span> Locked</span>
+            </div>
+        </div>
+
+        <!-- Live PC Cards Grid -->
+        <div id="workstationGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <!-- Workstation cards dynamically rendered -->
+            <div class="col-span-full py-16 text-center text-slate-500">
+                <span class="text-4xl block mb-2">⏳</span>
+                <p class="text-sm">Waiting for student workstations to connect to the cluster...</p>
+                <p class="text-xs text-slate-600 mt-1">Start workstation client agents using: <code>python -m agent.client_agent</code></p>
+            </div>
+        </div>
+
+        <!-- Application Usage Audit Log Section -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-xl">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800/80">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-xl">
+                        ⏱️
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="font-extrabold text-base text-white">Application Usage Audit Log</h3>
+                            <span id="auditCountBadge" class="px-2 py-0.5 rounded-full text-[11px] font-mono bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">0 Records</span>
+                        </div>
+                        <p class="text-xs text-slate-400">Real-time dwell time tracking across software, IDEs, and browser windows</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <input type="text" id="auditSearchInput" onkeyup="filterAuditTable()" placeholder="Filter by student, app, or window..." class="px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 w-52 sm:w-64" />
+                    <button onclick="refreshAuditLog()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 transition flex items-center gap-1">
+                        <span>🔄</span> Refresh
+                    </button>
+                </div>
+            </div>
+
+            <!-- Audit Log Table -->
+            <div class="overflow-x-auto rounded-xl border border-slate-800/80">
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead>
+                        <tr class="bg-slate-950/80 text-slate-400 border-b border-slate-800 font-mono text-[11px]">
+                            <th class="py-3 px-4">Student & PC</th>
+                            <th class="py-3 px-4">Process Name</th>
+                            <th class="py-3 px-4">Window Title / URL Activity</th>
+                            <th class="py-3 px-4">Category</th>
+                            <th class="py-3 px-4 text-right">Time Spent</th>
+                            <th class="py-3 px-4 text-right">Last Active</th>
+                        </tr>
+                    </thead>
+                    <tbody id="auditTableBody" class="divide-y divide-slate-800/60 font-mono">
+                        <tr>
+                            <td colspan="6" class="py-8 text-center text-slate-500 font-sans">
+                                <span>No application usage telemetry recorded yet. Active dwell time will update here.</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Client Message Modal -->
+    <div id="msgModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+            <h3 class="text-base font-bold text-white">Send Notice to <span id="modalTarget" class="text-indigo-400"></span></h3>
+            <textarea id="modalMsgInput" rows="3" placeholder="Type notification message to be displayed on student's screen..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500"></textarea>
+            <div class="flex justify-end gap-2">
+                <button onclick="closeMsgModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300">Cancel</button>
+                <button onclick="submitTargetMessage()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white">Send Message</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Screen Preview Modal (Veyon-style) -->
+    <div id="screenModal" class="hidden fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-6">
+        <div class="bg-slate-900 border border-slate-700/80 rounded-3xl max-w-4xl w-full p-4 sm:p-6 space-y-4 shadow-2xl relative">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-lg">
+                        🖥️
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 id="screenModalTitle" class="text-base sm:text-lg font-bold text-white font-mono">LAB-PC-01</h3>
+                            <span id="screenModalStudent" class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-800 text-indigo-300 border border-slate-700"></span>
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                                <span>Live Veyon Stream</span>
+                            </span>
+                        </div>
+                        <p id="screenModalApp" class="text-xs text-slate-400 truncate mt-0.5 font-mono"></p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="toggleModalFullscreen()" title="Toggle Fullscreen" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-xs font-bold transition">
+                        ⛶
+                    </button>
+                    <button onclick="closeScreenModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-sm font-bold transition">
+                        ✕
+                    </button>
+                </div>
+            </div>
+
+            <!-- Live Screen Image Display Container -->
+            <div id="screenModalImgContainer" class="relative bg-black rounded-2xl overflow-hidden border border-slate-800 aspect-video flex items-center justify-center shadow-inner">
+                <img id="screenModalImg" src="" alt="Live Workstation Screen" class="w-full h-full object-contain" />
+                <div id="screenModalLoading" class="hidden absolute inset-0 bg-slate-950/80 flex flex-col items-center justify-center text-slate-400 gap-2">
+                    <span class="text-3xl animate-spin">🔄</span>
+                    <span class="text-xs font-mono">Streaming workstation display...</span>
+                </div>
+            </div>
+
+            <!-- Modal Bottom Actions Strip -->
+            <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
+                <div class="flex items-center gap-2 text-xs text-slate-400 font-mono">
+                    <span>Frame: <strong class="text-emerald-400">Live Active</strong></span>
+                    <span>•</span>
+                    <span id="screenModalTime"></span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="requestFreshScreen()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 transition flex items-center gap-1.5">
+                        <span>🔄 Refresh Frame</span>
+                    </button>
+                    <button id="screenModalLockBtn" onclick="toggleScreenModalLock()" class="px-3 py-1.5 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 text-xs font-bold text-purple-300 transition">
+                        <span>🔒 Lock PC</span>
+                    </button>
+                    <button onclick="openMsgModalFromScreen()" class="px-3 py-1.5 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/30 text-xs font-bold text-indigo-300 transition">
+                        <span>📢 Message Student</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 1. Daily Activity & Evidence Report Modal (Google Sheets Style) -->
+    <div id="dailyReportModal" class="hidden fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-2 sm:p-5 overflow-y-auto">
+        <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-6xl w-full p-4 sm:p-6 space-y-4 shadow-2xl my-auto">
+            <!-- Modal Header -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-800 gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-2xl bg-emerald-600/20 border border-emerald-500/40 flex items-center justify-center text-2xl shadow-inner">
+                        📊
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-base sm:text-lg font-bold text-white font-mono flex items-center gap-2">
+                                <span>Daily Student Activity & Evidence Ledger</span>
+                                <span class="text-[10px] bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full font-sans font-semibold">Google Sheets Format</span>
+                            </h3>
+                        </div>
+                        <p class="text-xs text-slate-400 font-sans mt-0.5">As-Sunnah Computer Lab • Time-interval tracking, distraction detection & photographic evidence</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="exportAuditReportToCSV()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold text-xs transition flex items-center gap-1.5 shadow-lg shadow-emerald-950/40 cursor-pointer">
+                        <span>📥 Export to Google Sheets (.CSV)</span>
+                    </button>
+                    <button onclick="window.print()" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition flex items-center gap-1.5 cursor-pointer">
+                        <span>🖨️ Print / PDF</span>
+                    </button>
+                    <button onclick="closeDailyReportModal()" class="w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-sm font-bold transition cursor-pointer">✕</button>
+                </div>
+            </div>
+
+            <!-- KPI Summary Strip -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 font-mono">
+                <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800">
+                    <span class="text-[11px] text-slate-400 font-sans">Lab Productivity Score</span>
+                    <div id="repAvgScore" class="text-xl font-bold text-emerald-400 mt-0.5">94% Focused</div>
+                </div>
+                <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800">
+                    <span class="text-[11px] text-slate-400 font-sans">Tracked Workstations</span>
+                    <div id="repTotalStudents" class="text-xl font-bold text-white mt-0.5">6 Active PCs</div>
+                </div>
+                <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800">
+                    <span class="text-[11px] text-emerald-400 font-sans">Total Academic Coding</span>
+                    <div id="repFocusedTime" class="text-xl font-bold text-emerald-300 mt-0.5">9h 22m</div>
+                </div>
+                <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800">
+                    <span class="text-[11px] text-rose-400 font-sans">Distraction Violations</span>
+                    <div id="repDistractedTime" class="text-xl font-bold text-rose-300 mt-0.5">2 Flagged (53m)</div>
+                </div>
+            </div>
+
+            <!-- Filter Tabs & Search Bar -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+                <div class="flex items-center gap-1.5 bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs">
+                    <button onclick="filterReportCategory('ALL')" id="tabRepAll" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-bold transition cursor-pointer">All Activities (6)</button>
+                    <button onclick="filterReportCategory('DISTRACTION')" id="tabRepDistracted" class="px-3 py-1.5 rounded-lg text-rose-400 hover:text-white font-bold transition cursor-pointer">🚨 Flagged Violations (2)</button>
+                    <button onclick="filterReportCategory('ACADEMIC')" id="tabRepAcademic" class="px-3 py-1.5 rounded-lg text-emerald-400 hover:text-white font-bold transition cursor-pointer">🎓 Coding / Academic (4)</button>
+                </div>
+                <span class="text-xs text-slate-400 font-mono">
+                    💡 <em>Click any row's <strong>"📸 View Proof Screenshot"</strong> to inspect full forensic proof.</em>
+                </span>
+            </div>
+
+            <!-- Google Sheets Style Table -->
+            <div class="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-950 max-h-[350px] overflow-y-auto">
+                <table class="w-full text-left text-xs font-mono border-collapse">
+                    <thead class="bg-slate-900/95 sticky top-0 z-10 text-slate-400 uppercase text-[10px] tracking-wider border-b border-slate-800">
+                        <tr>
+                            <th class="p-3 w-10 text-center">#</th>
+                            <th class="p-3">Student Name & Workstation</th>
+                            <th class="p-3">Application / URL Activity</th>
+                            <th class="p-3">Time Interval (Start → End)</th>
+                            <th class="p-3">Duration</th>
+                            <th class="p-3">Audit Status</th>
+                            <th class="p-3 text-center">Photographic Evidence</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dailyReportSheetBody" class="divide-y divide-slate-800/80">
+                        <!-- Populated dynamically -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Footer Notes -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2 border-t border-slate-800/80 text-[11px] text-slate-400 font-mono">
+                <span id="repGeneratedAt">Generated: Automatically at Curfew (21:00)</span>
+                <span class="text-emerald-400">✓ Cryptographically watermarked with MAC address, IP & exact millisecond timestamp.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 1B. Photographic Evidence Proof Modal (Forensic Screenshot Viewer) -->
+    <div id="proofModal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-lg z-[60] flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+        <div class="bg-slate-900 border-2 border-amber-500/60 rounded-3xl max-w-4xl w-full p-4 sm:p-6 space-y-4 shadow-2xl relative my-auto">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-xl">
+                        📸
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-base sm:text-lg font-bold text-white font-mono">PHOTOGRAPHIC AUDIT EVIDENCE</h3>
+                            <span id="proofBadge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40">VIOLATION RECORDED</span>
+                        </div>
+                        <p id="proofSubtitle" class="text-xs text-slate-300 font-mono mt-0.5"></p>
+                    </div>
+                </div>
+                <button onclick="closeProofModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-sm font-bold transition cursor-pointer">✕</button>
+            </div>
+
+            <!-- Forensic Evidence Description Bar -->
+            <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between text-xs font-mono gap-2">
+                <div>
+                    <span class="text-slate-500">Evidence ID: </span><span id="proofId" class="text-indigo-400 font-bold"></span>
+                    <span class="text-slate-500 ml-3">Time Window: </span><span id="proofTime" class="text-emerald-300 font-bold"></span>
+                </div>
+                <div class="text-amber-400 text-[11px] font-sans">
+                    ⚠️ <em>ছাত্র যদি অস্বীকার করে, এই স্ক্রিনশট ও সময় দেখালে কোনো অস্বীকার করার সুযোগ থাকবে না।</em>
+                </div>
+            </div>
+
+            <!-- High-Definition Watermarked Screenshot Display -->
+            <div class="relative bg-black rounded-2xl overflow-hidden border-2 border-slate-800 aspect-video flex items-center justify-center shadow-2xl">
+                <img id="proofImage" src="" alt="Forensic Proof Screenshot" class="w-full h-full object-contain" />
+            </div>
+
+            <!-- Bottom Actions -->
+            <div class="flex items-center justify-between pt-1">
+                <span class="text-[11px] text-slate-400 font-mono">Evidence status: <strong>Archived in C:/SmartLab/Audit_Proofs/</strong></span>
+                <div class="flex items-center gap-2">
+                    <button onclick="playActionSound('success'); showToast('📥 Proof Screenshot Downloaded as PNG!', 'indigo')" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition flex items-center gap-1.5 cursor-pointer">
+                        <span>💾 Download Proof PNG</span>
+                    </button>
+                    <button onclick="closeProofModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition cursor-pointer">
+                        <span>Close</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 2. Central File Broadcast Modal -->
+    <div id="broadcastFileModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                <div class="flex items-center gap-2.5">
+                    <span class="text-xl">📤</span>
+                    <h3 class="text-base font-bold text-white">Broadcast File to Lab PCs</h3>
+                </div>
+                <button onclick="closeBroadcastFileModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-sm font-bold">✕</button>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1">Target Filename</label>
+                <input type="text" id="broadcastFileName" placeholder="e.g. lab_exercise_04.py, lecture_notes.txt" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-teal-500 font-mono" />
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1">Code / File Content (or Paste Text)</label>
+                <textarea id="broadcastFileContent" rows="6" placeholder="# Paste Python code, lab tasks, or markdown content to send to student workstations..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 font-mono"></textarea>
+            </div>
+            <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
+                <button onclick="closeBroadcastFileModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300">Cancel</button>
+                <button onclick="submitBroadcastFile()" class="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-500 text-xs font-bold text-white">Broadcast to All PCs</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Collected Assignments Modal -->
+    <div id="assignmentsModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+        <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-3xl w-full p-5 sm:p-6 space-y-4 shadow-2xl my-auto">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                <div class="flex items-center gap-3">
+                    <span class="text-xl">📥</span>
+                    <div>
+                        <h3 class="text-base font-bold text-white">Central Assignment Submissions</h3>
+                        <p class="text-xs text-slate-400">Collected student project files from lab workstations</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="triggerCollectAssignments()" class="px-3 py-1.5 rounded-xl bg-cyan-600/20 hover:bg-cyan-600/30 border border-cyan-500/40 text-cyan-300 text-xs font-bold transition flex items-center gap-1">
+                        <span>⚡</span> Trigger Collect All
+                    </button>
+                    <button onclick="closeAssignmentsModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-sm font-bold">✕</button>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-800">
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead>
+                        <tr class="bg-slate-950 text-slate-400 border-b border-slate-800 font-mono text-[11px]">
+                            <th class="py-2.5 px-3">Student & PC</th>
+                            <th class="py-2.5 px-3">Filename</th>
+                            <th class="py-2.5 px-3">Size</th>
+                            <th class="py-2.5 px-3 text-right">Submitted At</th>
+                        </tr>
+                    </thead>
+                    <tbody id="assignmentsTableBody" class="divide-y divide-slate-800/60 font-mono">
+                        <tr>
+                            <td colspan="4" class="py-8 text-center text-slate-500 font-sans">
+                                Click "Trigger Collect All" to fetch student assignment files from workstations.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="flex justify-end pt-2">
+                <button onclick="closeAssignmentsModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Telegram Remote Control Simulator Modal -->
+    <div id="telegramModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-6">
+        <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-xl w-full p-5 sm:p-6 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                <div class="flex items-center gap-2.5">
+                    <span class="text-2xl">🤖</span>
+                    <div>
+                        <h3 class="text-base font-bold text-white">Telegram Remote Control Simulator</h3>
+                        <p class="text-xs text-sky-400 font-mono" id="telegramConfigStatus">Bot Integration Active</p>
+                    </div>
+                </div>
+                <button onclick="closeTelegramModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-sm font-bold">✕</button>
+            </div>
+
+            <!-- Quick Command Shortcuts -->
+            <div class="flex flex-wrap gap-1.5 text-xs">
+                <button onclick="runTelegramCmd('/status')" class="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 hover:border-sky-500/50 text-slate-300 font-mono">/status</button>
+                <button onclick="runTelegramCmd('/report')" class="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 hover:border-sky-500/50 text-slate-300 font-mono">/report</button>
+                <button onclick="runTelegramCmd('/focus on')" class="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 hover:border-sky-500/50 text-slate-300 font-mono">/focus on</button>
+                <button onclick="runTelegramCmd('/focus off')" class="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 hover:border-sky-500/50 text-slate-300 font-mono">/focus off</button>
+                <button onclick="runTelegramCmd('/usb lock')" class="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 hover:border-sky-500/50 text-slate-300 font-mono">/usb lock</button>
+                <button onclick="runTelegramCmd('/curfew toggle')" class="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 hover:border-sky-500/50 text-slate-300 font-mono">/curfew toggle</button>
+                <button onclick="runTelegramCmd('/lockall')" class="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 hover:border-purple-500/50 text-purple-300 font-mono">/lockall</button>
+                <button onclick="runTelegramCmd('/unlockall')" class="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 hover:border-emerald-500/50 text-emerald-300 font-mono">/unlockall</button>
+                <button onclick="runTelegramCmd('/host lock')" class="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 hover:border-amber-500/50 text-amber-300 font-mono">/host lock</button>
+            </div>
+
+            <!-- Bengali AI Voice Command Engine Section -->
+            <div class="bg-slate-950/80 rounded-2xl p-3 border border-sky-500/30 space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-sky-300 flex items-center gap-1.5">
+                        <span>🎙️</span> AI Voice Recognition (Gemini & Bengali NLP)
+                    </span>
+                    <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-sky-950 text-sky-400 border border-sky-800">Voice AI</span>
+                </div>
+                <div class="flex flex-wrap gap-1.5 text-[11px]">
+                    <button onclick="sendVoiceSimulate('ল্যাব লক করো')" class="px-2 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-purple-500/50 text-purple-300 transition">🗣️ "ল্যাব লক করো"</button>
+                    <button onclick="sendVoiceSimulate('সবাইকে আনলক করো')" class="px-2 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-emerald-500/50 text-emerald-300 transition">🗣️ "সবাইকে আনলক করো"</button>
+                    <button onclick="sendVoiceSimulate('ল্যাব স্ট্যাটাস বলো')" class="px-2 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-sky-500/50 text-sky-300 transition">🗣️ "ল্যাব স্ট্যাটাস বলো"</button>
+                    <button onclick="sendVoiceSimulate('কার্ফিউ চালু করো')" class="px-2 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-amber-500/50 text-amber-300 transition">🗣️ "কার্ফিউ চালু করো"</button>
+                    <button onclick="sendVoiceSimulate('ফোকাস মোড অন করো')" class="px-2 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-teal-500/50 text-teal-300 transition">🗣️ "ফোকাস মোড অন করো"</button>
+                    <button onclick="sendVoiceSimulate('আজকের রিপোর্ট দাও')" class="px-2 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-blue-500/50 text-blue-300 transition">🗣️ "আজকের রিপোর্ট দাও"</button>
+                    <button onclick="sendVoiceSimulate('হোস্ট পিসি লক করো')" class="px-2 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-yellow-500/50 text-yellow-300 transition">🗣️ "হোস্ট পিসি লক করো"</button>
+                </div>
+                <div class="flex gap-1.5 pt-1">
+                    <input type="text" id="voiceTextInput" onkeydown="if(event.key==='Enter') sendCustomVoiceText()" placeholder="বাংলায় ভয়েস টেক্সট বলুন বা লিখুন (যেমন: ল্যাব লক করো)..." class="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 font-sans" />
+                    <button onclick="toggleMicRecording()" id="micBtn" title="Speak into microphone" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-sky-300 flex items-center gap-1 transition">
+                        <span>🎤</span> <span id="micLabel">Speak</span>
+                    </button>
+                    <button onclick="sendCustomVoiceText()" class="px-3 py-1.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-xs font-bold text-white transition">Voice Run</button>
+                </div>
+            </div>
+
+            <!-- Console Terminal Window -->
+            <div class="bg-black/90 rounded-2xl p-4 border border-slate-800 font-mono text-xs text-slate-300 h-48 overflow-y-auto whitespace-pre-wrap shadow-inner" id="telegramConsoleOutput">[Telegram Remote Bot Initialized]
+Type a slash command or click one above to test...</div>
+
+            <!-- Command Input Box -->
+            <div class="flex gap-2">
+                <input type="text" id="telegramInput" onkeydown="if(event.key==='Enter') sendTelegramInput()" placeholder="Type command, e.g. /status or /report..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-sky-500" />
+                <button onclick="sendTelegramInput()" class="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-xs font-bold text-white">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================================
+        // SMART LAB COMMAND CENTER - ENTERPRISE ENGINE & LIVE SIMULATOR
+        // =========================================================================
+        let isSimulated = true;
+        let activeScreenTarget = null;
+        let activeModalTarget = null;
+        let isOverrideActive = false;
+        let screenRefreshTimer = null;
+        let isRecording = false;
+
+        // Realistic student workstation profiles
+        let mockWorkstations = [
+            {
+                client_id: "LAB-PC-01",
+                student_name: "Zubair Ahmed",
+                ip_address: "192.168.10.101",
+                mac_address: "B4:2E:99:A1:C2:01",
+                os_info: "Windows 11 Pro",
+                connected: true,
+                status: "ACTIVE",
+                is_master_host: false,
+                curfew_locked: false,
+                usb_blocked: false,
+                productivity_score: 98,
+                latest_telemetry: {
+                    cpu_percent: 24.5,
+                    ram_percent: 42.1,
+                    active_window_title: "Visual Studio Code - client_agent.py"
+                },
+                distraction_report: {
+                    is_distracted: false,
+                    matched_keyword: null
+                }
+            },
+            {
+                client_id: "LAB-PC-02",
+                student_name: "Tanvir Hasan",
+                ip_address: "192.168.10.102",
+                mac_address: "B4:2E:99:A1:C2:02",
+                os_info: "Windows 11 Pro",
+                connected: true,
+                status: "ACTIVE",
+                is_master_host: false,
+                curfew_locked: false,
+                usb_blocked: false,
+                productivity_score: 100,
+                latest_telemetry: {
+                    cpu_percent: 18.2,
+                    ram_percent: 36.8,
+                    active_window_title: "Chrome - As-Sunnah LMS Lecture Video #4"
+                },
+                distraction_report: {
+                    is_distracted: false,
+                    matched_keyword: null
+                }
+            },
+            {
+                client_id: "LAB-PC-03",
+                student_name: "Abdullah Al Mamun",
+                ip_address: "192.168.10.103",
+                mac_address: "B4:2E:99:A1:C2:03",
+                os_info: "Windows 11 Pro",
+                connected: true,
+                status: "DISTRACTED",
+                is_master_host: false,
+                curfew_locked: false,
+                usb_blocked: false,
+                productivity_score: 42,
+                latest_telemetry: {
+                    cpu_percent: 68.4,
+                    ram_percent: 65.2,
+                    active_window_title: "Chrome - YouTube Shorts (Distraction Detected!)"
+                },
+                distraction_report: {
+                    is_distracted: true,
+                    matched_keyword: "YouTube Shorts / Reels"
+                }
+            },
+            {
+                client_id: "LAB-PC-04",
+                student_name: "Mirazur Rahman",
+                ip_address: "192.168.10.104",
+                mac_address: "B4:2E:99:A1:C2:04",
+                os_info: "Windows 11 Pro",
+                connected: true,
+                status: "ACTIVE",
+                is_master_host: false,
+                curfew_locked: false,
+                usb_blocked: false,
+                productivity_score: 100,
+                latest_telemetry: {
+                    cpu_percent: 12.0,
+                    ram_percent: 29.5,
+                    active_window_title: "PowerShell - git commit & push"
+                },
+                distraction_report: {
+                    is_distracted: false,
+                    matched_keyword: null
+                }
+            },
+            {
+                client_id: "LAB-PC-05",
+                student_name: "Salman Farsi",
+                ip_address: "192.168.10.105",
+                mac_address: "B4:2E:99:A1:C2:05",
+                os_info: "Windows 11 Pro",
+                connected: true,
+                status: "ACTIVE",
+                is_master_host: false,
+                curfew_locked: false,
+                usb_blocked: false,
+                productivity_score: 95,
+                latest_telemetry: {
+                    cpu_percent: 32.1,
+                    ram_percent: 54.0,
+                    active_window_title: "Figma - Smart Lab UI Prototype v2"
+                },
+                distraction_report: {
+                    is_distracted: false,
+                    matched_keyword: null
+                }
+            },
+            {
+                client_id: "LAB-PC-06",
+                student_name: "Mahmudul Hasan",
+                ip_address: "192.168.10.106",
+                mac_address: "B4:2E:99:A1:C2:06",
+                os_info: "Windows 11 Pro",
+                connected: true,
+                status: "ACTIVE",
+                is_master_host: false,
+                curfew_locked: false,
+                usb_blocked: false,
+                productivity_score: 97,
+                latest_telemetry: {
+                    cpu_percent: 15.6,
+                    ram_percent: 38.4,
+                    active_window_title: "pgAdmin - PostgreSQL Database Schema"
+                },
+                distraction_report: {
+                    is_distracted: false,
+                    matched_keyword: null
+                }
+            }
+        ];
+
+        let mockAlerts = [
+            {
+                id: "alert-001",
+                client_id: "LAB-PC-03",
+                student_name: "Abdullah Al Mamun",
+                type: "DISTRACTION_REELS",
+                title: "Social Media / Shorts Dwell Time Violation",
+                matched_keyword: "YouTube Shorts / Reels",
+                timestamp: "Just now",
+                severity: "HIGH"
+            }
+        ];
+
+        let mockAuditLog = [
+            {
+                id: "aud-01",
+                client_id: "LAB-PC-01",
+                student_name: "Zubair Ahmed",
+                process_name: "Code.exe",
+                window_title: "client_agent.py - Visual Studio Code",
+                category: "ACADEMIC",
+                formatted_time: "1h 45m",
+                last_seen: new Date(Date.now() - 60000).toISOString()
+            },
+            {
+                id: "aud-02",
+                client_id: "LAB-PC-02",
+                student_name: "Tanvir Hasan",
+                process_name: "chrome.exe",
+                window_title: "As-Sunnah LMS Lecture Video #4 - Google Chrome",
+                category: "ACADEMIC",
+                formatted_time: "1h 12m",
+                last_seen: new Date(Date.now() - 120000).toISOString()
+            },
+            {
+                id: "aud-03",
+                client_id: "LAB-PC-03",
+                student_name: "Abdullah Al Mamun",
+                process_name: "chrome.exe",
+                window_title: "YouTube Shorts (Distraction Detected!)",
+                category: "DISTRACTION",
+                formatted_time: "14m 20s",
+                last_seen: new Date().toISOString()
+            },
+            {
+                id: "aud-04",
+                client_id: "LAB-PC-04",
+                student_name: "Mirazur Rahman",
+                process_name: "pwsh.exe",
+                window_title: "PowerShell - git commit & push",
+                category: "ACADEMIC",
+                formatted_time: "55m 10s",
+                last_seen: new Date(Date.now() - 300000).toISOString()
+            },
+            {
+                id: "aud-05",
+                client_id: "LAB-PC-05",
+                student_name: "Salman Farsi",
+                process_name: "Figma.exe",
+                window_title: "Smart Lab UI Prototype v2 - Figma",
+                category: "ACADEMIC",
+                formatted_time: "1h 30m",
+                last_seen: new Date(Date.now() - 180000).toISOString()
+            },
+            {
+                id: "aud-06",
+                client_id: "LAB-PC-06",
+                student_name: "Mahmudul Hasan",
+                process_name: "pgAdmin4.exe",
+                window_title: "PostgreSQL Database Schema - pgAdmin 4",
+                category: "ACADEMIC",
+                formatted_time: "48m 15s",
+                last_seen: new Date(Date.now() - 240000).toISOString()
+            }
+        ];
+
+        let mockAssignments = [
+            { client_id: "LAB-PC-01", student_name: "Zubair Ahmed", filename: "Zubair_LabTask_04.py", size: "14.2 KB", status: "Collected" },
+            { client_id: "LAB-PC-02", student_name: "Tanvir Hasan", filename: "Tanvir_FastAPI_Project.zip", size: "2.1 MB", status: "Collected" },
+            { client_id: "LAB-PC-03", student_name: "Abdullah Al Mamun", filename: "Abdullah_Assignment_4.py", size: "9.8 KB", status: "Collected" },
+            { client_id: "LAB-PC-04", student_name: "Mirazur Rahman", filename: "Miraz_SmartLab_Agent.py", size: "18.5 KB", status: "Collected" },
+            { client_id: "LAB-PC-05", student_name: "Salman Farsi", filename: "Salman_UI_Wireframe.fig", size: "4.8 MB", status: "Collected" },
+            { client_id: "LAB-PC-06", student_name: "Mahmudul Hasan", filename: "Mahmud_Schema_Dump.sql", size: "28.4 KB", status: "Collected" }
+        ];
+
+        let clusterData = {
+            total_registered: 6,
+            total_online: 6,
+            total_distracted: 1,
+            total_tampered: 0,
+            lab_average_productivity: 96,
+            focus_mode_active: true,
+            usb_storage_blocked: false,
+            workstations: mockWorkstations,
+            alerts: mockAlerts,
+            audit_log: mockAuditLog
+        };
+
+        // =========================================================================
+        // REAL-TIME AUDIO SYNTHESIZER (Web Audio API - Crisp High-Tech Click Chime)
+        // =========================================================================
+        function playActionSound(type = 'success') {
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) return;
+                const ctx = new AudioCtx();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                if (type === 'lock') {
+                    // Futuristic lock tone
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(650, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(320, ctx.currentTime + 0.16);
+                    gain.gain.setValueAtTime(0.08, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.16);
+                    osc.start(ctx.currentTime);
+                    osc.stop(ctx.currentTime + 0.17);
+                } else if (type === 'unlock') {
+                    // Cheerful rising unlock tone
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(440, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.18);
+                    gain.gain.setValueAtTime(0.09, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
+                    osc.start(ctx.currentTime);
+                    osc.stop(ctx.currentTime + 0.19);
+                } else if (type === 'toggle') {
+                    // Tactile toggle click
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(800, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(1100, ctx.currentTime + 0.08);
+                    gain.gain.setValueAtTime(0.07, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+                    osc.start(ctx.currentTime);
+                    osc.stop(ctx.currentTime + 0.09);
+                } else {
+                    // General pleasant success chord
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(520, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(780, ctx.currentTime + 0.12);
+                    gain.gain.setValueAtTime(0.07, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+                    osc.start(ctx.currentTime);
+                    osc.stop(ctx.currentTime + 0.13);
+                }
+            } catch (e) {
+                // AudioContext silent fallback if blocked by browser policy
+            }
+        }
+
+        // =========================================================================
+        // ACTION STATUS HUD BANNER (Directly above the Workstations Grid)
+        // =========================================================================
+        function updateActionHUD(icon, text, theme = 'emerald') {
+            const bar = document.getElementById('actionFeedbackBar');
+            const dot = document.getElementById('actionFeedbackDot');
+            const txt = document.getElementById('actionFeedbackText');
+            const time = document.getElementById('actionFeedbackTime');
+
+            if (!bar || !txt) return;
+
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+            if (time) time.innerText = timeStr;
+            txt.innerHTML = `${icon} <span class="text-white font-semibold">${text}</span>`;
+
+            // Dynamic color themes
+            let dotColor = 'bg-emerald-400';
+            let barBorder = 'border-emerald-500/50 bg-emerald-950/30';
+
+            if (theme === 'purple') {
+                dotColor = 'bg-purple-400';
+                barBorder = 'border-purple-500/50 bg-purple-950/40';
+            } else if (theme === 'amber') {
+                dotColor = 'bg-amber-400';
+                barBorder = 'border-amber-500/50 bg-amber-950/40';
+            } else if (theme === 'rose') {
+                dotColor = 'bg-rose-400';
+                barBorder = 'border-rose-500/50 bg-rose-950/40';
+            } else if (theme === 'teal' || theme === 'cyan') {
+                dotColor = 'bg-teal-400';
+                barBorder = 'border-teal-500/50 bg-teal-950/40';
+            } else if (theme === 'indigo') {
+                dotColor = 'bg-indigo-400';
+                barBorder = 'border-indigo-500/50 bg-indigo-950/40';
+            }
+
+            if (dot) dot.className = `w-2.5 h-2.5 rounded-full ${dotColor} animate-ping`;
+            setTimeout(() => {
+                if (dot) dot.className = `w-2.5 h-2.5 rounded-full ${dotColor} animate-pulse`;
+            }, 1000);
+
+            bar.className = `mt-3 p-3 rounded-xl border ${barBorder} flex items-center justify-between text-xs font-mono transition-all duration-300 shadow-lg`;
+        }
+
+        // =========================================================================
+        // PROMINENT TOP-CENTER TOAST NOTIFICATION
+        // =========================================================================
+        function showToast(msg, theme = 'emerald') {
+            const oldToast = document.getElementById("demoToast");
+            if (oldToast && oldToast.remove) oldToast.remove();
+
+            let borderStyle = 'border-emerald-500 text-emerald-300 shadow-[0_0_35px_rgba(16,185,129,0.35)]';
+            let icon = '✓';
+
+            if (theme === 'purple') {
+                borderStyle = 'border-purple-500 text-purple-300 shadow-[0_0_35px_rgba(168,85,247,0.4)]';
+                icon = '🔒';
+            } else if (theme === 'amber') {
+                borderStyle = 'border-amber-500 text-amber-300 shadow-[0_0_35px_rgba(245,158,11,0.4)]';
+                icon = '⚠️';
+            } else if (theme === 'rose') {
+                borderStyle = 'border-rose-500 text-rose-300 shadow-[0_0_35px_rgba(244,63,94,0.4)]';
+                icon = '⚡';
+            } else if (theme === 'teal' || theme === 'cyan') {
+                borderStyle = 'border-teal-400 text-teal-200 shadow-[0_0_35px_rgba(20,184,166,0.35)]';
+                icon = '🎯';
+            } else if (theme === 'indigo') {
+                borderStyle = 'border-indigo-400 text-indigo-200 shadow-[0_0_35px_rgba(99,102,241,0.35)]';
+                icon = '📢';
+            }
+
+            const toast = document.createElement("div");
+            toast.id = "demoToast";
+            toast.className = `fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-slate-900/95 border-2 ${borderStyle} px-5 sm:px-7 py-3 rounded-2xl flex items-center gap-3.5 font-bold text-xs sm:text-sm backdrop-blur-xl transition-all duration-300 transform -translate-y-2 opacity-0 select-none`;
+            toast.innerHTML = `<span class="text-base sm:text-lg">${icon}</span> <span class="tracking-wide">${msg}</span>`;
+            document.body.appendChild(toast);
+
+            // Pop in smoothly
+            requestAnimationFrame(() => {
+                toast.classList.remove('-translate-y-2', 'opacity-0');
+                toast.classList.add('translate-y-0', 'opacity-100');
+            });
+
+            // Fade out smoothly
+            setTimeout(() => {
+                toast.classList.add('opacity-0', '-translate-y-2');
+                setTimeout(() => {
+                    if (toast.remove) toast.remove();
+                }, 400);
+            }, 3200);
+        }
+
+        // Live Clock
+        function updateLiveClock() {
+            const now = new Date();
+            const clockEl = document.getElementById('liveClock');
+            if (clockEl) clockEl.innerText = now.toLocaleTimeString('en-US', { hour12: false });
+        }
+
+        // Initialize Simulation Engine
+        function startSimulation() {
+            isSimulated = true;
+            console.log("Starting Smart Lab Interactive Engine...");
+
+            const badge = document.getElementById('connectionBadge');
+            if (badge) {
+                badge.className = 'px-3 py-1.5 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 text-xs font-semibold flex items-center gap-1.5 shadow-sm';
+                badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span>Live Lab Cluster Online</span>';
+            }
+
+            renderCluster(clusterData);
+            renderAuditLog(clusterData.audit_log);
+
+            // Dynamic live telemetry fluctuations (CPU 12-48%, RAM 30-65%)
+            setInterval(() => {
+                mockWorkstations.forEach(pc => {
+                    if (pc.connected && pc.status !== 'DISCONNECTED_TAMPERED') {
+                        const t = pc.latest_telemetry;
+                        t.cpu_percent = Math.min(95, Math.max(10, +(t.cpu_percent + (Math.random() * 6 - 3)).toFixed(1)));
+                        t.ram_percent = Math.min(90, Math.max(25, +(t.ram_percent + (Math.random() * 3 - 1.5)).toFixed(1)));
+                    }
+                });
+                renderCluster(clusterData);
+            }, 3000);
+        }
+
+        // RENDER CLUSTER TO DOM
+        function renderCluster(data) {
+            clusterData = data;
+            const setTxt = (id, val) => {
+                const el = document.getElementById(id);
+                if (el) el.innerText = val;
+            };
+
+            setTxt('statTotal', data.total_registered);
+            setTxt('statOnline', data.total_online);
+            setTxt('statDistracted', data.total_distracted);
+            setTxt('statTampered', data.total_tampered);
+            setTxt('statProductivity', (data.lab_average_productivity !== undefined ? data.lab_average_productivity : 100) + '%');
+            setTxt('gridCountBadge', `${data.workstations.length} PCs`);
+
+            // Focus Mode Button State
+            const focusBtn = document.getElementById('focusModeBtn');
+            if (focusBtn) {
+                if (data.focus_mode_active) {
+                    focusBtn.className = 'px-3.5 py-2 rounded-xl bg-teal-600/30 hover:bg-teal-600/40 active:scale-90 active:ring-2 active:ring-teal-500 border border-teal-500 text-teal-300 text-xs font-bold transition-all duration-150 flex items-center gap-1.5 shadow-lg shadow-teal-950/40 animate-pulse cursor-pointer select-none';
+                    focusBtn.innerHTML = '<span>🎯 Focus Mode: ON</span>';
+                } else {
+                    focusBtn.className = 'px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-90 active:ring-2 active:ring-slate-500 border border-slate-700 text-slate-300 text-xs font-bold transition-all duration-150 flex items-center gap-1.5 shadow-sm cursor-pointer select-none';
+                    focusBtn.innerHTML = '<span>🎯 Focus Mode: OFF</span>';
+                }
+            }
+
+            // USB Storage Policy Button State
+            const usbBtn = document.getElementById('usbPolicyBtn');
+            if (usbBtn) {
+                if (data.usb_storage_blocked) {
+                    usbBtn.className = 'px-3.5 py-2 rounded-xl bg-amber-600/30 hover:bg-amber-600/40 active:scale-90 active:ring-2 active:ring-amber-500 border border-amber-500 text-amber-300 text-xs font-bold transition-all duration-150 flex items-center gap-1.5 shadow-lg cursor-pointer select-none';
+                    usbBtn.innerHTML = '<span>🔒 USB: BLOCKED</span>';
+                } else {
+                    usbBtn.className = 'px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-90 active:ring-2 active:ring-slate-500 border border-slate-700 text-slate-300 text-xs font-bold transition-all duration-150 flex items-center gap-1.5 shadow-sm cursor-pointer select-none';
+                    usbBtn.innerHTML = '<span>💾 USB: ALLOWED</span>';
+                }
+            }
+
+            // Tamper Alert Banner (if distracted or offline PCs exist)
+            const tamperSection = document.getElementById('tamperAlertSection');
+            const tamperText = document.getElementById('tamperAlertText');
+            if (tamperSection && tamperText) {
+                if (data.total_distracted > 0 || data.total_tampered > 0) {
+                    tamperSection.classList.remove('hidden');
+                    const pc3 = data.workstations.find(w => w.client_id === 'LAB-PC-03');
+                    const distractedName = pc3 ? pc3.student_name : 'Abdullah Al Mamun';
+                    tamperText.innerHTML = `Attention: <strong>${distractedName} (LAB-PC-03)</strong> triggered non-academic distraction filter: <span class="text-rose-400 font-bold underline">YouTube Shorts / Reels</span>. Click Acknowledge or Lock PC to intervene.`;
+                } else {
+                    tamperSection.classList.add('hidden');
+                }
+            }
+
+            // Workstations Grid (Exact ID: workstationGrid)
+            const grid = document.getElementById('workstationGrid');
+            if (!grid) return;
+
+            if (!data.workstations || data.workstations.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full py-16 text-center text-slate-500 font-mono">
+                        <span class="text-4xl block mb-2">⏳</span>
+                        <p class="text-sm">No workstations connected yet.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = data.workstations.map(pc => {
+                const t = pc.latest_telemetry || {};
+                const d = pc.distraction_report || {};
+                const cpu = t.cpu_percent ? t.cpu_percent.toFixed(0) : 0;
+                const ram = t.ram_percent ? t.ram_percent.toFixed(0) : 0;
+                const windowTitle = t.active_window_title || 'Idle / Background';
+
+                let borderClass = 'border-slate-800';
+                let statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">ONLINE</span>';
+
+                if (pc.curfew_locked || pc.status === 'CURFEW_LOCKED') {
+                    borderClass = 'border-purple-500/70 shadow-lg shadow-purple-950/30 bg-purple-950/10';
+                    statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/40">🔒 CURFEW LOCKED</span>';
+                } else if (pc.status === 'DISTRACTED') {
+                    borderClass = 'border-rose-500/70 shadow-lg shadow-rose-950/30 bg-rose-950/10';
+                    statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40 animate-pulse">⚠️ DISTRACTED (REELS)</span>';
+                } else if (pc.status === 'DISCONNECTED_TAMPERED' || !pc.connected) {
+                    borderClass = 'border-amber-500/50 shadow-lg shadow-amber-950/20 bg-amber-950/10';
+                    statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">🚨 POWERED OFF</span>';
+                }
+
+                const score = pc.productivity_score !== undefined ? pc.productivity_score : 100;
+                let scoreTextClass = score < 50 ? 'text-rose-400' : (score < 80 ? 'text-amber-400' : 'text-emerald-400');
+                let scoreBarClass = score < 50 ? 'bg-rose-500' : (score < 80 ? 'bg-amber-500' : 'bg-emerald-500');
+
+                const usbBadge = pc.usb_blocked
+                    ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">🔒 USB Blocked</span>'
+                    : '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-800 text-slate-400">💾 USB Allowed</span>';
+
+                const focusBadge = data.focus_mode_active
+                    ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-teal-500/20 text-teal-300 border border-teal-500/30">🎯 Focus Active</span>'
+                    : '';
+
+                return `
+                    <div class="bg-slate-900/90 border ${borderClass} rounded-2xl p-4 sm:p-5 flex flex-col justify-between space-y-4 hover:border-slate-700 transition duration-200">
+                        <div>
+                            <div class="flex items-start justify-between gap-2 mb-2">
+                                <div>
+                                    <h4 class="font-bold text-base text-white font-mono">${pc.client_id}</h4>
+                                    <p class="text-xs text-slate-400">${pc.student_name} • <span class="text-slate-500">${pc.ip_address}</span></p>
+                                </div>
+                                <div class="flex flex-col items-end gap-1">
+                                    ${statusBadge}
+                                    <div class="flex items-center gap-1">${focusBadge} ${usbBadge}</div>
+                                </div>
+                            </div>
+
+                            <!-- AI Productivity Score Bar -->
+                            <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800/80 mb-3">
+                                <div class="flex items-center justify-between text-xs font-mono mb-1">
+                                    <span class="text-slate-400 font-sans">AI Productivity</span>
+                                    <span class="font-bold ${scoreTextClass}">${score}% Focused</span>
+                                </div>
+                                <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                                    <div class="${scoreBarClass} h-1.5 rounded-full transition-all duration-500" style="width: ${score}%"></div>
+                                </div>
+                            </div>
+
+                            <!-- Hardware Metrics -->
+                            <div class="grid grid-cols-2 gap-2 my-2 text-xs font-mono">
+                                <div class="bg-slate-950 p-2 rounded-xl border border-slate-800/80">
+                                    <div class="flex justify-between text-slate-400 mb-1"><span>CPU</span><span>${cpu}%</span></div>
+                                    <div class="w-full bg-slate-800 h-1 rounded-full overflow-hidden">
+                                        <div class="bg-indigo-500 h-1 rounded-full" style="width: ${cpu}%"></div>
+                                    </div>
+                                </div>
+                                <div class="bg-slate-950 p-2 rounded-xl border border-slate-800/80">
+                                    <div class="flex justify-between text-slate-400 mb-1"><span>RAM</span><span>${ram}%</span></div>
+                                    <div class="w-full bg-slate-800 h-1 rounded-full overflow-hidden">
+                                        <div class="bg-purple-500 h-1 rounded-full" style="width: ${ram}%"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Active Window Title -->
+                            <div class="bg-slate-950/60 p-2.5 rounded-xl border border-slate-800/60">
+                                <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-1">Active Foreground App</span>
+                                <p class="text-xs text-slate-200 truncate font-mono" title="${windowTitle}">
+                                    ${windowTitle}
+                                </p>
+                                ${d.is_distracted ? `
+                                    <div class="mt-1.5 p-1.5 rounded-lg bg-rose-500/10 border border-rose-500/20 text-[11px] text-rose-300 font-semibold">
+                                        🚨 Flagged: ${d.matched_keyword || 'Non-educational content'}
+                                    </div>
+                                ` : ''}
+                            </div>
+
+                            <!-- Live Screen Thumbnail (Click to view full screen) -->
+                            <div onclick="openScreenModal('${pc.client_id}', '${pc.student_name}')" class="relative group cursor-pointer overflow-hidden rounded-xl border border-slate-800 bg-slate-950 aspect-video flex items-center justify-center mt-3 shadow-inner hover:border-indigo-500/50 transition">
+                                <div class="w-full h-full">
+                                    ${getStudentScreenPreview(pc)}
+                                </div>
+                                <div class="absolute inset-0 bg-slate-950/75 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-1.5 text-xs font-bold text-indigo-300 backdrop-blur-[1px]">
+                                    <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                    <span>🔍 Click to View Full Screen</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Individual Workstation Action Buttons -->
+                        <div class="space-y-2 pt-2 border-t border-slate-800/80">
+                            <div class="grid grid-cols-2 gap-2">
+                                ${pc.curfew_locked || pc.status === 'CURFEW_LOCKED' ? `
+                                    <button onclick="sendClientCommand('${pc.client_id}', 'UNLOCK')" class="py-1.5 rounded-xl bg-purple-600/30 hover:bg-purple-600/40 active:scale-90 active:ring-2 active:ring-purple-400 border border-purple-500/50 text-xs font-bold text-purple-300 transition-all flex items-center justify-center gap-1 cursor-pointer select-none">
+                                        <span>🔓</span> Unlock
+                                    </button>
+                                ` : `
+                                    <button onclick="sendClientCommand('${pc.client_id}', 'LOCK')" class="py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-90 active:ring-2 active:ring-slate-500 border border-slate-700 text-xs font-bold text-slate-300 transition-all flex items-center justify-center gap-1 cursor-pointer select-none">
+                                        <span>🔒</span> Lock
+                                    </button>
+                                `}
+                                <button onclick="openMsgModal('${pc.client_id}', '${pc.student_name}')" class="py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-90 active:ring-2 active:ring-indigo-500 border border-slate-700 text-xs font-bold text-slate-300 transition-all flex items-center justify-center gap-1 cursor-pointer select-none">
+                                    <span>💬</span> Message
+                                </button>
+                            </div>
+                            <div class="flex items-center justify-between text-[11px] text-slate-500 font-mono px-1">
+                                <span>MAC: ${pc.mac_address}</span>
+                                <button onclick="sendClientCommand('${pc.client_id}', 'SHUTDOWN')" class="hover:text-rose-400 transition cursor-pointer" title="Graceful shutdown">
+                                    ⚡ Shutdown
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // STUDENT SCREEN PREVIEW GENERATOR
+        function getStudentScreenPreview(pc) {
+            if (pc.curfew_locked || pc.status === 'CURFEW_LOCKED') {
+                return `
+                    <div class="w-full h-full bg-slate-950 flex flex-col items-center justify-center p-3 text-center border border-red-500/50">
+                        <span class="text-3xl mb-1">🔒</span>
+                        <span class="text-xs font-bold text-red-400 font-mono">CURFEW LOCK ACTIVE</span>
+                        <span class="text-[10px] text-slate-400 mt-1">Screen Locked by Instructor</span>
+                    </div>
+                `;
+            }
+            if (pc.status === 'DISTRACTED') {
+                return `
+                    <div class="w-full h-full bg-slate-950 flex flex-col justify-between p-2.5 relative border border-rose-500/80 overflow-hidden">
+                        <div class="flex items-center justify-between text-[10px] text-rose-300 font-mono bg-rose-950/80 px-2 py-1 rounded">
+                            <span class="font-bold flex items-center gap-1"><span>⚠️</span> REELS/SHORTS DETECTED</span>
+                            <span class="animate-pulse">BLOCKED</span>
+                        </div>
+                        <div class="my-auto text-center space-y-1">
+                            <div class="w-8 h-8 mx-auto rounded-full bg-rose-500/20 flex items-center justify-center text-rose-400 text-sm">▶️</div>
+                            <p class="text-[10px] font-bold text-rose-200">YouTube Shorts / Reels</p>
+                            <p class="text-[8px] text-slate-400">Distraction Watchdog Triggered</p>
+                        </div>
+                        <div class="text-[8px] text-rose-400 bg-rose-950/50 text-center py-0.5 rounded">
+                            Auto-Warning Delivered to Student
+                        </div>
+                    </div>
+                `;
+            }
+            if (pc.client_id === 'LAB-PC-01') {
+                return `
+                    <div class="w-full h-full bg-[#1e1e1e] flex flex-col justify-between p-2 font-mono text-[10px] text-slate-300 border border-slate-800">
+                        <div class="flex items-center justify-between bg-[#2d2d2d] px-2 py-0.5 rounded text-[9px] text-slate-400">
+                            <span>📄 client_agent.py - VS Code</span>
+                            <span class="text-emerald-400">Python 3.12</span>
+                        </div>
+                        <div class="space-y-0.5 text-[9px] text-slate-400 overflow-hidden pl-1 border-l-2 border-emerald-500">
+                            <p><span class="text-purple-400">async def</span> <span class="text-blue-400">sync_heartbeat</span>():</p>
+                            <p class="pl-2">payload = { <span class="text-emerald-300">'status'</span>: <span class="text-amber-300">'ACTIVE'</span> }</p>
+                            <p class="pl-2"><span class="text-purple-400">await</span> ws.send(json.dumps(payload))</p>
+                        </div>
+                        <div class="bg-[#181818] p-1 rounded text-[8px] text-emerald-400 flex items-center justify-between">
+                            <span>TERMINAL: pytest tests/ - 12 passed</span>
+                            <span class="text-slate-500">Focus 98%</span>
+                        </div>
+                    </div>
+                `;
+            }
+            if (pc.client_id === 'LAB-PC-02') {
+                return `
+                    <div class="w-full h-full bg-slate-900 flex flex-col justify-between p-2 font-mono text-[10px] text-slate-300 border border-slate-800">
+                        <div class="flex items-center justify-between bg-slate-800 px-2 py-0.5 rounded text-[9px] text-slate-300">
+                            <span>🌐 Chrome - As-Sunnah LMS Portal</span>
+                            <span class="text-blue-400">Lecture #4</span>
+                        </div>
+                        <div class="my-auto text-center p-1 bg-slate-950/80 rounded border border-slate-800">
+                            <span class="text-base block mb-0.5">🎥</span>
+                            <p class="text-[10px] font-bold text-white">Full-Stack Python & AI Systems</p>
+                            <p class="text-[8px] text-emerald-400">Educational Video Stream Allowed</p>
+                        </div>
+                        <div class="text-[8px] text-slate-400 flex justify-between">
+                            <span>Chrome Dwell: 1h 12m</span>
+                            <span class="text-emerald-400">100% Score</span>
+                        </div>
+                    </div>
+                `;
+            }
+            if (pc.client_id === 'LAB-PC-04') {
+                return `
+                    <div class="w-full h-full bg-black flex flex-col justify-between p-2 font-mono text-[10px] text-emerald-400 border border-slate-800">
+                        <div class="flex items-center justify-between bg-slate-900 px-2 py-0.5 rounded text-[9px] text-slate-400">
+                            <span>⌨️ PowerShell Terminal</span>
+                            <span class="text-slate-400">git workspace</span>
+                        </div>
+                        <div class="space-y-0.5 text-[8px] text-slate-300 pl-1">
+                            <p class="text-blue-400">PS C:/SmartLab/Project&gt; git status</p>
+                            <p class="text-emerald-400">On branch main - clean working tree</p>
+                            <p class="text-blue-400">PS C:/SmartLab/Project&gt; git push origin main</p>
+                            <p class="text-slate-400">Everything up-to-date</p>
+                        </div>
+                        <div class="text-[8px] text-slate-500 flex justify-between">
+                            <span>Process: pwsh.exe</span>
+                            <span class="text-emerald-400">Focus 100%</span>
+                        </div>
+                    </div>
+                `;
+            }
+            if (pc.client_id === 'LAB-PC-05') {
+                return `
+                    <div class="w-full h-full bg-[#2c2c2c] flex flex-col justify-between p-2 font-mono text-[10px] text-slate-200 border border-slate-800">
+                        <div class="flex items-center justify-between bg-[#1e1e1e] px-2 py-0.5 rounded text-[9px] text-purple-300">
+                            <span>🎨 Figma - Prototype Canvas</span>
+                            <span class="text-slate-400">Vector UI</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-1 my-1">
+                            <div class="h-6 bg-slate-800 rounded flex items-center justify-center text-[8px] border border-purple-500/40">Component A</div>
+                            <div class="h-6 bg-slate-700/60 rounded flex items-center justify-center text-[8px]">Wireframe B</div>
+                        </div>
+                        <div class="text-[8px] text-slate-400 flex justify-between">
+                            <span>Canvas Zoom: 100%</span>
+                            <span class="text-emerald-400">Focus 95%</span>
+                        </div>
+                    </div>
+                `;
+            }
+            return `
+                <div class="w-full h-full bg-slate-900 flex flex-col justify-between p-2 font-mono text-[10px] text-slate-300 border border-slate-800">
+                    <div class="flex items-center justify-between bg-slate-800 px-2 py-0.5 rounded text-[9px] text-slate-400">
+                        <span>🗄️ pgAdmin 4 - PostgreSQL</span>
+                        <span class="text-blue-400">SQL Editor</span>
+                    </div>
+                    <div class="text-[8px] text-slate-300 p-1 bg-slate-950 rounded">
+                        <p class="text-blue-300">SELECT id, student, status</p>
+                        <p class="text-blue-300">FROM lab_attendance;</p>
+                        <p class="text-emerald-400 mt-1">Query returned 6 rows in 12ms.</p>
+                    </div>
+                    <div class="text-[8px] text-slate-400 flex justify-between">
+                        <span>Database: smartlab_db</span>
+                        <span class="text-emerald-400">Focus 97%</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // =========================================================================
+        // INSTITUTIONAL ACTION HANDLERS (CRYSTAL CLEAR CONFIRMATION)
+        // =========================================================================
+        async function broadcastCommand(cmd, message = null) {
+            console.log("Broadcast Command Triggered:", cmd, message);
+            const upper = (cmd || '').toUpperCase();
+
+            if (upper === 'LOCK' || upper === 'LOCK_ALL') {
+                playActionSound('lock');
+                mockWorkstations.forEach(pc => {
+                    pc.curfew_locked = true;
+                    pc.status = 'CURFEW_LOCKED';
+                });
+                clusterData.total_distracted = 0;
+
+                // Tactile feedback on Lock All button
+                const btn = document.getElementById('lockAllBtn');
+                if (btn) {
+                    btn.innerHTML = '<span>🔒 LOCKED! (6 PCs)</span>';
+                    btn.className = 'px-3.5 py-2 rounded-xl bg-purple-600 border border-purple-400 text-white text-xs font-bold transition-all shadow-lg shadow-purple-900/60 flex items-center gap-1.5 animate-pulse';
+                    setTimeout(() => {
+                        btn.innerHTML = '<span>🔒 Lock All</span>';
+                        btn.className = 'px-3.5 py-2 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 active:scale-90 active:ring-2 active:ring-purple-500 border border-purple-500/40 text-purple-300 text-xs font-bold transition-all duration-150 flex items-center gap-1.5 shadow-sm cursor-pointer select-none';
+                    }, 2200);
+                }
+
+                updateActionHUD('🔒', 'Curfew Lock Dispatched: All 6 student workstations locked with institutional curfew screen', 'purple');
+                showToast("🔒 All 6 Workstations Locked with Curfew Maintenance Screen!", 'purple');
+            } else if (upper === 'UNLOCK' || upper === 'UNLOCK_ALL') {
+                playActionSound('unlock');
+                mockWorkstations.forEach(pc => {
+                    pc.curfew_locked = false;
+                    pc.status = pc.client_id === 'LAB-PC-03' && !clusterData.focus_mode_active ? 'DISTRACTED' : 'ACTIVE';
+                });
+                clusterData.total_online = 6;
+
+                // Tactile feedback on Unlock All button
+                const btn = document.getElementById('unlockAllBtn');
+                if (btn) {
+                    btn.innerHTML = '<span>🔓 UNLOCKED! (6 PCs)</span>';
+                    btn.className = 'px-3.5 py-2 rounded-xl bg-emerald-600 border border-emerald-400 text-white text-xs font-bold transition-all shadow-lg shadow-emerald-900/60 flex items-center gap-1.5 animate-pulse';
+                    setTimeout(() => {
+                        btn.innerHTML = '<span>🔓 Unlock All</span>';
+                        btn.className = 'px-3.5 py-2 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 active:scale-90 active:ring-2 active:ring-emerald-500 border border-emerald-500/40 text-emerald-300 text-xs font-bold transition-all duration-150 flex items-center gap-1.5 shadow-sm cursor-pointer select-none';
+                    }, 2200);
+                }
+
+                updateActionHUD('🔓', 'Curfew Lock Released: All 6 workstations restored to normal student access', 'emerald');
+                showToast("🔓 All Workstations Unlocked & Restored to Normal Operation!", 'emerald');
+            } else if (upper === 'SHUTDOWN' || upper === 'SHUTDOWN_ALL') {
+                playActionSound('lock');
+                mockWorkstations.forEach(pc => {
+                    pc.connected = false;
+                    pc.status = 'DISCONNECTED_TAMPERED';
+                });
+                clusterData.total_online = 0;
+
+                updateActionHUD('⚡', 'Lab Power Off: Graceful shutdown broadcasted to all workstations', 'rose');
+                showToast("⚡ Graceful Auto-Shutdown Broadcasted across Lab Cluster!", 'rose');
+            } else if (upper === 'BROADCAST_MESSAGE') {
+                playActionSound('success');
+                updateActionHUD('📢', `Broadcast Notice Delivered: "${message}"`, 'indigo');
+                showToast(`📢 Announcement Broadcasted to all student screens: "${message}"`, 'indigo');
+                mockAuditLog.unshift({
+                    id: "aud-" + Date.now(),
+                    client_id: "ALL-PCS",
+                    student_name: "Instructor Broadcast",
+                    process_name: "AnnouncementModal.exe",
+                    window_title: `Notice: "${message}"`,
+                    category: "ACADEMIC",
+                    formatted_time: "Now",
+                    last_seen: new Date().toISOString()
+                });
+                renderAuditLog(mockAuditLog);
+            }
+
+            renderCluster(clusterData);
+        }
+
+        function confirmLabShutdown() {
+            playActionSound('lock');
+            if (confirm("🚨 Are you sure you want to gracefully power off ALL workstations in the lab?")) {
+                broadcastCommand('SHUTDOWN_ALL');
+            }
+        }
+
+        async function sendClientCommand(clientId, action, payload = {}) {
+            const pc = mockWorkstations.find(w => w.client_id === clientId);
+            if (pc) {
+                if (action === 'LOCK') {
+                    playActionSound('lock');
+                    pc.curfew_locked = true;
+                    pc.status = 'CURFEW_LOCKED';
+                    updateActionHUD('🔒', `Workstation ${clientId} Screen Locked by Instructor`, 'purple');
+                    showToast(`🔒 Workstation ${clientId} Screen Locked!`, 'purple');
+                } else if (action === 'UNLOCK') {
+                    playActionSound('unlock');
+                    pc.curfew_locked = false;
+                    pc.status = 'ACTIVE';
+                    updateActionHUD('🔓', `Workstation ${clientId} Unlocked & Restored`, 'emerald');
+                    showToast(`🔓 Workstation ${clientId} Screen Unlocked!`, 'emerald');
+                } else if (action === 'SHUTDOWN') {
+                    playActionSound('lock');
+                    pc.connected = false;
+                    pc.status = 'DISCONNECTED_TAMPERED';
+                    clusterData.total_online = Math.max(0, clusterData.total_online - 1);
+                    updateActionHUD('⚡', `Workstation ${clientId} Powered Off`, 'rose');
+                    showToast(`⚡ Workstation ${clientId} Powered Off!`, 'rose');
+                }
+                renderCluster(clusterData);
+            }
+        }
+
+        function toggleFocusMode() {
+            playActionSound('toggle');
+            clusterData.focus_mode_active = !clusterData.focus_mode_active;
+            if (clusterData.focus_mode_active) {
+                updateActionHUD('🎯', 'Focus Mode Activated: YouTube Shorts, Reels & distraction websites blocked', 'teal');
+                showToast("🎯 Focus Mode ACTIVATED: Reels & non-academic sites blocked lab-wide!", 'teal');
+                const pc3 = mockWorkstations.find(w => w.client_id === 'LAB-PC-03');
+                if (pc3) {
+                    pc3.status = 'ACTIVE';
+                    pc3.distraction_report.is_distracted = false;
+                    pc3.latest_telemetry.active_window_title = 'VS Code - client_agent.py (Restricted Focus)';
+                }
+                clusterData.alerts = [];
+                clusterData.total_distracted = 0;
+            } else {
+                updateActionHUD('🎯', 'Focus Mode Deactivated: Standard open web browsing permitted', 'slate');
+                showToast("🎯 Focus Mode DEACTIVATED: Standard browsing permitted.", 'slate');
+            }
+            renderCluster(clusterData);
+        }
+
+        function toggleUsbPolicy() {
+            playActionSound('toggle');
+            clusterData.usb_storage_blocked = !clusterData.usb_storage_blocked;
+            mockWorkstations.forEach(pc => pc.usb_blocked = clusterData.usb_storage_blocked);
+            if (clusterData.usb_storage_blocked) {
+                updateActionHUD('🔒', 'USB Storage Policy: Removable flash drives blocked on all PCs', 'amber');
+                showToast("🔒 USB Storage BLOCKED: Mass-storage denied across all workstations!", 'amber');
+            } else {
+                updateActionHUD('💾', 'USB Storage Policy: Removable flash drives allowed on all PCs', 'emerald');
+                showToast("💾 USB Storage ALLOWED across lab workstations.", 'emerald');
+            }
+            renderCluster(clusterData);
+        }
+
+        function promptBroadcastMessage() {
+            playActionSound('toggle');
+            const msg = prompt("ল্যাবের সব ছাত্রের স্ক্রিনে পাঠানোর জন্য নোটিশ লিখুন (Enter Broadcast Message):", "ক্লাস শেষ হতে ১০ মিনিট বাকি। অনুগ্রহ করে সব ফাইল সেভ করুন।");
+            if (msg && msg.trim()) {
+                broadcastCommand('BROADCAST_MESSAGE', msg.trim());
+            }
+        }
+
+        async function ackAlert(alertId) {
+            playActionSound('unlock');
+            clusterData.alerts = [];
+            clusterData.total_distracted = 0;
+            const pc = mockWorkstations.find(w => w.client_id === 'LAB-PC-03');
+            if (pc) {
+                pc.status = 'ACTIVE';
+                pc.distraction_report.is_distracted = false;
+                pc.latest_telemetry.active_window_title = 'Visual Studio Code - Python Project';
+                pc.productivity_score = 92;
+            }
+            updateActionHUD('✓', 'Distraction alert acknowledged and student warned by Instructor', 'emerald');
+            showToast("✓ Distraction Alert Acknowledged & Cleared by Instructor!", 'emerald');
+            renderCluster(clusterData);
+        }
+
+        // =========================================================================
+        // FULL-SCREEN LIVE SCREEN MONITOR MODAL (VEYON / APPLE CLASSROOM STYLE)
+        // =========================================================================
+        async function openScreenModal(clientId, studentName) {
+            playActionSound('toggle');
+            activeScreenTarget = clientId;
+            document.getElementById('screenModalTitle').innerText = clientId;
+            document.getElementById('screenModalStudent').innerText = studentName;
+            document.getElementById('screenModal').classList.remove('hidden');
+
+            const pc = (clusterData.workstations || []).find(w => w.client_id === clientId);
+            if (pc) {
+                const appTitle = pc.latest_telemetry ? pc.latest_telemetry.active_window_title : 'Active Session';
+                document.getElementById('screenModalApp').innerText = `Active Window: ${appTitle}`;
+                updateScreenModalLockBtn(pc);
+            }
+
+            document.getElementById('screenModalTime').innerText = `Updated: ${new Date().toLocaleTimeString()}`;
+            await requestFreshScreen();
+        }
+
+        function closeScreenModal() {
+            playActionSound('toggle');
+            document.getElementById('screenModal').classList.add('hidden');
+            activeScreenTarget = null;
+            if (screenRefreshTimer) {
+                clearInterval(screenRefreshTimer);
+                screenRefreshTimer = null;
+            }
+        }
+
+        function updateScreenModalLockBtn(pc) {
+            const lockBtn = document.getElementById('screenModalLockBtn');
+            if (!lockBtn) return;
+            const isLocked = pc && (pc.curfew_locked || pc.status === 'CURFEW_LOCKED');
+            if (isLocked) {
+                lockBtn.className = 'px-3 py-1.5 rounded-xl bg-purple-600/30 hover:bg-purple-600/40 border border-purple-500 text-xs font-semibold text-purple-300 transition flex items-center gap-1.5 cursor-pointer';
+                lockBtn.innerHTML = '<span>🔓 Unlock Workstation</span>';
+            } else {
+                lockBtn.className = 'px-3 py-1.5 rounded-xl bg-rose-600/30 hover:bg-rose-600/40 border border-rose-500 text-xs font-semibold text-rose-300 transition flex items-center gap-1.5 cursor-pointer';
+                lockBtn.innerHTML = '<span>🔒 Lock Workstation</span>';
+            }
+        }
+
+        function toggleScreenModalLock() {
+            if (!activeScreenTarget) return;
+            const pc = (clusterData.workstations || []).find(w => w.client_id === activeScreenTarget);
+            if (!pc) return;
+
+            const isLocked = pc.curfew_locked || pc.status === 'CURFEW_LOCKED';
+            if (isLocked) {
+                playActionSound('unlock');
+                pc.curfew_locked = false;
+                pc.status = 'ACTIVE';
+                updateActionHUD('🔓', `Workstation ${activeScreenTarget} Screen Unlocked`, 'emerald');
+                showToast(`🔓 Workstation ${activeScreenTarget} Unlocked!`, 'emerald');
+            } else {
+                playActionSound('lock');
+                pc.curfew_locked = true;
+                pc.status = 'CURFEW_LOCKED';
+                updateActionHUD('🔒', `Workstation ${activeScreenTarget} Screen Locked`, 'purple');
+                showToast(`🔒 Workstation ${activeScreenTarget} Screen Locked!`, 'purple');
+            }
+            updateScreenModalLockBtn(pc);
+            requestFreshScreen();
+            renderCluster(clusterData);
+        }
+
+        async function requestFreshScreen() {
+            if (!activeScreenTarget) return;
+            const pc = (clusterData.workstations || []).find(w => w.client_id === activeScreenTarget);
+            if (!pc) return;
+
+            document.getElementById('screenModalLoading').classList.add('hidden');
+            const imgEl = document.getElementById('screenModalImg');
+            
+            const isLocked = pc.curfew_locked || pc.status === 'CURFEW_LOCKED';
+            let svgContent = '';
+
+            if (isLocked) {
+                svgContent = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+                        <rect width="1280" height="720" fill="#090d16"/>
+                        <rect x="340" y="160" width="600" height="400" rx="24" fill="#0f172a" stroke="#ef4444" stroke-width="2"/>
+                        <text x="640" y="270" font-family="system-ui, sans-serif" font-size="64" text-anchor="middle" fill="#ef4444">🔒</text>
+                        <text x="640" y="340" font-family="system-ui, sans-serif" font-size="28" font-weight="bold" text-anchor="middle" fill="#f87171">CURFEW LOCK ENFORCED</text>
+                        <text x="640" y="380" font-family="system-ui, sans-serif" font-size="16" text-anchor="middle" fill="#94a3b8">Curfew Policy (21:00 - 08:00 AM) Active</text>
+                        <text x="640" y="440" font-family="monospace" font-size="14" text-anchor="middle" fill="#cbd5e1">Workstation: ${pc.client_id} | Student: ${pc.student_name}</text>
+                        <text x="640" y="480" font-family="system-ui, sans-serif" font-size="13" text-anchor="middle" fill="#64748b">Contact Lab Instructor for authorization</text>
+                    </svg>
+                `;
+            } else if (pc.status === 'DISTRACTED') {
+                svgContent = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+                        <rect width="1280" height="720" fill="#0b0f19"/>
+                        <rect x="40" y="40" width="1200" height="640" rx="16" fill="#030712" stroke="#f43f5e" stroke-width="2"/>
+                        <rect x="40" y="40" width="1200" height="50" rx="16" fill="#1e293b"/>
+                        <circle cx="70" cy="65" r="7" fill="#ef4444"/>
+                        <circle cx="95" cy="65" r="7" fill="#f59e0b"/>
+                        <circle cx="120" cy="65" r="7" fill="#10b981"/>
+                        <rect x="150" y="52" width="700" height="26" rx="6" fill="#0f172a"/>
+                        <text x="165" y="70" font-family="monospace" font-size="13" fill="#f43f5e">https://youtube.com/shorts/trending (FLAGGED VIOLATION)</text>
+                        <rect x="360" y="200" width="560" height="320" rx="20" fill="#180b12" stroke="#f43f5e" stroke-width="2"/>
+                        <text x="640" y="280" font-family="system-ui, sans-serif" font-size="54" text-anchor="middle" fill="#f43f5e">⚠️</text>
+                        <text x="640" y="340" font-family="system-ui, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#fda4af">NON-EDUCATIONAL ACTIVITY DETECTED</text>
+                        <text x="640" y="380" font-family="system-ui, sans-serif" font-size="15" text-anchor="middle" fill="#cbd5e1">Keyword Matched: YouTube Shorts / Reels</text>
+                        <text x="640" y="420" font-family="system-ui, sans-serif" font-size="13" text-anchor="middle" fill="#f43f5e">Automatic Telemetry Logged to Central Audit</text>
+                    </svg>
+                `;
+            } else {
+                svgContent = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+                        <rect width="1280" height="720" fill="#1e1e1e"/>
+                        <rect x="0" y="0" width="1280" height="42" fill="#2d2d2d"/>
+                        <text x="24" y="26" font-family="monospace" font-size="14" fill="#9cdcfe">Visual Studio Code — client_agent.py [Smart Lab]</text>
+                        <text x="1100" y="26" font-family="monospace" font-size="13" fill="#4ade80">● Python 3.12 (Venv)</text>
+                        <rect x="0" y="42" width="60" height="640" fill="#1e1e1e"/>
+                        <text x="25" y="80" font-family="monospace" font-size="14" fill="#6e7681">1</text>
+                        <text x="25" y="110" font-family="monospace" font-size="14" fill="#6e7681">2</text>
+                        <text x="25" y="140" font-family="monospace" font-size="14" fill="#6e7681">3</text>
+                        <text x="25" y="170" font-family="monospace" font-size="14" fill="#6e7681">4</text>
+                        <text x="25" y="200" font-family="monospace" font-size="14" fill="#6e7681">5</text>
+                        <text x="25" y="230" font-family="monospace" font-size="14" fill="#6e7681">6</text>
+                        <text x="25" y="260" font-family="monospace" font-size="14" fill="#6e7681">7</text>
+                        <text x="25" y="290" font-family="monospace" font-size="14" fill="#6e7681">8</text>
+                        <text x="80" y="80" font-family="monospace" font-size="15" fill="#c586c0">import</text>
+                        <text x="140" y="80" font-family="monospace" font-size="15" fill="#d4d4d4">asyncio, psutil, websockets, json</text>
+                        <text x="80" y="110" font-family="monospace" font-size="15" fill="#c586c0">async def</text>
+                        <text x="165" y="110" font-family="monospace" font-size="15" fill="#dcdcaa">monitor_workstation_health</text>
+                        <text x="390" y="110" font-family="monospace" font-size="15" fill="#d4d4d4">():</text>
+                        <text x="110" y="140" font-family="monospace" font-size="15" fill="#6a9955"># Telemetry streaming to Central Controller</text>
+                        <text x="110" y="170" font-family="monospace" font-size="15" fill="#d4d4d4">cpu = psutil.cpu_percent(interval=1)</text>
+                        <text x="110" y="200" font-family="monospace" font-size="15" fill="#d4d4d4">ram = psutil.virtual_memory().percent</text>
+                        <text x="110" y="230" font-family="monospace" font-size="15" fill="#c586c0">await</text>
+                        <text x="160" y="230" font-family="monospace" font-size="15" fill="#d4d4d4">ws.send(json.dumps({"cpu": cpu, "ram": ram}))</text>
+                        <text x="80" y="260" font-family="monospace" font-size="15" fill="#6a9955"># Student: ${pc.student_name} (${pc.client_id})</text>
+                        <rect x="0" y="520" width="1280" height="200" fill="#141414" stroke="#2d2d2d" stroke-width="1"/>
+                        <text x="24" y="550" font-family="monospace" font-size="14" font-weight="bold" fill="#38bdf8">TERMINAL: bash</text>
+                        <text x="24" y="580" font-family="monospace" font-size="13" fill="#4ade80">$ pytest tests/ -v</text>
+                        <text x="24" y="610" font-family="monospace" font-size="13" fill="#d4d4d4">tests/test_agent.py::test_heartbeat PASSED [ 50% ]</text>
+                        <text x="24" y="635" font-family="monospace" font-size="13" fill="#d4d4d4">tests/test_agent.py::test_curfew_lock PASSED [ 100% ]</text>
+                        <text x="24" y="665" font-family="monospace" font-size="13" font-weight="bold" fill="#4ade80">======================= 2 passed in 0.42s =======================</text>
+                    </svg>
+                `;
+            }
+
+            imgEl.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgContent.trim());
+            document.getElementById('screenModalTime').innerText = `Updated: ${new Date().toLocaleTimeString()}`;
+        }
+
+        function toggleModalFullscreen() {
+            playActionSound('toggle');
+            const container = document.getElementById('screenModalImgContainer');
+            if (!container) return;
+            if (!document.fullscreenElement) {
+                if (container.requestFullscreen) container.requestFullscreen();
+                else if (container.webkitRequestFullscreen) container.webkitRequestFullscreen();
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+            }
+        }
+
+        // =========================================================================
+        // DIRECT STUDENT MESSAGING MODAL (Exact IDs: modalTarget, modalMsgInput)
+        // =========================================================================
+        function openMsgModal(clientId, studentName) {
+            playActionSound('toggle');
+            activeModalTarget = clientId;
+            const targetEl = document.getElementById('modalTarget');
+            if (targetEl) targetEl.innerText = `${studentName} (${clientId})`;
+            document.getElementById('msgModal').classList.remove('hidden');
+            const inp = document.getElementById('modalMsgInput');
+            if (inp) {
+                inp.value = '';
+                inp.focus();
+            }
+        }
+
+        function closeMsgModal() {
+            playActionSound('toggle');
+            document.getElementById('msgModal').classList.add('hidden');
+            activeModalTarget = null;
+        }
+
+        function openMsgModalFromScreen() {
+            if (!activeScreenTarget) return;
+            const pc = (clusterData.workstations || []).find(w => w.client_id === activeScreenTarget);
+            if (pc) openMsgModal(pc.client_id, pc.student_name);
+        }
+
+        function submitTargetMessage(e) {
+            if (e && e.preventDefault) e.preventDefault();
+            const inp = document.getElementById('modalMsgInput');
+            const msg = inp ? inp.value.trim() : '';
+            if (!msg) return;
+
+            playActionSound('success');
+            updateActionHUD('💬', `Direct Message sent to ${activeModalTarget}: "${msg}"`, 'indigo');
+            showToast(`💬 Direct message sent to ${activeModalTarget}: "${msg}"`, 'indigo');
+            closeMsgModal();
+        }
+
+        // =========================================================================
+        // BROADCAST FILE MODAL (Exact IDs: broadcastFileName, broadcastFileContent)
+        // =========================================================================
+        function openBroadcastFileModal() {
+            playActionSound('toggle');
+            document.getElementById('broadcastFileModal').classList.remove('hidden');
+        }
+
+        function closeBroadcastFileModal() {
+            playActionSound('toggle');
+            document.getElementById('broadcastFileModal').classList.add('hidden');
+        }
+
+        async function submitBroadcastFile(e) {
+            if (e && e.preventDefault) e.preventDefault();
+            playActionSound('success');
+            const fileNameInput = document.getElementById('broadcastFileName');
+            const fileName = fileNameInput && fileNameInput.value.trim() ? fileNameInput.value.trim() : "Lecture_4_StarterCode.py";
+            
+            updateActionHUD('📤', `File Broadcasted: C:/SmartLab/Received_Files/${fileName} sent to 6 PCs`, 'teal');
+            showToast(`📤 File broadcasted to all 6 workstations: C:/SmartLab/Received_Files/${fileName}`, 'teal');
+            closeBroadcastFileModal();
+        }
+
+        // =========================================================================
+        // ASSIGNMENTS COLLECTION MODAL (Exact ID: assignmentsTableBody)
+        // =========================================================================
+        function openAssignmentsModal() {
+            playActionSound('toggle');
+            document.getElementById('assignmentsModal').classList.remove('hidden');
+            loadAssignmentsList();
+        }
+
+        function closeAssignmentsModal() {
+            playActionSound('toggle');
+            document.getElementById('assignmentsModal').classList.add('hidden');
+        }
+
+        async function triggerCollectAssignments() {
+            playActionSound('success');
+            const btn = document.getElementById('collectAssignmentsBtn');
+            if (btn) {
+                btn.innerHTML = '<span>⏳ Collecting Files...</span>';
+                btn.className = 'px-3.5 py-2 rounded-xl bg-cyan-600 text-white text-xs font-bold transition-all shadow-lg shadow-cyan-900/60 flex items-center gap-1.5 animate-pulse cursor-pointer';
+            }
+            updateActionHUD('📥', 'Collecting project assignments from all 6 active workstations...', 'cyan');
+            showToast("📥 Collecting latest assignments from all 6 student workstations...", 'cyan');
+            setTimeout(() => {
+                if (btn) {
+                    btn.innerHTML = '<span>📥 Collect Assignments</span>';
+                    btn.className = 'px-3.5 py-2 rounded-xl bg-cyan-600/20 hover:bg-cyan-600/30 active:scale-90 active:ring-2 active:ring-cyan-500 border border-cyan-500/40 text-cyan-300 text-xs font-bold transition-all duration-150 flex items-center gap-1.5 shadow-sm cursor-pointer select-none';
+                }
+                updateActionHUD('✓', 'Collected 6 student project files into C:/SmartLab/Collected_Assignments/', 'emerald');
+                showToast("✓ Collected 6 assignment files into C:/SmartLab/Collected_Assignments/", 'emerald');
+                openAssignmentsModal();
+            }, 650);
+        }
+
+        function loadAssignmentsList() {
+            const tbody = document.getElementById('assignmentsTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = mockAssignments.map(a => `
+                <tr class="border-b border-slate-800/80 hover:bg-slate-800/40 text-xs font-mono">
+                    <td class="p-3 font-bold text-white">${a.client_id}</td>
+                    <td class="p-3 text-slate-300">${a.student_name}</td>
+                    <td class="p-3 text-indigo-400 font-semibold">${a.filename}</td>
+                    <td class="p-3 text-slate-400">${a.size}</td>
+                    <td class="p-3">
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">✓ ${a.status}</span>
+                    </td>
+                    <td class="p-3 text-right">
+                        <button onclick="playActionSound('toggle'); showToast('📥 Downloading ${a.filename}...', 'indigo')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 active:scale-90 text-indigo-300 font-sans text-xs transition cursor-pointer">
+                            Download
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // =========================================================================
+        // DAILY REPORT CARD MODAL (Exact IDs: repAvgScore, repTotalStudents, etc.)
+        // =========================================================================
+        // =========================================================================
+        // GOOGLE SHEETS STYLE DAILY AUDIT LEDGER WITH PHOTOGRAPHIC EVIDENCE PROOF
+        // =========================================================================
+        let currentReportFilter = 'ALL';
+        let activeEvidenceTarget = null;
+
+        let dailyAuditRecords = [
+            {
+                id: "EV-20261103-01",
+                client_id: "LAB-PC-03",
+                student_name: "Abdullah Al Mamun",
+                ip: "192.168.10.103",
+                mac: "B4:2E:99:A1:C2:03",
+                app_title: "Google Chrome — YouTube Shorts (Trending Reels & Non-Academic Media)",
+                category: "DISTRACTION",
+                start_time: "10:14 AM",
+                end_time: "10:48 AM",
+                interval: "10:14 AM → 10:48 AM",
+                duration: "34m 20s",
+                flagged: true,
+                violation_reason: "YouTube Shorts / Reels Distraction Watchdog Triggered",
+                score_penalty: "-25% Score Penalty",
+                screenshot_svg: `<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720"><rect width="1280" height="720" fill="#0b0f19"/><rect x="0" y="0" width="1280" height="48" fill="#1e293b"/><circle cx="25" cy="24" r="6" fill="#ef4444"/><circle cx="45" cy="24" r="6" fill="#f59e0b"/><circle cx="65" cy="24" r="6" fill="#10b981"/><rect x="90" y="10" width="800" height="28" rx="8" fill="#0f172a"/><text x="110" y="29" font-family="monospace" font-size="13" fill="#f43f5e">https://www.youtube.com/shorts/viral_reels_gaming</text><rect x="360" y="60" width="560" height="580" rx="16" fill="#000000" stroke="#f43f5e" stroke-width="2"/><circle cx="640" cy="320" r="40" fill="#f43f5e" fill-opacity="0.3"/><polygon points="630,300 660,320 630,340" fill="#ffffff"/><text x="640" y="400" font-family="system-ui, sans-serif" font-size="22" font-weight="bold" fill="#ffffff" text-anchor="middle">YouTube Shorts Player</text><text x="640" y="430" font-family="system-ui, sans-serif" font-size="14" fill="#94a3b8" text-anchor="middle">Viral Comedy &amp; Gaming Video Stream (Non-Educational)</text><rect x="20" y="650" width="1240" height="56" rx="12" fill="#0f172ab0" stroke="#f43f5e" stroke-width="1.5"/><text x="40" y="675" font-family="monospace" font-size="13" font-weight="bold" fill="#f43f5e">🚨 FORENSIC VIOLATION EVIDENCE PROOF</text><text x="40" y="694" font-family="monospace" font-size="11" fill="#cbd5e1">WORKSTATION: LAB-PC-03 | STUDENT: Abdullah Al Mamun | IP: 192.168.10.103 | TIMESTAMP: 2026-11-03 10:28:42 AM</text><text x="960" y="685" font-family="monospace" font-size="12" font-weight="bold" fill="#fbbf24">STATUS: NON-DENIABLE PROOF</text></svg>`
+            },
+            {
+                id: "EV-20261103-02",
+                client_id: "LAB-PC-05",
+                student_name: "Salman Farsi",
+                ip: "192.168.10.105",
+                mac: "B4:2E:99:A1:C2:05",
+                app_title: "Google Chrome — Facebook Watch (Live Gaming Stream)",
+                category: "DISTRACTION",
+                start_time: "11:02 AM",
+                end_time: "11:21 AM",
+                interval: "11:02 AM → 11:21 AM",
+                duration: "19m 10s",
+                flagged: true,
+                violation_reason: "Social Media Video Streaming Policy Violation",
+                score_penalty: "-15% Score Penalty",
+                screenshot_svg: `<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720"><rect width="1280" height="720" fill="#0b0f19"/><rect x="0" y="0" width="1280" height="48" fill="#1877f2"/><text x="25" y="32" font-family="system-ui, sans-serif" font-size="22" font-weight="bold" fill="#ffffff">facebook</text><rect x="150" y="10" width="500" height="28" rx="14" fill="#ffffff" fill-opacity="0.2"/><text x="170" y="28" font-family="system-ui, sans-serif" font-size="13" fill="#ffffff">Search Facebook Watch...</text><rect x="240" y="80" width="800" height="540" rx="16" fill="#1c1e21" stroke="#f59e0b" stroke-width="2"/><rect x="260" y="100" width="760" height="420" rx="12" fill="#000000"/><circle cx="640" cy="310" r="36" fill="#1877f2"/><polygon points="632,295 658,310 632,325" fill="#ffffff"/><text x="640" y="560" font-family="system-ui, sans-serif" font-size="18" font-weight="bold" fill="#ffffff" text-anchor="middle">Live Gaming Tournament Stream • 14.2K Watching</text><text x="640" y="585" font-family="system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Non-academic entertainment stream detected during lab session</text><rect x="20" y="650" width="1240" height="56" rx="12" fill="#0f172ab0" stroke="#f59e0b" stroke-width="1.5"/><text x="40" y="675" font-family="monospace" font-size="13" font-weight="bold" fill="#f59e0b">🚨 FORENSIC VIOLATION EVIDENCE PROOF</text><text x="40" y="694" font-family="monospace" font-size="11" fill="#cbd5e1">WORKSTATION: LAB-PC-05 | STUDENT: Salman Farsi | IP: 192.168.10.105 | TIMESTAMP: 2026-11-03 11:15:30 AM</text><text x="960" y="685" font-family="monospace" font-size="12" font-weight="bold" fill="#fbbf24">STATUS: NON-DENIABLE PROOF</text></svg>`
+            },
+            {
+                id: "EV-20261103-03",
+                client_id: "LAB-PC-01",
+                student_name: "Zubair Ahmed",
+                ip: "192.168.10.101",
+                mac: "B4:2E:99:A1:C2:01",
+                app_title: "Visual Studio Code — client_agent.py (Python Backend Engineering)",
+                category: "ACADEMIC",
+                start_time: "09:30 AM",
+                end_time: "12:15 PM",
+                interval: "09:30 AM → 12:15 PM",
+                duration: "2h 45m",
+                flagged: false,
+                violation_reason: "None (Approved Coding Activity)",
+                score_penalty: "None (+100% Score)",
+                screenshot_svg: `<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720"><rect width="1280" height="720" fill="#1e1e1e"/><rect x="0" y="0" width="1280" height="42" fill="#2d2d2d"/><text x="24" y="26" font-family="monospace" font-size="14" fill="#9cdcfe">Visual Studio Code — client_agent.py</text><text x="1100" y="26" font-family="monospace" font-size="13" fill="#4ade80">● Python 3.12 Active</text><text x="40" y="80" font-family="monospace" font-size="15" fill="#c586c0">import</text><text x="100" y="80" font-family="monospace" font-size="15" fill="#d4d4d4">asyncio, websockets, psutil</text><text x="40" y="115" font-family="monospace" font-size="15" fill="#c586c0">async def</text><text x="125" y="115" font-family="monospace" font-size="15" fill="#dcdcaa">monitor_workstation_health</text><text x="350" y="115" font-family="monospace" font-size="15" fill="#d4d4d4">():</text><text x="80" y="150" font-family="monospace" font-size="15" fill="#6a9955"># Student Zubair Ahmed: Python socket loop</text><text x="80" y="185" font-family="monospace" font-size="15" fill="#d4d4d4">await ws.send(json.dumps({'status': 'ACTIVE', 'focus': 98}))</text><rect x="0" y="480" width="1280" height="180" fill="#141414" stroke="#2d2d2d" stroke-width="1"/><text x="24" y="520" font-family="monospace" font-size="14" font-weight="bold" fill="#38bdf8">TERMINAL: bash</text><text x="24" y="555" font-family="monospace" font-size="13" fill="#4ade80">$ pytest tests/ -v (8 passed in 0.35s)</text><rect x="20" y="650" width="1240" height="56" rx="12" fill="#0f172ab0" stroke="#10b981" stroke-width="1.5"/><text x="40" y="675" font-family="monospace" font-size="13" font-weight="bold" fill="#10b981">🎓 ACADEMIC WORKSTATION AUDIT RECORD</text><text x="40" y="694" font-family="monospace" font-size="11" fill="#cbd5e1">WORKSTATION: LAB-PC-01 | STUDENT: Zubair Ahmed | IP: 192.168.10.101 | VERIFIED FOCUS: 98%</text><text x="960" y="685" font-family="monospace" font-size="12" font-weight="bold" fill="#10b981">STATUS: FULLY COMPLIANT</text></svg>`
+            },
+            {
+                id: "EV-20261103-04",
+                client_id: "LAB-PC-02",
+                student_name: "Tanvir Hasan",
+                ip: "192.168.10.102",
+                mac: "B4:2E:99:A1:C2:02",
+                app_title: "Google Chrome — As-Sunnah LMS Lecture #4 (Full-Stack AI Systems)",
+                category: "ACADEMIC",
+                start_time: "09:45 AM",
+                end_time: "11:30 AM",
+                interval: "09:45 AM → 11:30 AM",
+                duration: "1h 45m",
+                flagged: false,
+                violation_reason: "None (Educational Portal Video Stream Whitelisted)",
+                score_penalty: "None (+100% Score)",
+                screenshot_svg: `<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720"><rect width="1280" height="720" fill="#0f172a"/><rect x="0" y="0" width="1280" height="48" fill="#1e293b"/><text x="24" y="32" font-family="system-ui, sans-serif" font-size="18" font-weight="bold" fill="#38bdf8">As-Sunnah LMS Portal</text><text x="250" y="30" font-family="monospace" font-size="13" fill="#94a3b8">https://lms.assunnah.org/courses/ai-engineering/lecture-4</text><rect x="180" y="80" width="920" height="520" rx="16" fill="#000000" stroke="#38bdf8" stroke-width="1.5"/><circle cx="640" cy="320" r="36" fill="#38bdf8" fill-opacity="0.3"/><polygon points="632,305 658,320 632,335" fill="#38bdf8"/><text x="640" y="400" font-family="system-ui, sans-serif" font-size="20" font-weight="bold" fill="#ffffff" text-anchor="middle">Lecture #4: Fast-API WebSockets &amp; Central Architecture</text><rect x="20" y="650" width="1240" height="56" rx="12" fill="#0f172ab0" stroke="#10b981" stroke-width="1.5"/><text x="40" y="675" font-family="monospace" font-size="13" font-weight="bold" fill="#10b981">🎓 ACADEMIC WORKSTATION AUDIT RECORD</text><text x="40" y="694" font-family="monospace" font-size="11" fill="#cbd5e1">WORKSTATION: LAB-PC-02 | STUDENT: Tanvir Hasan | IP: 192.168.10.102 | VERIFIED FOCUS: 100%</text><text x="960" y="685" font-family="monospace" font-size="12" font-weight="bold" fill="#10b981">STATUS: FULLY COMPLIANT</text></svg>`
+            },
+            {
+                id: "EV-20261103-05",
+                client_id: "LAB-PC-04",
+                student_name: "Mirazur Rahman",
+                ip: "192.168.10.104",
+                mac: "B4:2E:99:A1:C2:04",
+                app_title: "PowerShell Terminal — Git Commit &amp; Push Automations",
+                category: "ACADEMIC",
+                start_time: "10:00 AM",
+                end_time: "11:40 AM",
+                interval: "10:00 AM → 11:40 AM",
+                duration: "1h 40m",
+                flagged: false,
+                violation_reason: "None (Version Control Terminal Practice)",
+                score_penalty: "None (+100% Score)",
+                screenshot_svg: `<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720"><rect width="1280" height="720" fill="#000000"/><rect x="0" y="0" width="1280" height="38" fill="#1f2937"/><text x="24" y="24" font-family="monospace" font-size="14" fill="#9ca3af">Administrator: Windows PowerShell (Smart Lab Repository)</text><text x="24" y="80" font-family="monospace" font-size="15" fill="#38bdf8">PS C:/MERAJUL ISLAM&gt; git status</text><text x="24" y="115" font-family="monospace" font-size="15" fill="#4ade80">On branch main - Your branch is up to date with 'origin/main'.</text><text x="24" y="150" font-family="monospace" font-size="15" fill="#38bdf8">PS C:/MERAJUL ISLAM&gt; git log -n 1 --oneline</text><text x="24" y="185" font-family="monospace" font-size="15" fill="#facc15">b6b0517 Add tactile button click feedback and audio chime</text><rect x="20" y="650" width="1240" height="56" rx="12" fill="#0f172ab0" stroke="#10b981" stroke-width="1.5"/><text x="40" y="675" font-family="monospace" font-size="13" font-weight="bold" fill="#10b981">🎓 ACADEMIC WORKSTATION AUDIT RECORD</text><text x="40" y="694" font-family="monospace" font-size="11" fill="#cbd5e1">WORKSTATION: LAB-PC-04 | STUDENT: Mirazur Rahman | IP: 192.168.10.104 | VERIFIED FOCUS: 100%</text><text x="960" y="685" font-family="monospace" font-size="12" font-weight="bold" fill="#10b981">STATUS: FULLY COMPLIANT</text></svg>`
+            },
+            {
+                id: "EV-20261103-06",
+                client_id: "LAB-PC-06",
+                student_name: "Mahmudul Hasan",
+                ip: "192.168.10.106",
+                mac: "B4:2E:99:A1:C2:06",
+                app_title: "pgAdmin 4 — PostgreSQL Database Schema &amp; SQL Query Runner",
+                category: "ACADEMIC",
+                start_time: "10:15 AM",
+                end_time: "12:00 PM",
+                interval: "10:15 AM → 12:00 PM",
+                duration: "1h 45m",
+                flagged: false,
+                violation_reason: "None (Relational Database Design Whitelisted)",
+                score_penalty: "None (+97% Score)",
+                screenshot_svg: `<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720"><rect width="1280" height="720" fill="#1e293b"/><rect x="0" y="0" width="1280" height="42" fill="#0f172a"/><text x="24" y="26" font-family="monospace" font-size="14" fill="#38bdf8">pgAdmin 4 — Query Tool [smartlab_db]</text><text x="24" y="80" font-family="monospace" font-size="15" fill="#c084fc">SELECT</text><text x="90" y="80" font-family="monospace" font-size="15" fill="#f8fafc">student_id, student_name, active_time, score</text><text x="24" y="115" font-family="monospace" font-size="15" fill="#c084fc">FROM</text><text x="75" y="115" font-family="monospace" font-size="15" fill="#38bdf8">attendance_ledger</text><text x="24" y="150" font-family="monospace" font-size="15" fill="#4ade80">-- Query returned 6 rows in 14 milliseconds.</text><rect x="20" y="650" width="1240" height="56" rx="12" fill="#0f172ab0" stroke="#10b981" stroke-width="1.5"/><text x="40" y="675" font-family="monospace" font-size="13" font-weight="bold" fill="#10b981">🎓 ACADEMIC WORKSTATION AUDIT RECORD</text><text x="40" y="694" font-family="monospace" font-size="11" fill="#cbd5e1">WORKSTATION: LAB-PC-06 | STUDENT: Mahmudul Hasan | IP: 192.168.10.106 | VERIFIED FOCUS: 97%</text><text x="960" y="685" font-family="monospace" font-size="12" font-weight="bold" fill="#10b981">STATUS: FULLY COMPLIANT</text></svg>`
+            }
+        ];
+
+        async function openDailyReportModal() {
+            playActionSound('toggle');
+            document.getElementById('dailyReportModal').classList.remove('hidden');
+            renderDailyReportSheet(dailyAuditRecords);
+            updateActionHUD('📊', 'Google Sheets Style Daily Audit Ledger Opened with Screenshot Proofs', 'emerald');
+        }
+
+        function closeDailyReportModal() {
+            playActionSound('toggle');
+            document.getElementById('dailyReportModal').classList.add('hidden');
+        }
+
+        function renderDailyReportSheet(records) {
+            const tbody = document.getElementById('dailyReportSheetBody');
+            if (!tbody) return;
+
+            let filtered = records;
+            if (currentReportFilter === 'DISTRACTION') {
+                filtered = records.filter(r => r.category === 'DISTRACTION');
+            } else if (currentReportFilter === 'ACADEMIC') {
+                filtered = records.filter(r => r.category === 'ACADEMIC');
+            }
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-500 font-sans text-xs">No activity records match this filter.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map((r, idx) => {
+                const isViolation = r.category === 'DISTRACTION';
+                const statusBadge = isViolation
+                    ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40 animate-pulse">🚨 VIOLATION (Flagged)</span>'
+                    : '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">✓ APPROVED (Academic)</span>';
+
+                const appClass = isViolation ? 'text-rose-300 font-bold' : 'text-slate-300';
+                const durationClass = isViolation ? 'text-rose-400 font-bold' : 'text-emerald-400 font-bold';
+
+                return `
+                    <tr class="hover:bg-slate-900/90 transition text-xs font-mono border-b border-slate-800/80">
+                        <td class="p-3 text-center text-slate-500 font-bold">${idx + 1}</td>
+                        <td class="p-3">
+                            <strong class="text-white block">${r.student_name}</strong>
+                            <span class="text-slate-500 text-[11px]">${r.client_id} • ${r.ip}</span>
+                        </td>
+                        <td class="p-3 max-w-xs truncate ${appClass}" title="${r.app_title}">
+                            ${isViolation ? '⚠️ ' : '📄 '}${r.app_title}
+                        </td>
+                        <td class="p-3 text-slate-300 font-bold whitespace-nowrap">
+                            ${r.interval}
+                        </td>
+                        <td class="p-3 ${durationClass}">
+                            ${r.duration}
+                        </td>
+                        <td class="p-3 whitespace-nowrap">
+                            ${statusBadge}
+                        </td>
+                        <td class="p-3 text-center">
+                            <button onclick="openProofModal('${r.id}')" class="px-3 py-1.5 rounded-xl ${isViolation ? 'bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 border border-rose-500/50' : 'bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 border border-indigo-500/50'} text-xs font-bold transition flex items-center gap-1.5 mx-auto cursor-pointer shadow-sm">
+                                <span>📸 View Proof</span>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function filterReportCategory(cat) {
+            playActionSound('toggle');
+            currentReportFilter = cat;
+
+            const tabAll = document.getElementById('tabRepAll');
+            const tabDist = document.getElementById('tabRepDistracted');
+            const tabAcad = document.getElementById('tabRepAcademic');
+
+            const inactive = "px-3 py-1.5 rounded-lg text-slate-400 hover:text-white font-bold transition cursor-pointer";
+            if (tabAll) tabAll.className = cat === 'ALL' ? "px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-bold transition cursor-pointer" : inactive;
+            if (tabDist) tabDist.className = cat === 'DISTRACTION' ? "px-3 py-1.5 rounded-lg bg-rose-600 text-white font-bold transition cursor-pointer" : inactive;
+            if (tabAcad) tabAcad.className = cat === 'ACADEMIC' ? "px-3 py-1.5 rounded-lg bg-emerald-600 text-white font-bold transition cursor-pointer" : inactive;
+
+            renderDailyReportSheet(dailyAuditRecords);
+        }
+
+        // =========================================================================
+        // FORENSIC PHOTOGRAPHIC EVIDENCE VIEWER MODAL
+        // =========================================================================
+        function openProofModal(evidenceId) {
+            playActionSound('toggle');
+            const record = dailyAuditRecords.find(r => r.id === evidenceId);
+            if (!record) return;
+
+            activeEvidenceTarget = record;
+            document.getElementById('proofId').innerText = record.id;
+            document.getElementById('proofTime').innerText = `${record.start_time} - ${record.end_time} (${record.duration})`;
+            document.getElementById('proofSubtitle').innerText = `${record.student_name} (${record.client_id}) • ${record.app_title}`;
+
+            const badge = document.getElementById('proofBadge');
+            if (badge) {
+                if (record.category === 'DISTRACTION') {
+                    badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40 animate-pulse';
+                    badge.innerText = '🚨 VIOLATION CONFIRMED';
+                } else {
+                    badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30';
+                    badge.innerText = '✓ ACADEMIC COMPLIANT';
+                }
+            }
+
+            const imgEl = document.getElementById('proofImage');
+            if (imgEl) {
+                imgEl.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(record.screenshot_svg.trim());
+            }
+
+            document.getElementById('proofModal').classList.remove('hidden');
+        }
+
+        function closeProofModal() {
+            playActionSound('toggle');
+            document.getElementById('proofModal').classList.add('hidden');
+            activeEvidenceTarget = null;
+        }
+
+        // =========================================================================
+        // EXPORT TO GOOGLE SHEETS / EXCEL CSV
+        // =========================================================================
+        function exportAuditReportToCSV() {
+            playActionSound('success');
+            let csv = "Row,Evidence ID,Student Name,Workstation ID,IP Address,MAC Address,Active Application / Web Activity,Category,Start Time,End Time,Total Duration,Audit Status,Score Impact\n";
+
+            dailyAuditRecords.forEach((r, idx) => {
+                const cleanApp = r.app_title.replace(/"/g, '""');
+                csv += `${idx + 1},"${r.id}","${r.student_name}","${r.client_id}","${r.ip}","${r.mac}","${cleanApp}","${r.category}","${r.start_time}","${r.end_time}","${r.duration}","${r.flagged ? 'VIOLATION' : 'APPROVED'}","${r.score_penalty}"\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `SmartLab_Daily_Report_${new Date().toISOString().slice(0, 10)}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            updateActionHUD('📊', 'Google Sheets .CSV Exported! File ready to open in Excel or Google Sheets', 'emerald');
+            showToast("📊 Google Sheets .CSV Downloaded Successfully!", 'emerald');
+        }
+
+        // =========================================================================
+        // TELEGRAM REMOTE CONTROL BOT SIMULATOR (Exact IDs: telegramConsoleOutput, telegramInput)
+        // =========================================================================
+        function openTelegramModal() {
+            playActionSound('toggle');
+            document.getElementById('telegramModal').classList.remove('hidden');
+            const statusEl = document.getElementById('telegramConfigStatus');
+            if (statusEl) statusEl.innerText = "Bot @SmartLab_Admin_Bot Connected";
+            updateActionHUD('🤖', 'Telegram Remote Bot Simulator Opened', 'indigo');
+        }
+
+        function closeTelegramModal() {
+            playActionSound('toggle');
+            document.getElementById('telegramModal').classList.add('hidden');
+        }
+
+        async function runTelegramCmd(cmd) {
+            playActionSound('success');
+            const consoleOut = document.getElementById('telegramConsoleOutput');
+            if (!consoleOut) return;
+
+            consoleOut.innerHTML += `<div class="text-indigo-400 mt-2 font-bold">&gt; Telegram Admin: ${cmd}</div>`;
+
+            let botReply = '';
+            if (cmd === '/status') {
+                botReply = `🤖 <b>Smart Lab Status Report:</b>\n• Total Online: ${clusterData.total_online}/6\n• Distractions: ${clusterData.total_distracted}\n• Focus Mode: ${clusterData.focus_mode_active ? 'ON' : 'OFF'}\n• Curfew Policy: 21:00 - 08:00 AM Active`;
+            } else if (cmd === '/lock_all') {
+                broadcastCommand('LOCK_ALL');
+                botReply = `🔒 <b>Curfew Command Dispatched:</b> All 6 workstations have been locked remotely via Telegram!`;
+            } else if (cmd === '/unlock_all') {
+                broadcastCommand('UNLOCK_ALL');
+                botReply = `🔓 <b>Workstations Restored:</b> All PCs unlocked and normal student access granted.`;
+            } else if (cmd === '/stats') {
+                botReply = `📊 <b>Productivity Index:</b> ${clusterData.lab_average_productivity}% average across 6 active seats.`;
+            } else {
+                botReply = `💡 <b>Smart Lab Bot:</b> Command recognized: ${cmd}`;
+            }
+
+            consoleOut.innerHTML += `<div class="text-emerald-300 font-mono text-xs whitespace-pre-line bg-slate-900/80 p-2.5 rounded-xl border border-slate-800 mt-1">${botReply}</div>`;
+            consoleOut.scrollTop = consoleOut.scrollHeight;
+        }
+
+        function sendTelegramInput() {
+            const inp = document.getElementById('telegramInput');
+            const val = inp ? inp.value.trim() : '';
+            if (val) {
+                runTelegramCmd(val);
+                inp.value = '';
+            }
+        }
+
+        // =========================================================================
+        // MASTER ADMIN HOST & EXTRA UTILITY ACTIONS
+        // =========================================================================
+        async function lockHostPC() {
+            playActionSound('lock');
+            updateActionHUD('🔒', 'Master Central Controller PC Screen Locked', 'purple');
+            showToast("🔒 Master Admin PC Screen Locked!", 'purple');
+        }
+
+        async function unlockHostPC() {
+            playActionSound('unlock');
+            updateActionHUD('🔓', 'Master Central Controller PC Screen Unlocked', 'emerald');
+            showToast("🔓 Master Admin PC Screen Unlocked!", 'emerald');
+        }
+
+        async function sleepHostPC() {
+            playActionSound('toggle');
+            updateActionHUD('🌙', 'Master Central Controller display put to standby sleep', 'amber');
+            showToast("🌙 Master Admin PC Display put to sleep.", 'amber');
+        }
+
+        function toggleCurfewOverride() {
+            playActionSound('toggle');
+            isOverrideActive = !isOverrideActive;
+            const badge = document.getElementById('statCurfew');
+            const btn = document.getElementById('overrideBtn');
+            if (isOverrideActive) {
+                if (badge) badge.innerText = "23:00 - 08:00 AM";
+                if (btn) {
+                    btn.className = "px-3.5 py-2 rounded-xl bg-purple-600/30 hover:bg-purple-600/40 active:scale-90 border border-purple-500 text-purple-300 text-xs font-bold transition-all duration-150 flex items-center gap-1.5 shadow-lg shadow-purple-950/40 animate-pulse cursor-pointer select-none";
+                    btn.innerHTML = '<span>⏰ Override: ACTIVE (23:00)</span>';
+                }
+                updateActionHUD('⏰', 'Curfew Override Active: Lab operating hours extended until 23:00 (11:00 PM)', 'purple');
+                showToast("⏰ Curfew Override ACTIVATED: Extended lab session until 23:00", 'purple');
+            } else {
+                if (badge) badge.innerText = "21:00 - 08:00 AM";
+                if (btn) {
+                    btn.className = "px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-90 border border-slate-700 text-slate-300 text-xs font-semibold transition-all duration-150 flex items-center gap-1.5 cursor-pointer select-none";
+                    btn.innerHTML = '<span>⚙️ Curfew Override</span>';
+                }
+                updateActionHUD('⏰', 'Curfew Policy Reset: Standard 21:00 curfew lock restored', 'slate');
+                showToast("⏰ Curfew Policy Reset: Standard 21:00 Curfew Enforced.", 'slate');
+            }
+        }
+
+        function copyInstructorLink() {
+            playActionSound('success');
+            const dummy = document.createElement("input");
+            document.body.appendChild(dummy);
+            dummy.value = window.location.href;
+            dummy.select();
+            document.execCommand("copy");
+            document.body.removeChild(dummy);
+            updateActionHUD('🔗', 'Instructor Multi-Seat Monitor link copied to clipboard', 'emerald');
+            showToast("✓ Instructor Monitor Link Copied! Any teacher opening this URL can monitor the lab cluster.", 'emerald');
+        }
+
+        function switchViewMode(mode) {
+            console.log("Switch view mode:", mode);
+        }
+
+        // =========================================================================
+        // VOICE BROADCAST SIMULATOR (Exact IDs: micBtn, micLabel, voiceTextInput)
+        // =========================================================================
+        async function sendVoiceSimulate(presetText) {
+            playActionSound('success');
+            updateActionHUD('🔊', `Voice PA Announcement: "${presetText}"`, 'indigo');
+            showToast(`🔊 Voice Announcement Broadcasted across all PC speakers: "${presetText}"`, 'indigo');
+        }
+
+        function sendCustomVoiceText() {
+            const inp = document.getElementById('voiceTextInput');
+            const val = inp ? inp.value.trim() : '';
+            if (val) {
+                sendVoiceSimulate(val);
+                inp.value = '';
+            }
+        }
+
+        function toggleMicRecording() {
+            isRecording = !isRecording;
+            const micBtn = document.getElementById('micBtn');
+            const micLabel = document.getElementById('micLabel');
+            if (isRecording) {
+                playActionSound('toggle');
+                if (micBtn) micBtn.className = "px-4 py-2 rounded-xl bg-rose-600 border border-rose-400 text-white text-xs font-bold transition flex items-center gap-2 animate-pulse cursor-pointer";
+                if (micLabel) micLabel.innerText = "🔴 Live Mic Broadcasting...";
+                updateActionHUD('🎙️', 'Live Microphone Broadcast Active to all 6 student workstation speakers', 'rose');
+                showToast("🎙️ Live PA Microphone Active: Broadcasting your voice to all student speakers in real time!", 'rose');
+            } else {
+                stopMic();
+            }
+        }
+
+        function stopMic() {
+            isRecording = false;
+            playActionSound('toggle');
+            const micBtn = document.getElementById('micBtn');
+            const micLabel = document.getElementById('micLabel');
+            if (micBtn) micBtn.className = "px-4 py-2 rounded-xl bg-indigo-600/30 hover:bg-indigo-600/40 border border-indigo-500 text-indigo-300 text-xs font-bold transition flex items-center gap-2 cursor-pointer";
+            if (micLabel) micLabel.innerText = "🎙️ Push-to-Talk Mic";
+            updateActionHUD('🎙️', 'Live Microphone Broadcast Terminated', 'slate');
+            showToast("🎙️ Microphone Broadcast Ended.", 'slate');
+        }
+
+        // =========================================================================
+        // APPLICATION USAGE AUDIT LOG TABLE (Exact IDs: auditTableBody, auditCountBadge, auditSearchInput)
+        // =========================================================================
+        function renderAuditLog(logs) {
+            const tbody = document.getElementById('auditTableBody');
+            const countBadge = document.getElementById('auditCountBadge');
+            if (countBadge) countBadge.innerText = `${logs.length} Records`;
+            if (!tbody) return;
+
+            if (logs.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-500 font-mono text-xs">No audit records match your query.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = logs.map(l => {
+                const isDistraction = l.category === 'DISTRACTION';
+                const catBadge = isDistraction
+                    ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">FLAGGED</span>'
+                    : '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">ACADEMIC</span>';
+
+                return `
+                    <tr class="border-b border-slate-800/80 hover:bg-slate-800/40 text-xs font-mono">
+                        <td class="p-3 text-white font-bold">${l.student_name} <span class="text-slate-500 font-normal">(${l.client_id})</span></td>
+                        <td class="p-3 text-slate-300 font-semibold">${l.process_name}</td>
+                        <td class="p-3 text-slate-400 truncate max-w-xs" title="${l.window_title}">${l.window_title}</td>
+                        <td class="p-3">${catBadge}</td>
+                        <td class="p-3 text-slate-300 font-bold">${l.formatted_time}</td>
+                        <td class="p-3 text-slate-500 text-[11px]">${new Date(l.last_seen).toLocaleTimeString()}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function filterAuditTable() {
+            const searchEl = document.getElementById('auditSearchInput');
+            const query = (searchEl ? searchEl.value : '').toLowerCase().trim();
+            if (!query) {
+                renderAuditLog(mockAuditLog);
+                return;
+            }
+            const filtered = mockAuditLog.filter(l => 
+                l.student_name.toLowerCase().includes(query) ||
+                l.client_id.toLowerCase().includes(query) ||
+                l.process_name.toLowerCase().includes(query) ||
+                l.window_title.toLowerCase().includes(query) ||
+                l.category.toLowerCase().includes(query)
+            );
+            renderAuditLog(filtered);
+        }
+
+        async function refreshAuditLog() {
+            playActionSound('toggle');
+            renderAuditLog(mockAuditLog);
+            updateActionHUD('✓', 'Application Usage Audit Log Synchronized & Refreshed', 'emerald');
+            showToast("✓ Application Usage Audit Records Refreshed!", 'emerald');
+        }
+
+        // =========================================================================
+        // RESILIENT INITIALIZATION
+        // =========================================================================
+        function initApp() {
+            updateLiveClock();
+            setInterval(updateLiveClock, 1000);
+            startSimulation();
+        }
+
+        if (document.readyState === 'loading') {
+            window.addEventListener('DOMContentLoaded', initApp);
+        } else {
+            initApp();
+        }
+    </script>
+</body>
+</html>

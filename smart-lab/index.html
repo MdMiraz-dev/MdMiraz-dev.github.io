@@ -330,72 +330,146 @@
         </div>
     </div>
 
-    <!-- 1. Daily Report Card Modal -->
-    <div id="dailyReportModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
-        <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-3xl w-full p-5 sm:p-7 space-y-5 shadow-2xl my-auto">
-            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+    <!-- 1. Daily Activity & Evidence Report Modal (Google Sheets Style) -->
+    <div id="dailyReportModal" class="hidden fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-2 sm:p-5 overflow-y-auto">
+        <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-6xl w-full p-4 sm:p-6 space-y-4 shadow-2xl my-auto">
+            <!-- Modal Header -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-800 gap-3">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-xl">
+                    <div class="w-11 h-11 rounded-2xl bg-emerald-600/20 border border-emerald-500/40 flex items-center justify-center text-2xl shadow-inner">
                         📊
                     </div>
                     <div>
-                        <h3 class="text-base sm:text-lg font-bold text-white">Daily AI Productivity Report Card</h3>
-                        <p class="text-xs text-slate-400">As-Sunnah Computer Lab • Automated End-of-Day Audit</p>
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-base sm:text-lg font-bold text-white font-mono flex items-center gap-2">
+                                <span>Daily Student Activity & Evidence Ledger</span>
+                                <span class="text-[10px] bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full font-sans font-semibold">Google Sheets Format</span>
+                            </h3>
+                        </div>
+                        <p class="text-xs text-slate-400 font-sans mt-0.5">As-Sunnah Computer Lab • Time-interval tracking, distraction detection & photographic evidence</p>
                     </div>
                 </div>
-                <button onclick="closeDailyReportModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-sm font-bold transition">✕</button>
-            </div>
-
-            <!-- Report KPI Cards -->
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
-                    <span class="text-[11px] text-slate-400">Lab Avg Score</span>
-                    <div id="repAvgScore" class="text-xl font-bold text-emerald-400 mt-0.5">--</div>
-                </div>
-                <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
-                    <span class="text-[11px] text-slate-400">Active Students</span>
-                    <div id="repTotalStudents" class="text-xl font-bold text-white mt-0.5">--</div>
-                </div>
-                <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
-                    <span class="text-[11px] text-emerald-400">Total Focused Time</span>
-                    <div id="repFocusedTime" class="text-xl font-bold text-emerald-300 mt-0.5">--</div>
-                </div>
-                <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
-                    <span class="text-[11px] text-rose-400">Distraction Time</span>
-                    <div id="repDistractedTime" class="text-xl font-bold text-rose-300 mt-0.5">--</div>
+                <div class="flex items-center gap-2">
+                    <button onclick="exportAuditReportToCSV()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold text-xs transition flex items-center gap-1.5 shadow-lg shadow-emerald-950/40 cursor-pointer">
+                        <span>📥 Export to Google Sheets (.CSV)</span>
+                    </button>
+                    <button onclick="window.print()" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition flex items-center gap-1.5 cursor-pointer">
+                        <span>🖨️ Print / PDF</span>
+                    </button>
+                    <button onclick="closeDailyReportModal()" class="w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-sm font-bold transition cursor-pointer">✕</button>
                 </div>
             </div>
 
-            <!-- Leaderboard & Attention Lists -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Top Focused Students -->
-                <div class="bg-slate-950/70 p-4 rounded-2xl border border-slate-800/80 space-y-2">
-                    <h4 class="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
-                        <span>🏆</span> Top Focused Students
-                    </h4>
-                    <div id="repTopFocusedList" class="space-y-1.5 text-xs font-mono">
-                        <div class="text-slate-500 py-3 text-center">Loading report...</div>
-                    </div>
+            <!-- KPI Summary Strip -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 font-mono">
+                <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800">
+                    <span class="text-[11px] text-slate-400 font-sans">Lab Productivity Score</span>
+                    <div id="repAvgScore" class="text-xl font-bold text-emerald-400 mt-0.5">94% Focused</div>
                 </div>
-
-                <!-- Distraction / Needs Attention -->
-                <div class="bg-slate-950/70 p-4 rounded-2xl border border-slate-800/80 space-y-2">
-                    <h4 class="text-xs font-bold text-rose-400 uppercase tracking-wider flex items-center gap-1.5">
-                        <span>⚠️</span> Distraction Flags
-                    </h4>
-                    <div id="repTopDistractedList" class="space-y-1.5 text-xs font-mono">
-                        <div class="text-slate-500 py-3 text-center">Loading report...</div>
-                    </div>
+                <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800">
+                    <span class="text-[11px] text-slate-400 font-sans">Tracked Workstations</span>
+                    <div id="repTotalStudents" class="text-xl font-bold text-white mt-0.5">6 Active PCs</div>
+                </div>
+                <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800">
+                    <span class="text-[11px] text-emerald-400 font-sans">Total Academic Coding</span>
+                    <div id="repFocusedTime" class="text-xl font-bold text-emerald-300 mt-0.5">9h 22m</div>
+                </div>
+                <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800">
+                    <span class="text-[11px] text-rose-400 font-sans">Distraction Violations</span>
+                    <div id="repDistractedTime" class="text-xl font-bold text-rose-300 mt-0.5">2 Flagged (53m)</div>
                 </div>
             </div>
 
-            <div class="flex justify-between items-center pt-2 border-t border-slate-800/80">
-                <span id="repGeneratedAt" class="text-[11px] text-slate-500 font-mono"></span>
-                <button onclick="closeDailyReportModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-200">Close</button>
+            <!-- Filter Tabs & Search Bar -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+                <div class="flex items-center gap-1.5 bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs">
+                    <button onclick="filterReportCategory('ALL')" id="tabRepAll" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-bold transition cursor-pointer">All Activities (6)</button>
+                    <button onclick="filterReportCategory('DISTRACTION')" id="tabRepDistracted" class="px-3 py-1.5 rounded-lg text-rose-400 hover:text-white font-bold transition cursor-pointer">🚨 Flagged Violations (2)</button>
+                    <button onclick="filterReportCategory('ACADEMIC')" id="tabRepAcademic" class="px-3 py-1.5 rounded-lg text-emerald-400 hover:text-white font-bold transition cursor-pointer">🎓 Coding / Academic (4)</button>
+                </div>
+                <span class="text-xs text-slate-400 font-mono">
+                    💡 <em>Click any row's <strong>"📸 View Proof Screenshot"</strong> to inspect full forensic proof.</em>
+                </span>
+            </div>
+
+            <!-- Google Sheets Style Table -->
+            <div class="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-950 max-h-[350px] overflow-y-auto">
+                <table class="w-full text-left text-xs font-mono border-collapse">
+                    <thead class="bg-slate-900/95 sticky top-0 z-10 text-slate-400 uppercase text-[10px] tracking-wider border-b border-slate-800">
+                        <tr>
+                            <th class="p-3 w-10 text-center">#</th>
+                            <th class="p-3">Student Name & Workstation</th>
+                            <th class="p-3">Application / URL Activity</th>
+                            <th class="p-3">Time Interval (Start → End)</th>
+                            <th class="p-3">Duration</th>
+                            <th class="p-3">Audit Status</th>
+                            <th class="p-3 text-center">Photographic Evidence</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dailyReportSheetBody" class="divide-y divide-slate-800/80">
+                        <!-- Populated dynamically -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Footer Notes -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2 border-t border-slate-800/80 text-[11px] text-slate-400 font-mono">
+                <span id="repGeneratedAt">Generated: Automatically at Curfew (21:00)</span>
+                <span class="text-emerald-400">✓ Cryptographically watermarked with MAC address, IP & exact millisecond timestamp.</span>
             </div>
         </div>
     </div>
 
+    <!-- 1B. Photographic Evidence Proof Modal (Forensic Screenshot Viewer) -->
+    <div id="proofModal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-lg z-[60] flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+        <div class="bg-slate-900 border-2 border-amber-500/60 rounded-3xl max-w-4xl w-full p-4 sm:p-6 space-y-4 shadow-2xl relative my-auto">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-xl">
+                        📸
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-base sm:text-lg font-bold text-white font-mono">PHOTOGRAPHIC AUDIT EVIDENCE</h3>
+                            <span id="proofBadge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40">VIOLATION RECORDED</span>
+                        </div>
+                        <p id="proofSubtitle" class="text-xs text-slate-300 font-mono mt-0.5"></p>
+                    </div>
+                </div>
+                <button onclick="closeProofModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-sm font-bold transition cursor-pointer">✕</button>
+            </div>
+
+            <!-- Forensic Evidence Description Bar -->
+            <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between text-xs font-mono gap-2">
+                <div>
+                    <span class="text-slate-500">Evidence ID: </span><span id="proofId" class="text-indigo-400 font-bold"></span>
+                    <span class="text-slate-500 ml-3">Time Window: </span><span id="proofTime" class="text-emerald-300 font-bold"></span>
+                </div>
+                <div class="text-amber-400 text-[11px] font-sans">
+                    ⚠️ <em>ছাত্র যদি অস্বীকার করে, এই স্ক্রিনশট ও সময় দেখালে কোনো অস্বীকার করার সুযোগ থাকবে না।</em>
+                </div>
+            </div>
+
+            <!-- High-Definition Watermarked Screenshot Display -->
+            <div class="relative bg-black rounded-2xl overflow-hidden border-2 border-slate-800 aspect-video flex items-center justify-center shadow-2xl">
+                <img id="proofImage" src="" alt="Forensic Proof Screenshot" class="w-full h-full object-contain" />
+            </div>
+
+            <!-- Bottom Actions -->
+            <div class="flex items-center justify-between pt-1">
+                <span class="text-[11px] text-slate-400 font-mono">Evidence status: <strong>Archived in C:/SmartLab/Audit_Proofs/</strong></span>
+                <div class="flex items-center gap-2">
+                    <button onclick="playActionSound('success'); showToast('📥 Proof Screenshot Downloaded as PNG!', 'indigo')" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition flex items-center gap-1.5 cursor-pointer">
+                        <span>💾 Download Proof PNG</span>
+                    </button>
+                    <button onclick="closeProofModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition cursor-pointer">
+                        <span>Close</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- 2. Central File Broadcast Modal -->
     <div id="broadcastFileModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
@@ -1733,54 +1807,261 @@ Type a slash command or click one above to test...</div>
         // =========================================================================
         // DAILY REPORT CARD MODAL (Exact IDs: repAvgScore, repTotalStudents, etc.)
         // =========================================================================
+        // =========================================================================
+        // GOOGLE SHEETS STYLE DAILY AUDIT LEDGER WITH PHOTOGRAPHIC EVIDENCE PROOF
+        // =========================================================================
+        let currentReportFilter = 'ALL';
+        let activeEvidenceTarget = null;
+
+        let dailyAuditRecords = [
+            {
+                id: "EV-20261103-01",
+                client_id: "LAB-PC-03",
+                student_name: "Abdullah Al Mamun",
+                ip: "192.168.10.103",
+                mac: "B4:2E:99:A1:C2:03",
+                app_title: "Google Chrome — YouTube Shorts (Trending Reels & Non-Academic Media)",
+                category: "DISTRACTION",
+                start_time: "10:14 AM",
+                end_time: "10:48 AM",
+                interval: "10:14 AM → 10:48 AM",
+                duration: "34m 20s",
+                flagged: true,
+                violation_reason: "YouTube Shorts / Reels Distraction Watchdog Triggered",
+                score_penalty: "-25% Score Penalty",
+                screenshot_svg: `<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720"><rect width="1280" height="720" fill="#0b0f19"/><rect x="0" y="0" width="1280" height="48" fill="#1e293b"/><circle cx="25" cy="24" r="6" fill="#ef4444"/><circle cx="45" cy="24" r="6" fill="#f59e0b"/><circle cx="65" cy="24" r="6" fill="#10b981"/><rect x="90" y="10" width="800" height="28" rx="8" fill="#0f172a"/><text x="110" y="29" font-family="monospace" font-size="13" fill="#f43f5e">https://www.youtube.com/shorts/viral_reels_gaming</text><rect x="360" y="60" width="560" height="580" rx="16" fill="#000000" stroke="#f43f5e" stroke-width="2"/><circle cx="640" cy="320" r="40" fill="#f43f5e" fill-opacity="0.3"/><polygon points="630,300 660,320 630,340" fill="#ffffff"/><text x="640" y="400" font-family="system-ui, sans-serif" font-size="22" font-weight="bold" fill="#ffffff" text-anchor="middle">YouTube Shorts Player</text><text x="640" y="430" font-family="system-ui, sans-serif" font-size="14" fill="#94a3b8" text-anchor="middle">Viral Comedy &amp; Gaming Video Stream (Non-Educational)</text><rect x="20" y="650" width="1240" height="56" rx="12" fill="#0f172ab0" stroke="#f43f5e" stroke-width="1.5"/><text x="40" y="675" font-family="monospace" font-size="13" font-weight="bold" fill="#f43f5e">🚨 FORENSIC VIOLATION EVIDENCE PROOF</text><text x="40" y="694" font-family="monospace" font-size="11" fill="#cbd5e1">WORKSTATION: LAB-PC-03 | STUDENT: Abdullah Al Mamun | IP: 192.168.10.103 | TIMESTAMP: 2026-11-03 10:28:42 AM</text><text x="960" y="685" font-family="monospace" font-size="12" font-weight="bold" fill="#fbbf24">STATUS: NON-DENIABLE PROOF</text></svg>`
+            },
+            {
+                id: "EV-20261103-02",
+                client_id: "LAB-PC-05",
+                student_name: "Salman Farsi",
+                ip: "192.168.10.105",
+                mac: "B4:2E:99:A1:C2:05",
+                app_title: "Google Chrome — Facebook Watch (Live Gaming Stream)",
+                category: "DISTRACTION",
+                start_time: "11:02 AM",
+                end_time: "11:21 AM",
+                interval: "11:02 AM → 11:21 AM",
+                duration: "19m 10s",
+                flagged: true,
+                violation_reason: "Social Media Video Streaming Policy Violation",
+                score_penalty: "-15% Score Penalty",
+                screenshot_svg: `<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720"><rect width="1280" height="720" fill="#0b0f19"/><rect x="0" y="0" width="1280" height="48" fill="#1877f2"/><text x="25" y="32" font-family="system-ui, sans-serif" font-size="22" font-weight="bold" fill="#ffffff">facebook</text><rect x="150" y="10" width="500" height="28" rx="14" fill="#ffffff" fill-opacity="0.2"/><text x="170" y="28" font-family="system-ui, sans-serif" font-size="13" fill="#ffffff">Search Facebook Watch...</text><rect x="240" y="80" width="800" height="540" rx="16" fill="#1c1e21" stroke="#f59e0b" stroke-width="2"/><rect x="260" y="100" width="760" height="420" rx="12" fill="#000000"/><circle cx="640" cy="310" r="36" fill="#1877f2"/><polygon points="632,295 658,310 632,325" fill="#ffffff"/><text x="640" y="560" font-family="system-ui, sans-serif" font-size="18" font-weight="bold" fill="#ffffff" text-anchor="middle">Live Gaming Tournament Stream • 14.2K Watching</text><text x="640" y="585" font-family="system-ui, sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">Non-academic entertainment stream detected during lab session</text><rect x="20" y="650" width="1240" height="56" rx="12" fill="#0f172ab0" stroke="#f59e0b" stroke-width="1.5"/><text x="40" y="675" font-family="monospace" font-size="13" font-weight="bold" fill="#f59e0b">🚨 FORENSIC VIOLATION EVIDENCE PROOF</text><text x="40" y="694" font-family="monospace" font-size="11" fill="#cbd5e1">WORKSTATION: LAB-PC-05 | STUDENT: Salman Farsi | IP: 192.168.10.105 | TIMESTAMP: 2026-11-03 11:15:30 AM</text><text x="960" y="685" font-family="monospace" font-size="12" font-weight="bold" fill="#fbbf24">STATUS: NON-DENIABLE PROOF</text></svg>`
+            },
+            {
+                id: "EV-20261103-03",
+                client_id: "LAB-PC-01",
+                student_name: "Zubair Ahmed",
+                ip: "192.168.10.101",
+                mac: "B4:2E:99:A1:C2:01",
+                app_title: "Visual Studio Code — client_agent.py (Python Backend Engineering)",
+                category: "ACADEMIC",
+                start_time: "09:30 AM",
+                end_time: "12:15 PM",
+                interval: "09:30 AM → 12:15 PM",
+                duration: "2h 45m",
+                flagged: false,
+                violation_reason: "None (Approved Coding Activity)",
+                score_penalty: "None (+100% Score)",
+                screenshot_svg: `<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720"><rect width="1280" height="720" fill="#1e1e1e"/><rect x="0" y="0" width="1280" height="42" fill="#2d2d2d"/><text x="24" y="26" font-family="monospace" font-size="14" fill="#9cdcfe">Visual Studio Code — client_agent.py</text><text x="1100" y="26" font-family="monospace" font-size="13" fill="#4ade80">● Python 3.12 Active</text><text x="40" y="80" font-family="monospace" font-size="15" fill="#c586c0">import</text><text x="100" y="80" font-family="monospace" font-size="15" fill="#d4d4d4">asyncio, websockets, psutil</text><text x="40" y="115" font-family="monospace" font-size="15" fill="#c586c0">async def</text><text x="125" y="115" font-family="monospace" font-size="15" fill="#dcdcaa">monitor_workstation_health</text><text x="350" y="115" font-family="monospace" font-size="15" fill="#d4d4d4">():</text><text x="80" y="150" font-family="monospace" font-size="15" fill="#6a9955"># Student Zubair Ahmed: Python socket loop</text><text x="80" y="185" font-family="monospace" font-size="15" fill="#d4d4d4">await ws.send(json.dumps({'status': 'ACTIVE', 'focus': 98}))</text><rect x="0" y="480" width="1280" height="180" fill="#141414" stroke="#2d2d2d" stroke-width="1"/><text x="24" y="520" font-family="monospace" font-size="14" font-weight="bold" fill="#38bdf8">TERMINAL: bash</text><text x="24" y="555" font-family="monospace" font-size="13" fill="#4ade80">$ pytest tests/ -v (8 passed in 0.35s)</text><rect x="20" y="650" width="1240" height="56" rx="12" fill="#0f172ab0" stroke="#10b981" stroke-width="1.5"/><text x="40" y="675" font-family="monospace" font-size="13" font-weight="bold" fill="#10b981">🎓 ACADEMIC WORKSTATION AUDIT RECORD</text><text x="40" y="694" font-family="monospace" font-size="11" fill="#cbd5e1">WORKSTATION: LAB-PC-01 | STUDENT: Zubair Ahmed | IP: 192.168.10.101 | VERIFIED FOCUS: 98%</text><text x="960" y="685" font-family="monospace" font-size="12" font-weight="bold" fill="#10b981">STATUS: FULLY COMPLIANT</text></svg>`
+            },
+            {
+                id: "EV-20261103-04",
+                client_id: "LAB-PC-02",
+                student_name: "Tanvir Hasan",
+                ip: "192.168.10.102",
+                mac: "B4:2E:99:A1:C2:02",
+                app_title: "Google Chrome — As-Sunnah LMS Lecture #4 (Full-Stack AI Systems)",
+                category: "ACADEMIC",
+                start_time: "09:45 AM",
+                end_time: "11:30 AM",
+                interval: "09:45 AM → 11:30 AM",
+                duration: "1h 45m",
+                flagged: false,
+                violation_reason: "None (Educational Portal Video Stream Whitelisted)",
+                score_penalty: "None (+100% Score)",
+                screenshot_svg: `<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720"><rect width="1280" height="720" fill="#0f172a"/><rect x="0" y="0" width="1280" height="48" fill="#1e293b"/><text x="24" y="32" font-family="system-ui, sans-serif" font-size="18" font-weight="bold" fill="#38bdf8">As-Sunnah LMS Portal</text><text x="250" y="30" font-family="monospace" font-size="13" fill="#94a3b8">https://lms.assunnah.org/courses/ai-engineering/lecture-4</text><rect x="180" y="80" width="920" height="520" rx="16" fill="#000000" stroke="#38bdf8" stroke-width="1.5"/><circle cx="640" cy="320" r="36" fill="#38bdf8" fill-opacity="0.3"/><polygon points="632,305 658,320 632,335" fill="#38bdf8"/><text x="640" y="400" font-family="system-ui, sans-serif" font-size="20" font-weight="bold" fill="#ffffff" text-anchor="middle">Lecture #4: Fast-API WebSockets &amp; Central Architecture</text><rect x="20" y="650" width="1240" height="56" rx="12" fill="#0f172ab0" stroke="#10b981" stroke-width="1.5"/><text x="40" y="675" font-family="monospace" font-size="13" font-weight="bold" fill="#10b981">🎓 ACADEMIC WORKSTATION AUDIT RECORD</text><text x="40" y="694" font-family="monospace" font-size="11" fill="#cbd5e1">WORKSTATION: LAB-PC-02 | STUDENT: Tanvir Hasan | IP: 192.168.10.102 | VERIFIED FOCUS: 100%</text><text x="960" y="685" font-family="monospace" font-size="12" font-weight="bold" fill="#10b981">STATUS: FULLY COMPLIANT</text></svg>`
+            },
+            {
+                id: "EV-20261103-05",
+                client_id: "LAB-PC-04",
+                student_name: "Mirazur Rahman",
+                ip: "192.168.10.104",
+                mac: "B4:2E:99:A1:C2:04",
+                app_title: "PowerShell Terminal — Git Commit &amp; Push Automations",
+                category: "ACADEMIC",
+                start_time: "10:00 AM",
+                end_time: "11:40 AM",
+                interval: "10:00 AM → 11:40 AM",
+                duration: "1h 40m",
+                flagged: false,
+                violation_reason: "None (Version Control Terminal Practice)",
+                score_penalty: "None (+100% Score)",
+                screenshot_svg: `<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720"><rect width="1280" height="720" fill="#000000"/><rect x="0" y="0" width="1280" height="38" fill="#1f2937"/><text x="24" y="24" font-family="monospace" font-size="14" fill="#9ca3af">Administrator: Windows PowerShell (Smart Lab Repository)</text><text x="24" y="80" font-family="monospace" font-size="15" fill="#38bdf8">PS C:/MERAJUL ISLAM&gt; git status</text><text x="24" y="115" font-family="monospace" font-size="15" fill="#4ade80">On branch main - Your branch is up to date with 'origin/main'.</text><text x="24" y="150" font-family="monospace" font-size="15" fill="#38bdf8">PS C:/MERAJUL ISLAM&gt; git log -n 1 --oneline</text><text x="24" y="185" font-family="monospace" font-size="15" fill="#facc15">b6b0517 Add tactile button click feedback and audio chime</text><rect x="20" y="650" width="1240" height="56" rx="12" fill="#0f172ab0" stroke="#10b981" stroke-width="1.5"/><text x="40" y="675" font-family="monospace" font-size="13" font-weight="bold" fill="#10b981">🎓 ACADEMIC WORKSTATION AUDIT RECORD</text><text x="40" y="694" font-family="monospace" font-size="11" fill="#cbd5e1">WORKSTATION: LAB-PC-04 | STUDENT: Mirazur Rahman | IP: 192.168.10.104 | VERIFIED FOCUS: 100%</text><text x="960" y="685" font-family="monospace" font-size="12" font-weight="bold" fill="#10b981">STATUS: FULLY COMPLIANT</text></svg>`
+            },
+            {
+                id: "EV-20261103-06",
+                client_id: "LAB-PC-06",
+                student_name: "Mahmudul Hasan",
+                ip: "192.168.10.106",
+                mac: "B4:2E:99:A1:C2:06",
+                app_title: "pgAdmin 4 — PostgreSQL Database Schema &amp; SQL Query Runner",
+                category: "ACADEMIC",
+                start_time: "10:15 AM",
+                end_time: "12:00 PM",
+                interval: "10:15 AM → 12:00 PM",
+                duration: "1h 45m",
+                flagged: false,
+                violation_reason: "None (Relational Database Design Whitelisted)",
+                score_penalty: "None (+97% Score)",
+                screenshot_svg: `<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720"><rect width="1280" height="720" fill="#1e293b"/><rect x="0" y="0" width="1280" height="42" fill="#0f172a"/><text x="24" y="26" font-family="monospace" font-size="14" fill="#38bdf8">pgAdmin 4 — Query Tool [smartlab_db]</text><text x="24" y="80" font-family="monospace" font-size="15" fill="#c084fc">SELECT</text><text x="90" y="80" font-family="monospace" font-size="15" fill="#f8fafc">student_id, student_name, active_time, score</text><text x="24" y="115" font-family="monospace" font-size="15" fill="#c084fc">FROM</text><text x="75" y="115" font-family="monospace" font-size="15" fill="#38bdf8">attendance_ledger</text><text x="24" y="150" font-family="monospace" font-size="15" fill="#4ade80">-- Query returned 6 rows in 14 milliseconds.</text><rect x="20" y="650" width="1240" height="56" rx="12" fill="#0f172ab0" stroke="#10b981" stroke-width="1.5"/><text x="40" y="675" font-family="monospace" font-size="13" font-weight="bold" fill="#10b981">🎓 ACADEMIC WORKSTATION AUDIT RECORD</text><text x="40" y="694" font-family="monospace" font-size="11" fill="#cbd5e1">WORKSTATION: LAB-PC-06 | STUDENT: Mahmudul Hasan | IP: 192.168.10.106 | VERIFIED FOCUS: 97%</text><text x="960" y="685" font-family="monospace" font-size="12" font-weight="bold" fill="#10b981">STATUS: FULLY COMPLIANT</text></svg>`
+            }
+        ];
+
         async function openDailyReportModal() {
             playActionSound('toggle');
             document.getElementById('dailyReportModal').classList.remove('hidden');
-            const setTxt = (id, val) => {
-                const el = document.getElementById(id);
-                if (el) el.innerText = val;
-            };
-
-            setTxt('repAvgScore', '96/100');
-            setTxt('repTotalStudents', '6 Active');
-            setTxt('repFocusedTime', '6h 15m');
-            setTxt('repDistractedTime', '14m');
-            setTxt('repGeneratedAt', `Generated: ${new Date().toLocaleTimeString()} (Curfew Active)`);
-
-            const topFocusedEl = document.getElementById('repTopFocusedList');
-            if (topFocusedEl) {
-                topFocusedEl.innerHTML = `
-                    <div class="flex items-center justify-between p-2 rounded-xl bg-slate-900 border border-slate-800">
-                        <span>🥇 Tanvir Hasan (LAB-PC-02)</span>
-                        <span class="text-emerald-400 font-bold">100% Score</span>
-                    </div>
-                    <div class="flex items-center justify-between p-2 rounded-xl bg-slate-900 border border-slate-800">
-                        <span>🥈 Mirazur Rahman (LAB-PC-04)</span>
-                        <span class="text-emerald-400 font-bold">100% Score</span>
-                    </div>
-                    <div class="flex items-center justify-between p-2 rounded-xl bg-slate-900 border border-slate-800">
-                        <span>🥉 Zubair Ahmed (LAB-PC-01)</span>
-                        <span class="text-emerald-400 font-bold">98% Score</span>
-                    </div>
-                `;
-            }
-
-            const topDistractedEl = document.getElementById('repTopDistractedList');
-            if (topDistractedEl) {
-                topDistractedEl.innerHTML = `
-                    <div class="flex items-center justify-between p-2 rounded-xl bg-rose-950/40 border border-rose-500/30 text-rose-300">
-                        <span>⚠️ Abdullah Al Mamun (LAB-PC-03)</span>
-                        <span class="font-bold">14m Shorts (Flagged)</span>
-                    </div>
-                `;
-            }
-
-            updateActionHUD('📊', 'Daily AI Productivity Report Card Generated (Average Lab Score 96%)', 'emerald');
+            renderDailyReportSheet(dailyAuditRecords);
+            updateActionHUD('📊', 'Google Sheets Style Daily Audit Ledger Opened with Screenshot Proofs', 'emerald');
         }
 
         function closeDailyReportModal() {
             playActionSound('toggle');
             document.getElementById('dailyReportModal').classList.add('hidden');
+        }
+
+        function renderDailyReportSheet(records) {
+            const tbody = document.getElementById('dailyReportSheetBody');
+            if (!tbody) return;
+
+            let filtered = records;
+            if (currentReportFilter === 'DISTRACTION') {
+                filtered = records.filter(r => r.category === 'DISTRACTION');
+            } else if (currentReportFilter === 'ACADEMIC') {
+                filtered = records.filter(r => r.category === 'ACADEMIC');
+            }
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-500 font-sans text-xs">No activity records match this filter.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map((r, idx) => {
+                const isViolation = r.category === 'DISTRACTION';
+                const statusBadge = isViolation
+                    ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40 animate-pulse">🚨 VIOLATION (Flagged)</span>'
+                    : '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">✓ APPROVED (Academic)</span>';
+
+                const appClass = isViolation ? 'text-rose-300 font-bold' : 'text-slate-300';
+                const durationClass = isViolation ? 'text-rose-400 font-bold' : 'text-emerald-400 font-bold';
+
+                return `
+                    <tr class="hover:bg-slate-900/90 transition text-xs font-mono border-b border-slate-800/80">
+                        <td class="p-3 text-center text-slate-500 font-bold">${idx + 1}</td>
+                        <td class="p-3">
+                            <strong class="text-white block">${r.student_name}</strong>
+                            <span class="text-slate-500 text-[11px]">${r.client_id} • ${r.ip}</span>
+                        </td>
+                        <td class="p-3 max-w-xs truncate ${appClass}" title="${r.app_title}">
+                            ${isViolation ? '⚠️ ' : '📄 '}${r.app_title}
+                        </td>
+                        <td class="p-3 text-slate-300 font-bold whitespace-nowrap">
+                            ${r.interval}
+                        </td>
+                        <td class="p-3 ${durationClass}">
+                            ${r.duration}
+                        </td>
+                        <td class="p-3 whitespace-nowrap">
+                            ${statusBadge}
+                        </td>
+                        <td class="p-3 text-center">
+                            <button onclick="openProofModal('${r.id}')" class="px-3 py-1.5 rounded-xl ${isViolation ? 'bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 border border-rose-500/50' : 'bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 border border-indigo-500/50'} text-xs font-bold transition flex items-center gap-1.5 mx-auto cursor-pointer shadow-sm">
+                                <span>📸 View Proof</span>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function filterReportCategory(cat) {
+            playActionSound('toggle');
+            currentReportFilter = cat;
+
+            const tabAll = document.getElementById('tabRepAll');
+            const tabDist = document.getElementById('tabRepDistracted');
+            const tabAcad = document.getElementById('tabRepAcademic');
+
+            const inactive = "px-3 py-1.5 rounded-lg text-slate-400 hover:text-white font-bold transition cursor-pointer";
+            if (tabAll) tabAll.className = cat === 'ALL' ? "px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-bold transition cursor-pointer" : inactive;
+            if (tabDist) tabDist.className = cat === 'DISTRACTION' ? "px-3 py-1.5 rounded-lg bg-rose-600 text-white font-bold transition cursor-pointer" : inactive;
+            if (tabAcad) tabAcad.className = cat === 'ACADEMIC' ? "px-3 py-1.5 rounded-lg bg-emerald-600 text-white font-bold transition cursor-pointer" : inactive;
+
+            renderDailyReportSheet(dailyAuditRecords);
+        }
+
+        // =========================================================================
+        // FORENSIC PHOTOGRAPHIC EVIDENCE VIEWER MODAL
+        // =========================================================================
+        function openProofModal(evidenceId) {
+            playActionSound('toggle');
+            const record = dailyAuditRecords.find(r => r.id === evidenceId);
+            if (!record) return;
+
+            activeEvidenceTarget = record;
+            document.getElementById('proofId').innerText = record.id;
+            document.getElementById('proofTime').innerText = `${record.start_time} - ${record.end_time} (${record.duration})`;
+            document.getElementById('proofSubtitle').innerText = `${record.student_name} (${record.client_id}) • ${record.app_title}`;
+
+            const badge = document.getElementById('proofBadge');
+            if (badge) {
+                if (record.category === 'DISTRACTION') {
+                    badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40 animate-pulse';
+                    badge.innerText = '🚨 VIOLATION CONFIRMED';
+                } else {
+                    badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30';
+                    badge.innerText = '✓ ACADEMIC COMPLIANT';
+                }
+            }
+
+            const imgEl = document.getElementById('proofImage');
+            if (imgEl) {
+                imgEl.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(record.screenshot_svg.trim());
+            }
+
+            document.getElementById('proofModal').classList.remove('hidden');
+        }
+
+        function closeProofModal() {
+            playActionSound('toggle');
+            document.getElementById('proofModal').classList.add('hidden');
+            activeEvidenceTarget = null;
+        }
+
+        // =========================================================================
+        // EXPORT TO GOOGLE SHEETS / EXCEL CSV
+        // =========================================================================
+        function exportAuditReportToCSV() {
+            playActionSound('success');
+            let csv = "Row,Evidence ID,Student Name,Workstation ID,IP Address,MAC Address,Active Application / Web Activity,Category,Start Time,End Time,Total Duration,Audit Status,Score Impact\n";
+
+            dailyAuditRecords.forEach((r, idx) => {
+                const cleanApp = r.app_title.replace(/"/g, '""');
+                csv += `${idx + 1},"${r.id}","${r.student_name}","${r.client_id}","${r.ip}","${r.mac}","${cleanApp}","${r.category}","${r.start_time}","${r.end_time}","${r.duration}","${r.flagged ? 'VIOLATION' : 'APPROVED'}","${r.score_penalty}"\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `SmartLab_Daily_Report_${new Date().toISOString().slice(0, 10)}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            updateActionHUD('📊', 'Google Sheets .CSV Exported! File ready to open in Excel or Google Sheets', 'emerald');
+            showToast("📊 Google Sheets .CSV Downloaded Successfully!", 'emerald');
         }
 
         // =========================================================================
