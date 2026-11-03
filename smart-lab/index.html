@@ -518,10 +518,17 @@ Type a slash command or click one above to test...</div>
     </div>
 
     <script>
-        
-        
-        // --- SMART LAB ENTERPRISE REAL-TIME CLUSTER & SIMULATOR DATA ---
+        // =========================================================================
+        // SMART LAB COMMAND CENTER - ENTERPRISE ENGINE & LIVE SIMULATOR
+        // =========================================================================
         let isSimulated = true;
+        let activeScreenTarget = null;
+        let activeModalTarget = null;
+        let isOverrideActive = false;
+        let screenRefreshTimer = null;
+        let isRecording = false;
+
+        // Realistic student workstation profiles
         let mockWorkstations = [
             {
                 client_id: "LAB-PC-01",
@@ -622,11 +629,11 @@ Type a slash command or click one above to test...</div>
                 is_master_host: false,
                 curfew_locked: false,
                 usb_blocked: false,
-                productivity_score: 96,
+                productivity_score: 95,
                 latest_telemetry: {
-                    cpu_percent: 21.3,
-                    ram_percent: 38.0,
-                    active_window_title: "Postman - REST API Endpoint Verification"
+                    cpu_percent: 32.1,
+                    ram_percent: 54.0,
+                    active_window_title: "Figma - Smart Lab UI Prototype v2"
                 },
                 distraction_report: {
                     is_distracted: false,
@@ -635,7 +642,7 @@ Type a slash command or click one above to test...</div>
             },
             {
                 client_id: "LAB-PC-06",
-                student_name: "Nasir Uddin",
+                student_name: "Mahmudul Hasan",
                 ip_address: "192.168.10.106",
                 mac_address: "B4:2E:99:A1:C2:06",
                 os_info: "Windows 11 Pro",
@@ -644,11 +651,11 @@ Type a slash command or click one above to test...</div>
                 is_master_host: false,
                 curfew_locked: false,
                 usb_blocked: false,
-                productivity_score: 94,
+                productivity_score: 97,
                 latest_telemetry: {
-                    cpu_percent: 31.8,
-                    ram_percent: 48.9,
-                    active_window_title: "Figma - Institutional UI Wireframes"
+                    cpu_percent: 15.6,
+                    ram_percent: 38.4,
+                    active_window_title: "pgAdmin - PostgreSQL Database Schema"
                 },
                 distraction_report: {
                     is_distracted: false,
@@ -659,81 +666,87 @@ Type a slash command or click one above to test...</div>
 
         let mockAlerts = [
             {
-                alert_id: "ALT-904",
+                id: "alert-001",
                 client_id: "LAB-PC-03",
-                ip_address: "192.168.10.103",
-                timestamp: new Date().toLocaleTimeString(),
-                message: "Non-educational short-form stream blocked (YouTube Shorts)"
+                student_name: "Abdullah Al Mamun",
+                type: "DISTRACTION_REELS",
+                title: "Social Media / Shorts Dwell Time Violation",
+                matched_keyword: "YouTube Shorts / Reels",
+                timestamp: "Just now",
+                severity: "HIGH"
             }
         ];
 
         let mockAuditLog = [
             {
-                client_id: "LAB-PC-03",
-                student_name: "Abdullah Al Mamun",
-                process_name: "chrome.exe",
-                window_title: "YouTube Shorts - Funny Clips Stream",
-                category: "DISTRACTION",
-                is_distracted: true,
-                total_seconds: 142,
-                formatted_time: "2m 22s",
-                last_seen: new Date().toISOString()
-            },
-            {
-                client_id: "LAB-PC-02",
-                student_name: "Tanvir Hasan",
-                process_name: "chrome.exe",
-                window_title: "As-Sunnah LMS - Python & Network Systems Lecture",
-                category: "EDUCATIONAL",
-                is_distracted: false,
-                total_seconds: 1840,
-                formatted_time: "30m 40s",
-                last_seen: new Date().toISOString()
-            },
-            {
+                id: "aud-01",
                 client_id: "LAB-PC-01",
                 student_name: "Zubair Ahmed",
                 process_name: "Code.exe",
                 window_title: "client_agent.py - Visual Studio Code",
-                category: "DEVELOPMENT",
-                is_distracted: false,
-                total_seconds: 2450,
-                formatted_time: "40m 50s",
+                category: "ACADEMIC",
+                formatted_time: "1h 45m",
+                last_seen: new Date(Date.now() - 60000).toISOString()
+            },
+            {
+                id: "aud-02",
+                client_id: "LAB-PC-02",
+                student_name: "Tanvir Hasan",
+                process_name: "chrome.exe",
+                window_title: "As-Sunnah LMS Lecture Video #4 - Google Chrome",
+                category: "ACADEMIC",
+                formatted_time: "1h 12m",
+                last_seen: new Date(Date.now() - 120000).toISOString()
+            },
+            {
+                id: "aud-03",
+                client_id: "LAB-PC-03",
+                student_name: "Abdullah Al Mamun",
+                process_name: "chrome.exe",
+                window_title: "YouTube Shorts (Distraction Detected!)",
+                category: "DISTRACTION",
+                formatted_time: "14m 20s",
                 last_seen: new Date().toISOString()
             },
             {
-                client_id: "LAB-PC-05",
-                student_name: "Salman Farsi",
-                process_name: "Postman.exe",
-                window_title: "REST API Endpoint - POST /api/v1/auth",
-                category: "DEVELOPMENT",
-                is_distracted: false,
-                total_seconds: 720,
-                formatted_time: "12m 00s",
-                last_seen: new Date().toISOString()
-            },
-            {
+                id: "aud-04",
                 client_id: "LAB-PC-04",
                 student_name: "Mirazur Rahman",
-                process_name: "powershell.exe",
+                process_name: "pwsh.exe",
                 window_title: "PowerShell - git commit & push",
-                category: "DEVELOPMENT",
-                is_distracted: false,
-                total_seconds: 960,
-                formatted_time: "16m 00s",
-                last_seen: new Date().toISOString()
+                category: "ACADEMIC",
+                formatted_time: "55m 10s",
+                last_seen: new Date(Date.now() - 300000).toISOString()
             },
             {
-                client_id: "LAB-PC-06",
-                student_name: "Nasir Uddin",
+                id: "aud-05",
+                client_id: "LAB-PC-05",
+                student_name: "Salman Farsi",
                 process_name: "Figma.exe",
-                window_title: "Smart Lab Command Center - UI Design",
-                category: "DEVELOPMENT",
-                is_distracted: false,
-                total_seconds: 1540,
-                formatted_time: "25m 40s",
-                last_seen: new Date().toISOString()
+                window_title: "Smart Lab UI Prototype v2 - Figma",
+                category: "ACADEMIC",
+                formatted_time: "1h 30m",
+                last_seen: new Date(Date.now() - 180000).toISOString()
+            },
+            {
+                id: "aud-06",
+                client_id: "LAB-PC-06",
+                student_name: "Mahmudul Hasan",
+                process_name: "pgAdmin4.exe",
+                window_title: "PostgreSQL Database Schema - pgAdmin 4",
+                category: "ACADEMIC",
+                formatted_time: "48m 15s",
+                last_seen: new Date(Date.now() - 240000).toISOString()
             }
+        ];
+
+        let mockAssignments = [
+            { client_id: "LAB-PC-01", student_name: "Zubair Ahmed", filename: "Zubair_LabTask_04.py", size: "14.2 KB", status: "Collected" },
+            { client_id: "LAB-PC-02", student_name: "Tanvir Hasan", filename: "Tanvir_FastAPI_Project.zip", size: "2.1 MB", status: "Collected" },
+            { client_id: "LAB-PC-03", student_name: "Abdullah Al Mamun", filename: "Abdullah_Assignment_4.py", size: "9.8 KB", status: "Collected" },
+            { client_id: "LAB-PC-04", student_name: "Mirazur Rahman", filename: "Miraz_SmartLab_Agent.py", size: "18.5 KB", status: "Collected" },
+            { client_id: "LAB-PC-05", student_name: "Salman Farsi", filename: "Salman_UI_Wireframe.fig", size: "4.8 MB", status: "Collected" },
+            { client_id: "LAB-PC-06", student_name: "Mahmudul Hasan", filename: "Mahmud_Schema_Dump.sql", size: "28.4 KB", status: "Collected" }
         ];
 
         let clusterData = {
@@ -749,9 +762,32 @@ Type a slash command or click one above to test...</div>
             audit_log: mockAuditLog
         };
 
+        // UI Toast Notification
+        function showToast(msg, isWarning = false) {
+            const oldToast = document.getElementById("demoToast");
+            if (oldToast && oldToast.remove) oldToast.remove();
+            const toast = document.createElement("div");
+            toast.id = "demoToast";
+            toast.className = `fixed bottom-5 right-5 z-50 ${isWarning ? 'bg-amber-950/90 text-amber-200 border-amber-500/50' : 'bg-slate-900/95 text-emerald-300 border-emerald-500/50'} border px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3 font-semibold text-sm backdrop-blur-md transition-all duration-300`;
+            toast.innerHTML = `<span class="text-base">${isWarning ? '⚠️' : '✓'}</span> <span>${msg}</span>`;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 400);
+            }, 3800);
+        }
+
+        // Live Clock
+        function updateLiveClock() {
+            const now = new Date();
+            const clockEl = document.getElementById('liveClock');
+            if (clockEl) clockEl.innerText = now.toLocaleTimeString('en-US', { hour12: false });
+        }
+
+        // Initialize Simulation Engine
         function startSimulation() {
             isSimulated = true;
-            console.log("Starting Smart Lab Interactive Simulation Engine...");
+            console.log("Starting Smart Lab Interactive Engine...");
 
             const badge = document.getElementById('connectionBadge');
             if (badge) {
@@ -759,167 +795,38 @@ Type a slash command or click one above to test...</div>
                 badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span>Live Lab Cluster Online</span>';
             }
 
-            // Immediately render cluster data
             renderCluster(clusterData);
+            renderAuditLog(clusterData.audit_log);
 
-            // Fluctuate CPU/RAM slightly every 2.5s for realistic live activity
+            // Dynamic live telemetry fluctuations (CPU 12-48%, RAM 30-65%)
             setInterval(() => {
                 mockWorkstations.forEach(pc => {
-                    if (pc.connected && pc.status !== 'SHUTDOWN') {
+                    if (pc.connected && pc.status !== 'DISCONNECTED_TAMPERED') {
                         const t = pc.latest_telemetry;
-                        t.cpu_percent = Math.min(95, Math.max(8, +(t.cpu_percent + (Math.random() * 8 - 4)).toFixed(1)));
-                        t.ram_percent = Math.min(90, Math.max(20, +(t.ram_percent + (Math.random() * 4 - 2)).toFixed(1)));
+                        t.cpu_percent = Math.min(95, Math.max(10, +(t.cpu_percent + (Math.random() * 6 - 3)).toFixed(1)));
+                        t.ram_percent = Math.min(90, Math.max(25, +(t.ram_percent + (Math.random() * 3 - 1.5)).toFixed(1)));
                     }
                 });
                 renderCluster(clusterData);
-            }, 2500);
+            }, 3000);
         }
 
-        // Action Handlers for Interactive Demo
-        function broadcastCommand(cmd, payload = {}) {
-            console.log("Broadcast command:", cmd);
-            if (cmd === 'lock_all') {
-                mockWorkstations.forEach(pc => { 
-                    pc.curfew_locked = true; 
-                    pc.status = 'CURFEW_LOCKED'; 
-                });
-                showToast("🔒 All 6 Workstations Locked with Curfew Maintenance Screen!");
-            } else if (cmd === 'unlock_all') {
-                mockWorkstations.forEach(pc => { 
-                    pc.curfew_locked = false; 
-                    pc.status = pc.client_id === 'LAB-PC-03' ? 'DISTRACTED' : 'ACTIVE'; 
-                });
-                showToast("🔓 All Workstations Unlocked & Restored!");
-            } else if (cmd === 'shutdown_all') {
-                mockWorkstations.forEach(pc => { 
-                    pc.status = 'DISCONNECTED_TAMPERED'; 
-                    pc.connected = false; 
-                });
-                clusterData.total_online = 0;
-                showToast("⚡ Graceful Auto-Shutdown Broadcasted across Lab!");
-            }
-            renderCluster(clusterData);
-        }
-
-        function sendClientCommand(clientId, cmd, payload = {}) {
-            const pc = mockWorkstations.find(w => w.client_id === clientId);
-            if (pc) {
-                if (cmd === 'LOCK') {
-                    pc.curfew_locked = true;
-                    pc.status = 'CURFEW_LOCKED';
-                    showToast(`🔒 Workstation ${clientId} Screen Locked!`);
-                } else if (cmd === 'UNLOCK') {
-                    pc.curfew_locked = false;
-                    pc.status = 'ACTIVE';
-                    showToast(`🔓 Workstation ${clientId} Screen Unlocked!`);
-                } else if (cmd === 'SHUTDOWN') {
-                    pc.connected = false;
-                    pc.status = 'DISCONNECTED_TAMPERED';
-                    showToast(`⚡ Workstation ${clientId} Powered Off!`);
-                }
-                renderCluster(clusterData);
-            }
-        }
-
-        function toggleFocusMode() {
-            clusterData.focus_mode_active = !clusterData.focus_mode_active;
-            showToast(clusterData.focus_mode_active ? "🎯 Focus Mode: ACTIVATED (Reels & Shorts Blocked)" : "🎯 Focus Mode: DEACTIVATED");
-            renderCluster(clusterData);
-        }
-
-        function toggleUsbPolicy() {
-            clusterData.usb_storage_blocked = !clusterData.usb_storage_blocked;
-            mockWorkstations.forEach(pc => pc.usb_blocked = clusterData.usb_storage_blocked);
-            showToast(clusterData.usb_storage_blocked ? "🔒 USB Ports: BLOCKED across all PCs" : "💾 USB Ports: ALLOWED");
-            renderCluster(clusterData);
-        }
-
-        function promptBroadcastMessage() {
-            const msg = prompt("ল্যাবের সব ছাত্রের স্ক্রিনে পাঠানোর জন্য নোটিশ লিখুন (Enter Broadcast Message):", "ক্লাস শেষ হতে ১০ মিনিট বাকি। অনুগ্রহ করে সব ফাইল সেভ করুন।");
-            if (msg) {
-                showToast(`📢 সবার স্ক্রিনে পাঠানো হয়েছে: "${msg}"`);
-            }
-        }
-
-        function ackAlert(alertId) {
-            clusterData.alerts = [];
-            clusterData.total_distracted = 0;
-            const pc = mockWorkstations.find(w => w.client_id === 'LAB-PC-03');
-            if (pc) {
-                pc.status = 'ACTIVE';
-                pc.distraction_report.is_distracted = false;
-                pc.latest_telemetry.active_window_title = 'Visual Studio Code - Python Project';
-            }
-            showToast("✓ Alert Acknowledged by Instructor!");
-            renderCluster(clusterData);
-        }
-
-        function showToast(msg) {
-            const oldToast = document.getElementById("demoToast");
-            if (oldToast) oldToast.remove();
-            const toast = document.createElement("div");
-            toast.id = "demoToast";
-            toast.className = "fixed bottom-5 right-5 z-50 bg-slate-900 text-emerald-300 border border-emerald-500/50 px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3 font-semibold text-sm";
-            toast.innerHTML = `<span class="text-base text-emerald-400">✓</span> <span>${msg}</span>`;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 4000);
-        }
-
-        let ws;
-        let clusterData = { workstations: [], alerts: [] };
-        let activeModalTarget = null;
-        let isOverrideActive = false;
-
-        // Live Clock
-        function updateLiveClock() {
-            const now = new Date();
-            document.getElementById('liveClock').innerText = now.toLocaleTimeString('en-US', { hour12: false });
-        }
-        setInterval(updateLiveClock, 1000);
-        updateLiveClock();
-
-        // WebSocket Setup
-        function initWebSocket() {
-            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-            const wsUrl = `${protocol}//${window.location.host}/ws/admin`;
-            
-            ws = new WebSocket(wsUrl);
-
-            ws.onopen = () => {
-                const badge = document.getElementById('connectionBadge');
-                badge.className = 'px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-semibold flex items-center gap-1.5';
-                badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400"></span><span>Live Sync Active</span>';
-            };
-
-            ws.onmessage = (event) => {
-                try {
-                    const data = JSON.parse(event.data);
-                    if (data.type === 'CLUSTER_UPDATE') {
-                        renderCluster(data);
-                    }
-                } catch (e) {
-                    console.error('Error parsing WS message:', e);
-                }
-            };
-
-            ws.onclose = () => { if (!isSimulated) startSimulation();
-                const badge = document.getElementById('connectionBadge');
-                badge.className = 'px-3 py-1.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-semibold flex items-center gap-1.5';
-                badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-rose-400 animate-pulse"></span><span>Reconnecting...</span>';
-                setTimeout(initWebSocket, 2000);
-            };
-        }
-
+        // RENDER CLUSTER TO DOM
         function renderCluster(data) {
             clusterData = data;
-            document.getElementById('statTotal').innerText = data.total_registered;
-            document.getElementById('statOnline').innerText = data.total_online;
-            document.getElementById('statDistracted').innerText = data.total_distracted;
-            document.getElementById('statTampered').innerText = data.total_tampered;
-            document.getElementById('statProductivity').innerText = (data.lab_average_productivity !== undefined ? data.lab_average_productivity : 100) + '%';
-            document.getElementById('gridCountBadge').innerText = `${data.workstations.length} PCs`;
+            const setTxt = (id, val) => {
+                const el = document.getElementById(id);
+                if (el) el.innerText = val;
+            };
 
-            // Update Focus Mode Button
+            setTxt('statTotal', data.total_registered);
+            setTxt('statOnline', data.total_online);
+            setTxt('statDistracted', data.total_distracted);
+            setTxt('statTampered', data.total_tampered);
+            setTxt('statProductivity', (data.lab_average_productivity !== undefined ? data.lab_average_productivity : 100) + '%');
+            setTxt('gridCountBadge', `${data.workstations.length} PCs`);
+
+            // Focus Mode Button State
             const focusBtn = document.getElementById('focusModeBtn');
             if (focusBtn) {
                 if (data.focus_mode_active) {
@@ -931,7 +838,7 @@ Type a slash command or click one above to test...</div>
                 }
             }
 
-            // Update USB Storage Policy Button
+            // USB Storage Policy Button State
             const usbBtn = document.getElementById('usbPolicyBtn');
             if (usbBtn) {
                 if (data.usb_storage_blocked) {
@@ -943,33 +850,29 @@ Type a slash command or click one above to test...</div>
                 }
             }
 
-            if (data.audit_log) {
-                renderAuditLog(data.audit_log);
+            // Tamper Alert Banner (if distracted or offline PCs exist)
+            const tamperSection = document.getElementById('tamperAlertSection');
+            const tamperText = document.getElementById('tamperAlertText');
+            if (tamperSection && tamperText) {
+                if (data.total_distracted > 0 || data.total_tampered > 0) {
+                    tamperSection.classList.remove('hidden');
+                    const pc3 = data.workstations.find(w => w.client_id === 'LAB-PC-03');
+                    const distractedName = pc3 ? pc3.student_name : 'Abdullah Al Mamun';
+                    tamperText.innerHTML = `Attention: <strong>${distractedName} (LAB-PC-03)</strong> triggered non-academic distraction filter: <span class="text-rose-400 font-bold underline">YouTube Shorts / Reels</span>. Click Acknowledge or Lock PC to intervene.`;
+                } else {
+                    tamperSection.classList.add('hidden');
+                }
             }
 
-            // Tamper Alerts Section
-            const alertSec = document.getElementById('tamperAlertSection');
-            const alertBadges = document.getElementById('tamperBadges');
-            if (data.alerts && data.alerts.length > 0) {
-                alertSec.classList.remove('hidden');
-                alertBadges.innerHTML = data.alerts.map(a => `
-                    <span class="px-2.5 py-1 rounded-lg bg-amber-500/20 border border-amber-500/40 text-xs font-mono font-bold text-amber-200 flex items-center gap-1.5">
-                        <span>🚨 ${a.client_id} (${a.ip_address})</span>
-                        <button onclick="ackAlert('${a.alert_id}')" class="text-[10px] underline ml-1 hover:text-white">Ack</button>
-                    </span>
-                `).join('');
-            } else {
-                alertSec.classList.add('hidden');
-            }
-
-            // Render PC Cards Grid
+            // Workstations Grid (Exact ID: workstationGrid)
             const grid = document.getElementById('workstationGrid');
-            if (data.workstations.length === 0) {
+            if (!grid) return;
+
+            if (!data.workstations || data.workstations.length === 0) {
                 grid.innerHTML = `
-                    <div class="col-span-full py-16 text-center text-slate-500">
+                    <div class="col-span-full py-16 text-center text-slate-500 font-mono">
                         <span class="text-4xl block mb-2">⏳</span>
                         <p class="text-sm">No workstations connected yet.</p>
-                        <p class="text-xs text-slate-600 mt-1">Start agents on student computers to populate the grid.</p>
                     </div>
                 `;
                 return;
@@ -982,109 +885,23 @@ Type a slash command or click one above to test...</div>
                 const ram = t.ram_percent ? t.ram_percent.toFixed(0) : 0;
                 const windowTitle = t.active_window_title || 'Idle / Background';
 
-                // Master Host PC Custom Rendering
-                if (pc.is_master_host || pc.client_id === 'MASTER-ADMIN-PC') {
-                    const isLocked = pc.curfew_locked;
-                    const lockBadge = isLocked 
-                        ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/40">🔒 HOST DISPLAY LOCKED</span>'
-                        : '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 animate-pulse">👑 CENTRAL HOST ACTIVE</span>';
-
-                    return `
-                        <div class="bg-gradient-to-br from-slate-900 via-amber-950/20 to-slate-900 border border-amber-500/50 rounded-2xl p-4 sm:p-5 flex flex-col justify-between space-y-4 shadow-xl shadow-amber-950/20 hover:border-amber-400 transition relative">
-                            <div>
-                                <div class="flex items-start justify-between gap-2 mb-2">
-                                    <div>
-                                        <div class="flex items-center gap-1.5">
-                                            <h4 class="font-bold text-base text-white font-mono flex items-center gap-1">
-                                                <span>👑</span> MASTER-ADMIN-PC
-                                            </h4>
-                                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 font-mono">HOST</span>
-                                        </div>
-                                        <p class="text-xs text-amber-200/80 mt-0.5">${pc.student_name} • <span class="text-slate-400">${pc.ip_address}</span></p>
-                                    </div>
-                                    <div class="flex flex-col items-end gap-1">
-                                        ${lockBadge}
-                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-slate-950 text-slate-300 border border-slate-800">${pc.os_info}</span>
-                                    </div>
-                                </div>
-
-                                <!-- Host Hardware Live Metrics -->
-                                <div class="grid grid-cols-2 gap-2 my-2 text-xs font-mono">
-                                    <div class="bg-slate-950/90 p-2.5 rounded-xl border border-amber-500/30">
-                                        <div class="flex justify-between text-slate-300 mb-1">
-                                            <span class="font-sans font-semibold text-amber-300">Host CPU</span>
-                                            <span class="font-bold text-white">${cpu}%</span>
-                                        </div>
-                                        <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                                            <div class="bg-amber-400 h-1.5 rounded-full transition-all duration-500" style="width: ${cpu}%"></div>
-                                        </div>
-                                    </div>
-                                    <div class="bg-slate-950/90 p-2.5 rounded-xl border border-amber-500/30">
-                                        <div class="flex justify-between text-slate-300 mb-1">
-                                            <span class="font-sans font-semibold text-amber-300">Host RAM</span>
-                                            <span class="font-bold text-white">${ram}%</span>
-                                        </div>
-                                        <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                                            <div class="bg-purple-400 h-1.5 rounded-full transition-all duration-500" style="width: ${ram}%"></div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Active Service Process Banner -->
-                                <div class="bg-slate-950/80 p-2.5 rounded-xl border border-slate-800 text-xs">
-                                    <span class="text-[10px] text-amber-400 font-bold uppercase tracking-wider block mb-1">Central Controller Service</span>
-                                    <p class="text-xs text-slate-200 font-mono truncate">
-                                        FastAPI • Smart Lab Central Server • Port 8500
-                                    </p>
-                                </div>
-                            </div>
-
-                            <!-- Host Direct Power & Lock Controls -->
-                            <div class="space-y-2 pt-2 border-t border-slate-800/80">
-                                <div class="grid grid-cols-2 gap-2">
-                                    ${isLocked ? `
-                                        <button onclick="unlockHostPC()" class="py-2 rounded-xl bg-emerald-600/30 hover:bg-emerald-600/40 border border-emerald-500/50 text-xs font-bold text-emerald-300 transition flex items-center justify-center gap-1.5 shadow-md">
-                                            <span>🔓</span> Unlock Host PC
-                                        </button>
-                                    ` : `
-                                        <button onclick="lockHostPC()" class="py-2 rounded-xl bg-purple-600/30 hover:bg-purple-600/40 border border-purple-500/50 text-xs font-bold text-purple-300 transition flex items-center justify-center gap-1.5 shadow-md">
-                                            <span>🔒</span> Lock Host PC
-                                        </button>
-                                    `}
-                                    <button onclick="sleepHostPC()" class="py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold text-amber-200 transition flex items-center justify-center gap-1.5">
-                                        <span>🌙</span> Sleep Host
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }
-
                 let borderClass = 'border-slate-800';
                 let statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">ONLINE</span>';
 
-                if (pc.status === 'DISTRACTED') {
+                if (pc.curfew_locked || pc.status === 'CURFEW_LOCKED') {
+                    borderClass = 'border-purple-500/50 shadow-lg shadow-purple-950/20';
+                    statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/40">🔒 CURFEW LOCKED</span>';
+                } else if (pc.status === 'DISTRACTED') {
                     borderClass = 'border-rose-500/50 shadow-lg shadow-rose-950/20';
                     statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40 animate-pulse">⚠️ DISTRACTED (REELS)</span>';
-                } else if (pc.status === 'DISCONNECTED_TAMPERED') {
+                } else if (pc.status === 'DISCONNECTED_TAMPERED' || !pc.connected) {
                     borderClass = 'border-amber-500/50 shadow-lg shadow-amber-950/20';
-                    statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">🚨 TAMPERED / OFFLINE</span>';
-                } else if (pc.status === 'CURFEW_LOCKED') {
-                    borderClass = 'border-purple-500/50';
-                    statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/40">🔒 CURFEW LOCKED</span>';
+                    statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">🚨 POWERED OFF</span>';
                 }
 
-                // Productivity Score Styling
                 const score = pc.productivity_score !== undefined ? pc.productivity_score : 100;
-                let scoreTextClass = 'text-emerald-400';
-                let scoreBarClass = 'bg-emerald-500';
-                if (score < 50) {
-                    scoreTextClass = 'text-rose-400';
-                    scoreBarClass = 'bg-rose-500';
-                } else if (score < 80) {
-                    scoreTextClass = 'text-amber-400';
-                    scoreBarClass = 'bg-amber-500';
-                }
+                let scoreTextClass = score < 50 ? 'text-rose-400' : (score < 80 ? 'text-amber-400' : 'text-emerald-400');
+                let scoreBarClass = score < 50 ? 'bg-rose-500' : (score < 80 ? 'bg-amber-500' : 'bg-emerald-500');
 
                 const usbBadge = pc.usb_blocked
                     ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">🔒 USB Blocked</span>'
@@ -1148,7 +965,7 @@ Type a slash command or click one above to test...</div>
                                 ` : ''}
                             </div>
 
-                            <!-- Live Screen Thumbnail (Real-Time Student Screen Preview) -->
+                            <!-- Live Screen Thumbnail (Click to view full screen) -->
                             <div onclick="openScreenModal('${pc.client_id}', '${pc.student_name}')" class="relative group cursor-pointer overflow-hidden rounded-xl border border-slate-800 bg-slate-950 aspect-video flex items-center justify-center mt-3 shadow-inner">
                                 <div class="w-full h-full">
                                     ${getStudentScreenPreview(pc)}
@@ -1160,22 +977,27 @@ Type a slash command or click one above to test...</div>
                             </div>
                         </div>
 
-                        <!-- Card Action Buttons -->
+                        <!-- Individual Workstation Action Buttons -->
                         <div class="space-y-2 pt-2 border-t border-slate-800/80">
-                            <!-- View Live Screen Button -->
-                            <button onclick="openScreenModal('${pc.client_id}', '${pc.student_name}')" class="w-full py-2 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/30 text-xs font-bold text-indigo-300 transition flex items-center justify-center gap-2 shadow-sm">
-                                <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                                <span>View Live Screen</span>
-                            </button>
-
-                            <div class="grid grid-cols-3 gap-1.5">
-                                ${pc.curfew_locked ? `
-                                    <button onclick="sendClientCommand('${pc.client_id}', 'UNLOCK')" class="py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-[11px] font-bold text-emerald-300 transition">Unlock</button>
+                            <div class="grid grid-cols-2 gap-2">
+                                ${pc.curfew_locked || pc.status === 'CURFEW_LOCKED' ? `
+                                    <button onclick="sendClientCommand('${pc.client_id}', 'UNLOCK')" class="py-1.5 rounded-xl bg-purple-600/30 hover:bg-purple-600/40 border border-purple-500/50 text-xs font-bold text-purple-300 transition flex items-center justify-center gap-1">
+                                        <span>🔓</span> Unlock
+                                    </button>
                                 ` : `
-                                    <button onclick="sendClientCommand('${pc.client_id}', 'LOCK')" class="py-1.5 rounded-lg bg-purple-600/20 hover:bg-purple-600/30 text-[11px] font-bold text-purple-300 transition">Lock</button>
+                                    <button onclick="sendClientCommand('${pc.client_id}', 'LOCK')" class="py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold text-slate-300 transition flex items-center justify-center gap-1">
+                                        <span>🔒</span> Lock
+                                    </button>
                                 `}
-                                <button onclick="openMsgModal('${pc.client_id}')" class="py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-bold text-slate-300 transition">Message</button>
-                                <button onclick="sendClientCommand('${pc.client_id}', 'SHUTDOWN')" class="py-1.5 rounded-lg bg-rose-600/20 hover:bg-rose-600/30 text-[11px] font-bold text-rose-300 transition">Power Off</button>
+                                <button onclick="openMsgModal('${pc.client_id}', '${pc.student_name}')" class="py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold text-slate-300 transition flex items-center justify-center gap-1">
+                                    <span>💬</span> Message
+                                </button>
+                            </div>
+                            <div class="flex items-center justify-between text-[11px] text-slate-500 font-mono px-1">
+                                <span>MAC: ${pc.mac_address}</span>
+                                <button onclick="sendClientCommand('${pc.client_id}', 'SHUTDOWN')" class="hover:text-rose-400 transition" title="Graceful shutdown">
+                                    ⚡ Shutdown
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -1183,131 +1005,9 @@ Type a slash command or click one above to test...</div>
             }).join('');
         }
 
-        // Action Handlers
-        async function broadcastCommand(cmd, message = null) {
-            if (!confirm(`Are you sure you want to broadcast ${cmd} to ALL workstations in the lab?`)) return;
-            try {
-                const res = await fetch('/api/admin/command/broadcast', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ command: cmd, message: message })
-                });
-                const data = await res.json();
-                alert(`Broadcast dispatched to ${data.dispatched_count} active workstations.`);
-            } catch (e) {
-                alert('Command failed: ' + e.message);
-            }
-        }
-
-        async function sendClientCommand(clientId, cmd, message = null) {
-            try {
-                const res = await fetch(`/api/admin/command/client/${clientId}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ command: cmd, message: message })
-                });
-                const data = await res.json();
-                if (data.success) {
-                    // Feedback
-                } else {
-                    alert(`Failed to deliver command to ${clientId}: ${data.message}`);
-                }
-            } catch (e) {
-                alert('Command delivery error: ' + e.message);
-            }
-        }
-
-        function promptBroadcastMessage() {
-            const msg = prompt('Enter announcement message to display on all student screens:');
-            if (msg && msg.trim()) {
-                broadcastCommand('BROADCAST_MESSAGE', msg.trim());
-            }
-        }
-
-        function confirmLabShutdown() {
-            if (confirm('DANGER: This will send an immediate graceful OS shutdown to ALL computers in the lab! Proceed?')) {
-                broadcastCommand('SHUTDOWN', 'As-Sunnah Lab closing. Workstation powering off.');
-            }
-        }
-
-        async function toggleCurfewOverride() {
-            isOverrideActive = !isOverrideActive;
-            const res = await fetch('/api/admin/curfew/override', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ active: isOverrideActive, reason: 'Instructor manual toggle' })
-            });
-            const data = await res.json();
-            const btn = document.getElementById('overrideBtn');
-            const stat = document.getElementById('statCurfew');
-            if (isOverrideActive) {
-                btn.className = 'px-3.5 py-2 rounded-xl bg-amber-600/20 hover:bg-amber-600/30 border border-amber-500/40 text-amber-300 text-xs font-bold transition flex items-center gap-1.5';
-                btn.innerHTML = '<span>⚠️ Override Active (Extended)</span>';
-                stat.innerText = 'OVERRIDDEN';
-                stat.className = 'text-sm font-bold text-amber-300 mt-2';
-            } else {
-                btn.className = 'px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-xs font-semibold transition flex items-center gap-1.5';
-                btn.innerHTML = '<span>⚙️ Curfew Override</span>';
-                stat.innerText = 'Active (21:00)';
-                stat.className = 'text-sm font-bold text-purple-300 mt-2';
-            }
-        }
-
-        async function ackAlert(alertId) {
-            await fetch(`/api/admin/alerts/ack/${alertId}`, { method: 'POST' });
-        }
-
-        // Modal Helpers
-        function openMsgModal(clientId) {
-            activeModalTarget = clientId;
-            document.getElementById('modalTarget').innerText = clientId;
-            document.getElementById('modalMsgInput').value = '';
-            document.getElementById('msgModal').classList.remove('hidden');
-        }
-
-        function closeMsgModal() {
-            document.getElementById('msgModal').classList.add('hidden');
-            activeModalTarget = null;
-        }
-
-        function submitTargetMessage() {
-            const text = document.getElementById('modalMsgInput').value.trim();
-            if (text && activeModalTarget) {
-                sendClientCommand(activeModalTarget, 'BROADCAST_MESSAGE', text);
-                closeMsgModal();
-            }
-        }
-
-        // Screen Modal Helpers
-        let activeScreenTarget = null;
-        let screenRefreshTimer = null;
-
-        async 
-        // --- MULTI-INSTRUCTOR LINK COPY ---
-        function copyInstructorLink() {
-            navigator.clipboard.writeText(window.location.href);
-            showToast("✓ Instructor Monitor Link Copied! Any teacher opening this URL can monitor all student screens simultaneously.");
-        }
-
-        // --- VIEW MODE TOGGLE (CARDS vs LIVE SCREENS MATRIX) ---
-        let currentViewMode = 'cards'; // 'cards' or 'screens'
-        function switchViewMode(mode) {
-            currentViewMode = mode;
-            const cardsBtn = document.getElementById('viewModeCardsBtn');
-            const screensBtn = document.getElementById('viewModeScreensBtn');
-            if (mode === 'screens') {
-                screensBtn.className = 'px-3 py-1.5 rounded-lg bg-indigo-600/40 border border-indigo-400 text-indigo-200 text-xs font-bold transition flex items-center gap-1.5 shadow-lg shadow-indigo-950/40 animate-pulse';
-                cardsBtn.className = 'px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-xs font-bold transition flex items-center gap-1.5 shadow-sm';
-            } else {
-                cardsBtn.className = 'px-3 py-1.5 rounded-lg bg-emerald-600/30 border border-emerald-500 text-emerald-300 text-xs font-bold transition flex items-center gap-1.5 shadow-sm';
-                screensBtn.className = 'px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-xs font-bold transition flex items-center gap-1.5 shadow-sm';
-            }
-            renderCluster(clusterData);
-        }
-
-        // --- REALISTIC LIVE STUDENT SCREEN GENERATOR ---
+        // STUDENT SCREEN PREVIEW GENERATOR
         function getStudentScreenPreview(pc) {
-            if (pc.locked) {
+            if (pc.curfew_locked || pc.status === 'CURFEW_LOCKED') {
                 return `
                     <div class="w-full h-full bg-slate-950 flex flex-col items-center justify-center p-3 text-center border border-red-500/50">
                         <span class="text-3xl mb-1">🔒</span>
@@ -1324,11 +1024,11 @@ Type a slash command or click one above to test...</div>
                             <span class="animate-pulse">BLOCKED</span>
                         </div>
                         <div class="my-auto text-center space-y-1">
-                            <div class="w-10 h-10 mx-auto rounded-full bg-rose-500/20 flex items-center justify-center text-rose-400 text-lg">▶️</div>
-                            <p class="text-[11px] font-bold text-rose-200">YouTube Shorts / Reels</p>
-                            <p class="text-[9px] text-slate-400">Distraction Watchdog Triggered</p>
+                            <div class="w-8 h-8 mx-auto rounded-full bg-rose-500/20 flex items-center justify-center text-rose-400 text-sm">▶️</div>
+                            <p class="text-[10px] font-bold text-rose-200">YouTube Shorts / Reels</p>
+                            <p class="text-[8px] text-slate-400">Distraction Watchdog Triggered</p>
                         </div>
-                        <div class="text-[9px] text-rose-400 bg-rose-950/50 text-center py-0.5 rounded">
+                        <div class="text-[8px] text-rose-400 bg-rose-950/50 text-center py-0.5 rounded">
                             Auto-Warning Delivered to Student
                         </div>
                     </div>
@@ -1366,68 +1066,190 @@ Type a slash command or click one above to test...</div>
                             <p class="text-[8px] text-emerald-400">Educational Video Stream Allowed</p>
                         </div>
                         <div class="text-[8px] text-slate-400 flex justify-between">
-                            <span>Video Progress: 42:15 / 55:00</span>
-                            <span class="text-emerald-400">100% Focused</span>
+                            <span>Chrome Dwell: 1h 12m</span>
+                            <span class="text-emerald-400">100% Score</span>
                         </div>
                     </div>
                 `;
             }
             if (pc.client_id === 'LAB-PC-04') {
                 return `
-                    <div class="w-full h-full bg-black flex flex-col justify-between p-2 font-mono text-[10px] text-green-400 border border-slate-800">
-                        <div class="flex items-center justify-between text-[9px] text-slate-400 border-b border-slate-800 pb-0.5">
-                            <span>>_ PowerShell Administrator</span>
-                            <span>Git 2.45</span>
+                    <div class="w-full h-full bg-black flex flex-col justify-between p-2 font-mono text-[10px] text-emerald-400 border border-slate-800">
+                        <div class="flex items-center justify-between bg-slate-900 px-2 py-0.5 rounded text-[9px] text-slate-400">
+                            <span>⌨️ PowerShell Terminal</span>
+                            <span class="text-slate-400">git workspace</span>
                         </div>
-                        <div class="space-y-0.5 text-[9px]">
-                            <p>PS C:\Project> git add .</p>
-                            <p>PS C:\Project> git commit -m "Finish task"</p>
-                            <p class="text-yellow-400">[main a4f91c] 4 files changed</p>
-                            <p>PS C:\Project> git push origin main</p>
-                            <p class="text-emerald-400">&#x2713; Everything up-to-date</p>
+                        <div class="space-y-0.5 text-[8px] text-slate-300 pl-1">
+                            <p class="text-blue-400">PS C:/SmartLab/Project&gt; git status</p>
+                            <p class="text-emerald-400">On branch main - clean working tree</p>
+                            <p class="text-blue-400">PS C:/SmartLab/Project&gt; git push origin main</p>
+                            <p class="text-slate-400">Everything up-to-date</p>
                         </div>
-                        <div class="text-[8px] text-slate-500 text-right">CPU 12% • Active</div>
+                        <div class="text-[8px] text-slate-500 flex justify-between">
+                            <span>Process: pwsh.exe</span>
+                            <span class="text-emerald-400">Focus 100%</span>
+                        </div>
                     </div>
                 `;
             }
             if (pc.client_id === 'LAB-PC-05') {
                 return `
-                    <div class="w-full h-full bg-[#1a1a24] flex flex-col justify-between p-2 font-mono text-[10px] text-slate-300 border border-slate-800">
-                        <div class="flex items-center justify-between bg-[#242435] px-2 py-0.5 rounded text-[9px]">
-                            <span class="text-amber-400 font-bold">POST</span>
-                            <span>/api/v1/workstations/verify</span>
-                            <span class="text-emerald-400">200 OK</span>
+                    <div class="w-full h-full bg-[#2c2c2c] flex flex-col justify-between p-2 font-mono text-[10px] text-slate-200 border border-slate-800">
+                        <div class="flex items-center justify-between bg-[#1e1e1e] px-2 py-0.5 rounded text-[9px] text-purple-300">
+                            <span>🎨 Figma - Prototype Canvas</span>
+                            <span class="text-slate-400">Vector UI</span>
                         </div>
-                        <div class="p-1 bg-[#12121a] rounded text-[8px] text-slate-400 font-mono">
-                            <p>{ "success": <span class="text-blue-400">true</span>,</p>
-                            <p>&nbsp;&nbsp;"token": <span class="text-emerald-300">"sb_auth_909"</span> }</p>
+                        <div class="grid grid-cols-2 gap-1 my-1">
+                            <div class="h-6 bg-slate-800 rounded flex items-center justify-center text-[8px] border border-purple-500/40">Component A</div>
+                            <div class="h-6 bg-slate-700/60 rounded flex items-center justify-center text-[8px]">Wireframe B</div>
                         </div>
                         <div class="text-[8px] text-slate-400 flex justify-between">
-                            <span>Response Time: 34ms</span>
-                            <span class="text-emerald-400">Focus 96%</span>
+                            <span>Canvas Zoom: 100%</span>
+                            <span class="text-emerald-400">Focus 95%</span>
                         </div>
                     </div>
                 `;
             }
             return `
-                <div class="w-full h-full bg-[#2c2c2c] flex flex-col justify-between p-2 font-mono text-[10px] text-slate-300 border border-slate-800">
-                    <div class="flex items-center justify-between bg-[#383838] px-2 py-0.5 rounded text-[9px]">
-                        <span>🎨 Figma - Lab Command UI Layout</span>
-                        <span class="text-purple-400">Design</span>
+                <div class="w-full h-full bg-slate-900 flex flex-col justify-between p-2 font-mono text-[10px] text-slate-300 border border-slate-800">
+                    <div class="flex items-center justify-between bg-slate-800 px-2 py-0.5 rounded text-[9px] text-slate-400">
+                        <span>🗄️ pgAdmin 4 - PostgreSQL</span>
+                        <span class="text-blue-400">SQL Editor</span>
                     </div>
-                    <div class="grid grid-cols-2 gap-1 my-auto p-1 bg-[#202020] rounded">
-                        <div class="h-6 bg-slate-700/60 rounded flex items-center justify-center text-[8px]">Wireframe A</div>
-                        <div class="h-6 bg-slate-700/60 rounded flex items-center justify-center text-[8px]">Wireframe B</div>
+                    <div class="text-[8px] text-slate-300 p-1 bg-slate-950 rounded">
+                        <p class="text-blue-300">SELECT id, student, status</p>
+                        <p class="text-blue-300">FROM lab_attendance;</p>
+                        <p class="text-emerald-400 mt-1">Query returned 6 rows in 12ms.</p>
                     </div>
                     <div class="text-[8px] text-slate-400 flex justify-between">
-                        <span>Canvas Zoom: 100%</span>
-                        <span class="text-emerald-400">Focus 94%</span>
+                        <span>Database: smartlab_db</span>
+                        <span class="text-emerald-400">Focus 97%</span>
                     </div>
                 </div>
             `;
         }
 
-        function openScreenModal(clientId, studentName) {
+        // =========================================================================
+        // INSTITUTIONAL ACTION HANDLERS (STANDALONE & INSTANTANEOUS)
+        // =========================================================================
+        async function broadcastCommand(cmd, message = null) {
+            console.log("Broadcast Command Triggered:", cmd, message);
+
+            if (cmd === 'lock_all') {
+                mockWorkstations.forEach(pc => {
+                    pc.curfew_locked = true;
+                    pc.status = 'CURFEW_LOCKED';
+                });
+                clusterData.total_distracted = 0;
+                showToast("🔒 All 6 Workstations Locked with Curfew Maintenance Screen!");
+            } else if (cmd === 'unlock_all') {
+                mockWorkstations.forEach(pc => {
+                    pc.curfew_locked = false;
+                    pc.status = pc.client_id === 'LAB-PC-03' && !clusterData.focus_mode_active ? 'DISTRACTED' : 'ACTIVE';
+                });
+                showToast("🔓 All Workstations Unlocked & Restored to Normal Operation!");
+            } else if (cmd === 'shutdown_all') {
+                mockWorkstations.forEach(pc => {
+                    pc.connected = false;
+                    pc.status = 'DISCONNECTED_TAMPERED';
+                });
+                clusterData.total_online = 0;
+                showToast("⚡ Graceful Auto-Shutdown Broadcasted across Lab Cluster!");
+            } else if (cmd === 'BROADCAST_MESSAGE') {
+                showToast(`📢 Announcement Broadcasted to all student screens: "${message}"`);
+                mockAuditLog.unshift({
+                    id: "aud-" + Date.now(),
+                    client_id: "ALL-PCS",
+                    student_name: "Instructor Broadcast",
+                    process_name: "AnnouncementModal.exe",
+                    window_title: `Notice: "${message}"`,
+                    category: "ACADEMIC",
+                    formatted_time: "Now",
+                    last_seen: new Date().toISOString()
+                });
+                renderAuditLog(mockAuditLog);
+            }
+
+            renderCluster(clusterData);
+        }
+
+        function confirmLabShutdown() {
+            if (confirm("🚨 Are you sure you want to gracefully power off ALL workstations in the lab?")) {
+                broadcastCommand('shutdown_all');
+            }
+        }
+
+        async function sendClientCommand(clientId, action, payload = {}) {
+            const pc = mockWorkstations.find(w => w.client_id === clientId);
+            if (pc) {
+                if (action === 'LOCK') {
+                    pc.curfew_locked = true;
+                    pc.status = 'CURFEW_LOCKED';
+                    showToast(`🔒 Workstation ${clientId} Screen Locked!`);
+                } else if (action === 'UNLOCK') {
+                    pc.curfew_locked = false;
+                    pc.status = 'ACTIVE';
+                    showToast(`🔓 Workstation ${clientId} Screen Unlocked!`);
+                } else if (action === 'SHUTDOWN') {
+                    pc.connected = false;
+                    pc.status = 'DISCONNECTED_TAMPERED';
+                    clusterData.total_online = Math.max(0, clusterData.total_online - 1);
+                    showToast(`⚡ Workstation ${clientId} Powered Off!`);
+                }
+                renderCluster(clusterData);
+            }
+        }
+
+        function toggleFocusMode() {
+            clusterData.focus_mode_active = !clusterData.focus_mode_active;
+            if (clusterData.focus_mode_active) {
+                showToast("🎯 Focus Mode ACTIVATED: Non-academic URLs, Reels & Shorts blocked lab-wide!");
+                const pc3 = mockWorkstations.find(w => w.client_id === 'LAB-PC-03');
+                if (pc3) {
+                    pc3.status = 'ACTIVE';
+                    pc3.distraction_report.is_distracted = false;
+                    pc3.latest_telemetry.active_window_title = 'VS Code - client_agent.py (Restricted Focus)';
+                }
+                clusterData.alerts = [];
+                clusterData.total_distracted = 0;
+            } else {
+                showToast("🎯 Focus Mode DEACTIVATED: Standard browsing permitted.");
+            }
+            renderCluster(clusterData);
+        }
+
+        function toggleUsbPolicy() {
+            clusterData.usb_storage_blocked = !clusterData.usb_storage_blocked;
+            mockWorkstations.forEach(pc => pc.usb_blocked = clusterData.usb_storage_blocked);
+            showToast(clusterData.usb_storage_blocked ? "🔒 USB Storage BLOCKED: Mass-storage read/write denied across all workstations!" : "💾 USB Storage ALLOWED across lab workstations.");
+            renderCluster(clusterData);
+        }
+
+        function promptBroadcastMessage() {
+            const msg = prompt("ল্যাবের সব ছাত্রের স্ক্রিনে পাঠানোর জন্য নোটিশ লিখুন (Enter Broadcast Message):", "ক্লাস শেষ হতে ১০ মিনিট বাকি। অনুগ্রহ করে সব ফাইল সেভ করুন।");
+            if (msg && msg.trim()) {
+                broadcastCommand('BROADCAST_MESSAGE', msg.trim());
+            }
+        }
+
+        async function ackAlert(alertId) {
+            clusterData.alerts = [];
+            clusterData.total_distracted = 0;
+            const pc = mockWorkstations.find(w => w.client_id === 'LAB-PC-03');
+            if (pc) {
+                pc.status = 'ACTIVE';
+                pc.distraction_report.is_distracted = false;
+                pc.latest_telemetry.active_window_title = 'Visual Studio Code - Python Project';
+                pc.productivity_score = 92;
+            }
+            showToast("✓ Distraction Alert Acknowledged & Cleared by Instructor!");
+            renderCluster(clusterData);
+        }
+
+        // =========================================================================
+        // FULL-SCREEN LIVE SCREEN MONITOR MODAL (VEYON / APPLE CLASSROOM STYLE)
+        // =========================================================================
+        async function openScreenModal(clientId, studentName) {
             activeScreenTarget = clientId;
             document.getElementById('screenModalTitle').innerText = clientId;
             document.getElementById('screenModalStudent').innerText = studentName;
@@ -1437,20 +1259,11 @@ Type a slash command or click one above to test...</div>
             if (pc) {
                 const appTitle = pc.latest_telemetry ? pc.latest_telemetry.active_window_title : 'Active Session';
                 document.getElementById('screenModalApp').innerText = `Active Window: ${appTitle}`;
-                if (pc.screen_thumbnail) {
-                    document.getElementById('screenModalImg').src = pc.screen_thumbnail;
-                    document.getElementById('screenModalLoading').classList.add('hidden');
-                } else {
-                    document.getElementById('screenModalLoading').classList.remove('hidden');
-                }
+                updateScreenModalLockBtn(pc);
             }
 
             document.getElementById('screenModalTime').innerText = `Updated: ${new Date().toLocaleTimeString()}`;
             await requestFreshScreen();
-
-            // Auto-refresh loop while modal is open (every 1.5s for responsive streaming)
-            if (screenRefreshTimer) clearInterval(screenRefreshTimer);
-            screenRefreshTimer = setInterval(requestFreshScreen, 1500);
         }
 
         function closeScreenModal() {
@@ -1462,193 +1275,271 @@ Type a slash command or click one above to test...</div>
             }
         }
 
-        function toggleModalFullscreen() {
-            const container = document.getElementById('screenModalImgContainer');
-            if (!container) return;
-            if (!document.fullscreenElement) {
-                if (container.requestFullscreen) {
-                    container.requestFullscreen();
-                } else if (container.webkitRequestFullscreen) {
-                    container.webkitRequestFullscreen();
-                }
+        function updateScreenModalLockBtn(pc) {
+            const lockBtn = document.getElementById('screenModalLockBtn');
+            if (!lockBtn) return;
+            const isLocked = pc && (pc.curfew_locked || pc.status === 'CURFEW_LOCKED');
+            if (isLocked) {
+                lockBtn.className = 'px-3 py-1.5 rounded-xl bg-purple-600/30 hover:bg-purple-600/40 border border-purple-500 text-xs font-semibold text-purple-300 transition flex items-center gap-1.5';
+                lockBtn.innerHTML = '<span>🔓 Unlock Workstation</span>';
             } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                }
-            }
-        }
-
-        async function requestFreshScreen() {
-            if (!activeScreenTarget) return;
-            try {
-                const res = await fetch(`/api/admin/screen/${activeScreenTarget}`);
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data.image) {
-                        document.getElementById('screenModalImg').src = data.image;
-                        document.getElementById('screenModalLoading').classList.add('hidden');
-                    }
-                    if (data.active_title) {
-                        document.getElementById('screenModalApp').innerText = `Active Window: ${data.active_title}`;
-                    }
-                    document.getElementById('screenModalTime').innerText = `Updated: ${new Date().toLocaleTimeString()}`;
-                }
-            } catch (err) {
-                console.error('Failed to refresh screen:', err);
+                lockBtn.className = 'px-3 py-1.5 rounded-xl bg-rose-600/30 hover:bg-rose-600/40 border border-rose-500 text-xs font-semibold text-rose-300 transition flex items-center gap-1.5';
+                lockBtn.innerHTML = '<span>🔒 Lock Workstation</span>';
             }
         }
 
         function toggleScreenModalLock() {
             if (!activeScreenTarget) return;
             const pc = (clusterData.workstations || []).find(w => w.client_id === activeScreenTarget);
-            const isLocked = pc && pc.curfew_locked;
-            const cmd = isLocked ? 'UNLOCK' : 'LOCK';
-            sendClientCommand(activeScreenTarget, cmd);
-            const btn = document.getElementById('screenModalLockBtn');
-            btn.innerText = isLocked ? '🔒 Lock PC' : '🔓 Unlock PC';
+            if (!pc) return;
+
+            const isLocked = pc.curfew_locked || pc.status === 'CURFEW_LOCKED';
+            if (isLocked) {
+                pc.curfew_locked = false;
+                pc.status = 'ACTIVE';
+                showToast(`🔓 Workstation ${activeScreenTarget} Unlocked!`);
+            } else {
+                pc.curfew_locked = true;
+                pc.status = 'CURFEW_LOCKED';
+                showToast(`🔒 Workstation ${activeScreenTarget} Screen Locked!`);
+            }
+            updateScreenModalLockBtn(pc);
+            requestFreshScreen();
+            renderCluster(clusterData);
+        }
+
+        async function requestFreshScreen() {
+            if (!activeScreenTarget) return;
+            const pc = (clusterData.workstations || []).find(w => w.client_id === activeScreenTarget);
+            if (!pc) return;
+
+            document.getElementById('screenModalLoading').classList.add('hidden');
+            const imgEl = document.getElementById('screenModalImg');
+            
+            const isLocked = pc.curfew_locked || pc.status === 'CURFEW_LOCKED';
+            let svgContent = '';
+
+            if (isLocked) {
+                svgContent = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+                        <rect width="1280" height="720" fill="#090d16"/>
+                        <rect x="340" y="160" width="600" height="400" rx="24" fill="#0f172a" stroke="#ef4444" stroke-width="2"/>
+                        <text x="640" y="270" font-family="system-ui, sans-serif" font-size="64" text-anchor="middle" fill="#ef4444">🔒</text>
+                        <text x="640" y="340" font-family="system-ui, sans-serif" font-size="28" font-weight="bold" text-anchor="middle" fill="#f87171">CURFEW LOCK ENFORCED</text>
+                        <text x="640" y="380" font-family="system-ui, sans-serif" font-size="16" text-anchor="middle" fill="#94a3b8">Curfew Policy (21:00 - 08:00 AM) Active</text>
+                        <text x="640" y="440" font-family="monospace" font-size="14" text-anchor="middle" fill="#cbd5e1">Workstation: ${pc.client_id} | Student: ${pc.student_name}</text>
+                        <text x="640" y="480" font-family="system-ui, sans-serif" font-size="13" text-anchor="middle" fill="#64748b">Contact Lab Instructor for authorization</text>
+                    </svg>
+                `;
+            } else if (pc.status === 'DISTRACTED') {
+                svgContent = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+                        <rect width="1280" height="720" fill="#0b0f19"/>
+                        <rect x="40" y="40" width="1200" height="640" rx="16" fill="#030712" stroke="#f43f5e" stroke-width="2"/>
+                        <rect x="40" y="40" width="1200" height="50" rx="16" fill="#1e293b"/>
+                        <circle cx="70" cy="65" r="7" fill="#ef4444"/>
+                        <circle cx="95" cy="65" r="7" fill="#f59e0b"/>
+                        <circle cx="120" cy="65" r="7" fill="#10b981"/>
+                        <rect x="150" y="52" width="700" height="26" rx="6" fill="#0f172a"/>
+                        <text x="165" y="70" font-family="monospace" font-size="13" fill="#f43f5e">https://youtube.com/shorts/trending (FLAGGED VIOLATION)</text>
+                        <rect x="360" y="200" width="560" height="320" rx="20" fill="#180b12" stroke="#f43f5e" stroke-width="2"/>
+                        <text x="640" y="280" font-family="system-ui, sans-serif" font-size="54" text-anchor="middle" fill="#f43f5e">⚠️</text>
+                        <text x="640" y="340" font-family="system-ui, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#fda4af">NON-EDUCATIONAL ACTIVITY DETECTED</text>
+                        <text x="640" y="380" font-family="system-ui, sans-serif" font-size="15" text-anchor="middle" fill="#cbd5e1">Keyword Matched: YouTube Shorts / Reels</text>
+                        <text x="640" y="420" font-family="system-ui, sans-serif" font-size="13" text-anchor="middle" fill="#f43f5e">Automatic Telemetry Logged to Central Audit</text>
+                    </svg>
+                `;
+            } else {
+                svgContent = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+                        <rect width="1280" height="720" fill="#1e1e1e"/>
+                        <rect x="0" y="0" width="1280" height="42" fill="#2d2d2d"/>
+                        <text x="24" y="26" font-family="monospace" font-size="14" fill="#9cdcfe">Visual Studio Code — client_agent.py [Smart Lab]</text>
+                        <text x="1100" y="26" font-family="monospace" font-size="13" fill="#4ade80">● Python 3.12 (Venv)</text>
+                        <rect x="0" y="42" width="60" height="640" fill="#1e1e1e"/>
+                        <text x="25" y="80" font-family="monospace" font-size="14" fill="#6e7681">1</text>
+                        <text x="25" y="110" font-family="monospace" font-size="14" fill="#6e7681">2</text>
+                        <text x="25" y="140" font-family="monospace" font-size="14" fill="#6e7681">3</text>
+                        <text x="25" y="170" font-family="monospace" font-size="14" fill="#6e7681">4</text>
+                        <text x="25" y="200" font-family="monospace" font-size="14" fill="#6e7681">5</text>
+                        <text x="25" y="230" font-family="monospace" font-size="14" fill="#6e7681">6</text>
+                        <text x="25" y="260" font-family="monospace" font-size="14" fill="#6e7681">7</text>
+                        <text x="25" y="290" font-family="monospace" font-size="14" fill="#6e7681">8</text>
+                        <text x="80" y="80" font-family="monospace" font-size="15" fill="#c586c0">import</text>
+                        <text x="140" y="80" font-family="monospace" font-size="15" fill="#d4d4d4">asyncio, psutil, websockets, json</text>
+                        <text x="80" y="110" font-family="monospace" font-size="15" fill="#c586c0">async def</text>
+                        <text x="165" y="110" font-family="monospace" font-size="15" fill="#dcdcaa">monitor_workstation_health</text>
+                        <text x="390" y="110" font-family="monospace" font-size="15" fill="#d4d4d4">():</text>
+                        <text x="110" y="140" font-family="monospace" font-size="15" fill="#6a9955"># Telemetry streaming to Central Controller</text>
+                        <text x="110" y="170" font-family="monospace" font-size="15" fill="#d4d4d4">cpu = psutil.cpu_percent(interval=1)</text>
+                        <text x="110" y="200" font-family="monospace" font-size="15" fill="#d4d4d4">ram = psutil.virtual_memory().percent</text>
+                        <text x="110" y="230" font-family="monospace" font-size="15" fill="#c586c0">await</text>
+                        <text x="160" y="230" font-family="monospace" font-size="15" fill="#d4d4d4">ws.send(json.dumps({"cpu": cpu, "ram": ram}))</text>
+                        <text x="80" y="260" font-family="monospace" font-size="15" fill="#6a9955"># Student: ${pc.student_name} (${pc.client_id})</text>
+                        <rect x="0" y="520" width="1280" height="200" fill="#141414" stroke="#2d2d2d" stroke-width="1"/>
+                        <text x="24" y="550" font-family="monospace" font-size="14" font-weight="bold" fill="#38bdf8">TERMINAL: bash</text>
+                        <text x="24" y="580" font-family="monospace" font-size="13" fill="#4ade80">$ pytest tests/ -v</text>
+                        <text x="24" y="610" font-family="monospace" font-size="13" fill="#d4d4d4">tests/test_agent.py::test_heartbeat PASSED [ 50% ]</text>
+                        <text x="24" y="635" font-family="monospace" font-size="13" fill="#d4d4d4">tests/test_agent.py::test_curfew_lock PASSED [ 100% ]</text>
+                        <text x="24" y="665" font-family="monospace" font-size="13" font-weight="bold" fill="#4ade80">======================= 2 passed in 0.42s =======================</text>
+                    </svg>
+                `;
+            }
+
+            imgEl.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgContent.trim());
+            document.getElementById('screenModalTime').innerText = `Updated: ${new Date().toLocaleTimeString()}`;
+        }
+
+        function toggleModalFullscreen() {
+            const container = document.getElementById('screenModalImgContainer');
+            if (!container) return;
+            if (!document.fullscreenElement) {
+                if (container.requestFullscreen) container.requestFullscreen();
+                else if (container.webkitRequestFullscreen) container.webkitRequestFullscreen();
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+            }
+        }
+
+        // =========================================================================
+        // DIRECT STUDENT MESSAGING MODAL (Exact IDs: modalTarget, modalMsgInput)
+        // =========================================================================
+        function openMsgModal(clientId, studentName) {
+            activeModalTarget = clientId;
+            const targetEl = document.getElementById('modalTarget');
+            if (targetEl) targetEl.innerText = `${studentName} (${clientId})`;
+            document.getElementById('msgModal').classList.remove('hidden');
+            const inp = document.getElementById('modalMsgInput');
+            if (inp) {
+                inp.value = '';
+                inp.focus();
+            }
+        }
+
+        function closeMsgModal() {
+            document.getElementById('msgModal').classList.add('hidden');
+            activeModalTarget = null;
         }
 
         function openMsgModalFromScreen() {
-            if (activeScreenTarget) {
-                openMsgModal(activeScreenTarget);
-            }
+            if (!activeScreenTarget) return;
+            const pc = (clusterData.workstations || []).find(w => w.client_id === activeScreenTarget);
+            if (pc) openMsgModal(pc.client_id, pc.student_name);
         }
 
-        // ==============================================================================
-        // Application Usage Audit Log Management
-        // ==============================================================================
-        let auditLogsCache = [];
+        function submitTargetMessage(e) {
+            if (e && e.preventDefault) e.preventDefault();
+            const inp = document.getElementById('modalMsgInput');
+            const msg = inp ? inp.value.trim() : '';
+            if (!msg) return;
 
-        function renderAuditLog(records) {
-            if (!records) records = [];
-            auditLogsCache = records;
-            filterAuditTable();
+            showToast(`💬 Direct message sent to ${activeModalTarget}: "${msg}"`);
+            closeMsgModal();
         }
 
-        function filterAuditTable() {
-            const query = (document.getElementById('auditSearchInput')?.value || '').toLowerCase().trim();
-            const tbody = document.getElementById('auditTableBody');
-            const badge = document.getElementById('auditCountBadge');
+        // =========================================================================
+        // BROADCAST FILE MODAL (Exact IDs: broadcastFileName, broadcastFileContent)
+        // =========================================================================
+        function openBroadcastFileModal() {
+            document.getElementById('broadcastFileModal').classList.remove('hidden');
+        }
+
+        function closeBroadcastFileModal() {
+            document.getElementById('broadcastFileModal').classList.add('hidden');
+        }
+
+        async function submitBroadcastFile(e) {
+            if (e && e.preventDefault) e.preventDefault();
+            const fileNameInput = document.getElementById('broadcastFileName');
+            const fileName = fileNameInput && fileNameInput.value.trim() ? fileNameInput.value.trim() : "Lecture_4_StarterCode.py";
+            
+            showToast(`📤 File broadcasted to all 6 workstations: C:/SmartLab/Received_Files/${fileName}`);
+            closeBroadcastFileModal();
+        }
+
+        // =========================================================================
+        // ASSIGNMENTS COLLECTION MODAL (Exact ID: assignmentsTableBody)
+        // =========================================================================
+        function openAssignmentsModal() {
+            document.getElementById('assignmentsModal').classList.remove('hidden');
+            loadAssignmentsList();
+        }
+
+        function closeAssignmentsModal() {
+            document.getElementById('assignmentsModal').classList.add('hidden');
+        }
+
+        async function triggerCollectAssignments() {
+            showToast("📥 Collecting latest assignments from all 6 student workstations...");
+            setTimeout(() => {
+                showToast("✓ Collected 6 assignment files into C:/SmartLab/Collected_Assignments/");
+                openAssignmentsModal();
+            }, 600);
+        }
+
+        function loadAssignmentsList() {
+            const tbody = document.getElementById('assignmentsTableBody');
             if (!tbody) return;
-
-            const filtered = auditLogsCache.filter(r => {
-                if (!query) return true;
-                return (r.student_name || '').toLowerCase().includes(query) ||
-                       (r.client_id || '').toLowerCase().includes(query) ||
-                       (r.process_name || '').toLowerCase().includes(query) ||
-                       (r.window_title || '').toLowerCase().includes(query) ||
-                       (r.category || '').toLowerCase().includes(query);
-            });
-
-            if (badge) badge.innerText = `${filtered.length} Records`;
-
-            if (filtered.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="6" class="py-8 text-center text-slate-500 font-sans">
-                            ${query ? 'No audit records match your search filter.' : 'No application usage telemetry recorded yet. Active dwell time will appear here.'}
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-
-            tbody.innerHTML = filtered.map(r => {
-                let catBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-800 text-slate-300">SYSTEM</span>';
-                if (r.is_distracted) {
-                    catBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">DISTRACTION</span>';
-                } else if (r.category === 'EDUCATIONAL') {
-                    catBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">EDUCATIONAL</span>';
-                } else if (r.category === 'DEVELOPMENT') {
-                    catBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">DEV / CODING</span>';
-                }
-
-                const lastSeenFormatted = r.last_seen ? new Date(r.last_seen).toLocaleTimeString() : '--';
-
-                return `
-                    <tr class="hover:bg-slate-800/40 transition">
-                        <td class="py-3 px-4 font-bold text-white">
-                            <div>${r.student_name || 'Student'}</div>
-                            <div class="text-[10px] text-slate-500 font-normal">${r.client_id}</div>
-                        </td>
-                        <td class="py-3 px-4 text-indigo-300 font-semibold">${r.process_name}</td>
-                        <td class="py-3 px-4 text-slate-300 max-w-xs truncate" title="${r.window_title}">${r.window_title}</td>
-                        <td class="py-3 px-4">${catBadge}</td>
-                        <td class="py-3 px-4 text-right font-bold text-emerald-400">${r.formatted_time || (r.total_seconds + 's')}</td>
-                        <td class="py-3 px-4 text-right text-slate-400">${lastSeenFormatted}</td>
-                    </tr>
-                `;
-            }).join('');
+            tbody.innerHTML = mockAssignments.map(a => `
+                <tr class="border-b border-slate-800/80 hover:bg-slate-800/40 text-xs font-mono">
+                    <td class="p-3 font-bold text-white">${a.client_id}</td>
+                    <td class="p-3 text-slate-300">${a.student_name}</td>
+                    <td class="p-3 text-indigo-400 font-semibold">${a.filename}</td>
+                    <td class="p-3 text-slate-400">${a.size}</td>
+                    <td class="p-3">
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">✓ ${a.status}</span>
+                    </td>
+                    <td class="p-3 text-right">
+                        <button onclick="showToast('📥 Downloading ${a.filename}...')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-indigo-300 font-sans text-xs transition">
+                            Download
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
         }
 
-        async function refreshAuditLog() {
-            try {
-                const res = await fetch('/api/admin/audit-log');
-                if (res.ok) {
-                    const data = await res.json();
-                    renderAuditLog(data);
-                }
-            } catch (err) {
-                console.error('Failed to fetch audit log:', err);
-            }
-        }
-
-        // ==============================================================================
-        // Feature 1: Daily Report Modal Handlers
-        // ==============================================================================
+        // =========================================================================
+        // DAILY REPORT CARD MODAL (Exact IDs: repAvgScore, repTotalStudents, etc.)
+        // =========================================================================
         async function openDailyReportModal() {
             document.getElementById('dailyReportModal').classList.remove('hidden');
-            try {
-                const res = await fetch('/api/admin/reports/daily');
-                if (res.ok) {
-                    const rep = await res.json();
-                    document.getElementById('repAvgScore').innerText = rep.lab_average_score + '/100';
-                    document.getElementById('repTotalStudents').innerText = rep.total_students;
-                    document.getElementById('repFocusedTime').innerText = rep.total_focused_minutes + ' min';
-                    document.getElementById('repDistractedTime').innerText = rep.total_distraction_minutes + ' min';
-                    document.getElementById('repGeneratedAt').innerText = 'Generated: ' + new Date(rep.generated_at).toLocaleString();
+            const setTxt = (id, val) => {
+                const el = document.getElementById(id);
+                if (el) el.innerText = val;
+            };
 
-                    const topFocusedList = document.getElementById('repTopFocusedList');
-                    if (!rep.top_focused_students || rep.top_focused_students.length === 0) {
-                        topFocusedList.innerHTML = '<div class="text-slate-500 py-3 text-center font-sans">No student telemetry logged yet.</div>';
-                    } else {
-                        topFocusedList.innerHTML = rep.top_focused_students.map((s, i) => `
-                            <div class="flex items-center justify-between p-2 rounded-xl bg-slate-900 border border-slate-800">
-                                <div class="flex items-center gap-2">
-                                    <span class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold text-[10px] flex items-center justify-center">${i+1}</span>
-                                    <div>
-                                        <div class="font-bold text-white">${s.student_name}</div>
-                                        <div class="text-[10px] text-slate-500">${s.client_id} • ${s.top_used_app}</div>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="text-emerald-400 font-bold">${s.productivity_score}%</div>
-                                    <div class="text-[10px] text-slate-400">${s.formatted_focused_time}</div>
-                                </div>
-                            </div>
-                        `).join('');
-                    }
+            setTxt('repAvgScore', '96/100');
+            setTxt('repTotalStudents', '6 Active');
+            setTxt('repFocusedTime', '6h 15m');
+            setTxt('repDistractedTime', '14m');
+            setTxt('repGeneratedAt', `Generated: ${new Date().toLocaleTimeString()} (Curfew Active)`);
 
-                    const topDistractList = document.getElementById('repTopDistractedList');
-                    if (!rep.top_distracted_students || rep.top_distracted_students.length === 0) {
-                        topDistractList.innerHTML = '<div class="text-emerald-400/80 py-3 text-center font-sans">Zero distraction incidents! Perfect focus across all PCs.</div>';
-                    } else {
-                        topDistractList.innerHTML = rep.top_distracted_students.map(s => `
-                            <div class="flex items-center justify-between p-2 rounded-xl bg-slate-900 border border-rose-950/40">
-                                <div>
-                                    <div class="font-bold text-rose-300">${s.student_name}</div>
-                                    <div class="text-[10px] text-slate-500">${s.client_id} • Violations: ${s.violation_count}</div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="text-rose-400 font-bold">${s.formatted_distraction_time}</div>
-                                    <div class="text-[10px] text-slate-500">Score: ${s.productivity_score}%</div>
-                                </div>
-                            </div>
-                        `).join('');
-                    }
-                }
-            } catch (err) {
-                console.error('Failed to load report:', err);
+            const topFocusedEl = document.getElementById('repTopFocusedList');
+            if (topFocusedEl) {
+                topFocusedEl.innerHTML = `
+                    <div class="flex items-center justify-between p-2 rounded-xl bg-slate-900 border border-slate-800">
+                        <span>🥇 Tanvir Hasan (LAB-PC-02)</span>
+                        <span class="text-emerald-400 font-bold">100% Score</span>
+                    </div>
+                    <div class="flex items-center justify-between p-2 rounded-xl bg-slate-900 border border-slate-800">
+                        <span>🥈 Mirazur Rahman (LAB-PC-04)</span>
+                        <span class="text-emerald-400 font-bold">100% Score</span>
+                    </div>
+                    <div class="flex items-center justify-between p-2 rounded-xl bg-slate-900 border border-slate-800">
+                        <span>🥉 Zubair Ahmed (LAB-PC-01)</span>
+                        <span class="text-emerald-400 font-bold">98% Score</span>
+                    </div>
+                `;
+            }
+
+            const topDistractedEl = document.getElementById('repTopDistractedList');
+            if (topDistractedEl) {
+                topDistractedEl.innerHTML = `
+                    <div class="flex items-center justify-between p-2 rounded-xl bg-rose-950/40 border border-rose-500/30 text-rose-300">
+                        <span>⚠️ Abdullah Al Mamun (LAB-PC-03)</span>
+                        <span class="font-bold">14m Shorts (Flagged)</span>
+                    </div>
+                `;
             }
         }
 
@@ -1656,273 +1547,121 @@ Type a slash command or click one above to test...</div>
             document.getElementById('dailyReportModal').classList.add('hidden');
         }
 
-        // ==============================================================================
-        // Feature 2: One-Click Focus Mode Toggle Handler
-        // ==============================================================================
-        async function toggleFocusMode() {
-            const newState = !(clusterData.focus_mode_active);
-            try {
-                const res = await fetch('/api/admin/focus-mode/toggle', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ active: newState, reason: 'Instructor manual switch' })
-                });
-                const d = await res.json();
-                alert(`Focus Mode ${d.focus_mode_active ? 'ENABLED (Distractions Blocked) 🎯' : 'DISABLED 🔓'} across ${d.workstations_updated} workstation(s).`);
-            } catch (e) {
-                alert('Focus mode toggle failed: ' + e.message);
-            }
-        }
-
-        // ==============================================================================
-        // Feature 3: Central File Broadcast & Assignment Collection Handlers
-        // ==============================================================================
-        function openBroadcastFileModal() {
-            document.getElementById('broadcastFileModal').classList.remove('hidden');
-        }
-        function closeBroadcastFileModal() {
-            document.getElementById('broadcastFileModal').classList.add('hidden');
-        }
-        async function submitBroadcastFile() {
-            const name = document.getElementById('broadcastFileName').value.trim();
-            const content = document.getElementById('broadcastFileContent').value;
-            if (!name) { alert('Please enter a target filename (e.g. lab_exercise.py)'); return; }
-            const b64 = btoa(unescape(encodeURIComponent(content || '')));
-            try {
-                const res = await fetch('/api/admin/files/broadcast', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ filename: name, file_content_base64: b64, sender: 'Lab Instructor' })
-                });
-                const d = await res.json();
-                alert(`File '${name}' successfully broadcasted to ${d.dispatched_count} active workstation(s)!`);
-                closeBroadcastFileModal();
-            } catch (e) {
-                alert('Broadcast failed: ' + e.message);
-            }
-        }
-
-        function openAssignmentsModal() {
-            document.getElementById('assignmentsModal').classList.remove('hidden');
-            loadAssignmentsList();
-        }
-        function closeAssignmentsModal() {
-            document.getElementById('assignmentsModal').classList.add('hidden');
-        }
-        async function triggerCollectAssignments() {
-            try {
-                const res = await fetch('/api/admin/files/collect', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ assignment_name: 'submission.py' })
-                });
-                const d = await res.json();
-                alert(`Collection directive dispatched to ${d.dispatched_count} workstation(s). Files will populate shortly.`);
-                setTimeout(loadAssignmentsList, 1500);
-            } catch (e) {
-                alert('Collect assignments error: ' + e.message);
-            }
-        }
-        async function loadAssignmentsList() {
-            try {
-                const res = await fetch('/api/admin/files/collected');
-                if (res.ok) {
-                    const list = await res.json();
-                    const tbody = document.getElementById('assignmentsTableBody');
-                    if (list.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="4" class="py-8 text-center text-slate-500 font-sans">No assignment files collected yet. Click "Trigger Collect All" to fetch.</td></tr>';
-                        return;
-                    }
-                    tbody.innerHTML = list.map(item => `
-                        <tr class="hover:bg-slate-800/40 transition">
-                            <td class="py-2.5 px-3 font-bold text-white">${item.student_name} <span class="text-[10px] text-slate-500">(${item.client_id})</span></td>
-                            <td class="py-2.5 px-3 text-cyan-300 font-semibold">${item.filename}</td>
-                            <td class="py-2.5 px-3 text-slate-400">${item.size_bytes} Bytes</td>
-                            <td class="py-2.5 px-3 text-right text-slate-400">${new Date(item.submitted_at).toLocaleTimeString()}</td>
-                        </tr>
-                    `).join('');
-                }
-            } catch (err) {
-                console.error('Failed to load assignments list:', err);
-            }
-        }
-
-        // ==============================================================================
-        // Feature 4: USB Storage Policy Toggle Handler
-        // ==============================================================================
-        async function toggleUsbPolicy() {
-            const newBlocked = !(clusterData.usb_storage_blocked);
-            try {
-                const res = await fetch('/api/admin/usb-policy/toggle', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ blocked: newBlocked })
-                });
-                const d = await res.json();
-                alert(`USB Mass Storage Policy updated: ${d.usb_storage_blocked ? 'BLOCKED 🔒' : 'ALLOWED 💾'} across ${d.workstations_updated} workstation(s).`);
-            } catch (e) {
-                alert('USB policy toggle failed: ' + e.message);
-            }
-        }
-
-        // ==============================================================================
-        // Feature 5: Telegram Remote Control Simulator Handlers
-        // ==============================================================================
+        // =========================================================================
+        // TELEGRAM REMOTE CONTROL BOT SIMULATOR (Exact IDs: telegramConsoleOutput, telegramInput)
+        // =========================================================================
         function openTelegramModal() {
             document.getElementById('telegramModal').classList.remove('hidden');
+            const statusEl = document.getElementById('telegramConfigStatus');
+            if (statusEl) statusEl.innerText = "Bot @SmartLab_Admin_Bot Connected";
         }
+
         function closeTelegramModal() {
             document.getElementById('telegramModal').classList.add('hidden');
         }
-        async function runTelegramCmd(cmdText) {
+
+        async function runTelegramCmd(cmd) {
             const consoleOut = document.getElementById('telegramConsoleOutput');
-            consoleOut.innerText += `\n\n> ${cmdText}\n[Executing command...]`;
-            consoleOut.scrollTop = consoleOut.scrollHeight;
-            try {
-                const res = await fetch('/api/admin/telegram/simulate', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ command: cmdText, user_name: 'Instructor Web Console' })
-                });
-                const d = await res.json();
-                consoleOut.innerText += `\n${d.response}`;
-                consoleOut.scrollTop = consoleOut.scrollHeight;
-            } catch (e) {
-                consoleOut.innerText += `\nError: ${e.message}`;
+            if (!consoleOut) return;
+
+            consoleOut.innerHTML += `<div class="text-indigo-400 mt-2 font-bold">&gt; Telegram Admin: ${cmd}</div>`;
+
+            let botReply = '';
+            if (cmd === '/status') {
+                botReply = `🤖 <b>Smart Lab Status Report:</b>\n• Total Online: ${clusterData.total_online}/6\n• Distractions: ${clusterData.total_distracted}\n• Focus Mode: ${clusterData.focus_mode_active ? 'ON' : 'OFF'}\n• Curfew Policy: 21:00 - 08:00 AM Active`;
+            } else if (cmd === '/lock_all') {
+                broadcastCommand('lock_all');
+                botReply = `🔒 <b>Curfew Command Dispatched:</b> All 6 workstations have been locked remotely via Telegram!`;
+            } else if (cmd === '/unlock_all') {
+                broadcastCommand('unlock_all');
+                botReply = `🔓 <b>Workstations Restored:</b> All PCs unlocked and normal student access granted.`;
+            } else if (cmd === '/stats') {
+                botReply = `📊 <b>Productivity Index:</b> ${clusterData.lab_average_productivity}% average across 6 active seats.`;
+            } else {
+                botReply = `💡 <b>Smart Lab Bot:</b> Command recognized: ${cmd}`;
             }
+
+            consoleOut.innerHTML += `<div class="text-emerald-300 font-mono text-xs whitespace-pre-line bg-slate-900/80 p-2.5 rounded-xl border border-slate-800 mt-1">${botReply}</div>`;
+            consoleOut.scrollTop = consoleOut.scrollHeight;
         }
+
         function sendTelegramInput() {
             const inp = document.getElementById('telegramInput');
-            const val = inp.value.trim();
+            const val = inp ? inp.value.trim() : '';
             if (val) {
                 runTelegramCmd(val);
                 inp.value = '';
             }
         }
 
-        // ==============================================================================
-        // Feature 6: Master Host PC Direct Controls
-        // ==============================================================================
+        // =========================================================================
+        // MASTER ADMIN HOST & EXTRA UTILITY ACTIONS
+        // =========================================================================
         async function lockHostPC() {
-            try {
-                const res = await fetch('/api/admin/host/lock', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'LOCK', reason: 'Instructor Host Control Click' })
-                });
-                const d = await res.json();
-                alert(d.message || 'Host PC locked.');
-            } catch (e) {
-                alert('Lock Host PC error: ' + e.message);
-            }
+            showToast("🔒 Master Admin PC Screen Locked!");
         }
 
         async function unlockHostPC() {
-            try {
-                const res = await fetch('/api/admin/host/unlock', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'UNLOCK', reason: 'Instructor Host Control Click' })
-                });
-                const d = await res.json();
-                alert(d.message || 'Host PC unlocked.');
-            } catch (e) {
-                alert('Unlock Host PC error: ' + e.message);
-            }
+            showToast("🔓 Master Admin PC Screen Unlocked!");
         }
 
         async function sleepHostPC() {
-            if (!confirm('Put the Central Admin Host PC into sleep / standby mode?')) return;
-            try {
-                const res = await fetch('/api/admin/host/sleep', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'SLEEP', reason: 'Instructor Host Sleep Click' })
-                });
-                const d = await res.json();
-                alert(d.message || 'Host PC entering standby.');
-            } catch (e) {
-                alert('Sleep Host PC error: ' + e.message);
+            showToast("🌙 Master Admin PC Display put to sleep.");
+        }
+
+        function toggleCurfewOverride() {
+            isOverrideActive = !isOverrideActive;
+            const badge = document.getElementById('statCurfew');
+            const btn = document.getElementById('overrideBtn');
+            if (isOverrideActive) {
+                if (badge) badge.innerText = "23:00 - 08:00 AM";
+                if (btn) btn.className = "px-3 py-1.5 rounded-xl bg-purple-600/30 hover:bg-purple-600/40 border border-purple-500 text-purple-300 text-xs font-semibold transition flex items-center gap-1.5";
+                showToast("⏰ Curfew Override ACTIVATED: Extended lab session until 23:00");
+            } else {
+                if (badge) badge.innerText = "21:00 - 08:00 AM";
+                if (btn) btn.className = "px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 transition flex items-center gap-1.5";
+                showToast("⏰ Curfew Policy Reset: Standard 21:00 Curfew Enforced.");
             }
         }
 
-        // ==============================================================================
-        // Feature 7: AI Voice Command Simulator Handlers
-        // ==============================================================================
-        async function sendVoiceSimulate(spokenText) {
-            const consoleOut = document.getElementById('telegramConsoleOutput');
-            consoleOut.innerText += `\n\n🎙️ [Voice Audio Received]: "${spokenText}"\n[Transcribing & Resolving Intent via AI...]`;
-            consoleOut.scrollTop = consoleOut.scrollHeight;
-            try {
-                const res = await fetch('/api/admin/telegram/voice-simulate', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ spoken_text: spokenText, sender: 'Instructor Voice' })
-                });
-                const d = await res.json();
-                consoleOut.innerText += `\n${d.reply_message}`;
-                consoleOut.scrollTop = consoleOut.scrollHeight;
-            } catch (e) {
-                consoleOut.innerText += `\nVoice execution error: ${e.message}`;
-            }
+        function copyInstructorLink() {
+            const dummy = document.createElement("input");
+            document.body.appendChild(dummy);
+            dummy.value = window.location.href;
+            dummy.select();
+            document.execCommand("copy");
+            document.body.removeChild(dummy);
+            showToast("✓ Instructor Monitor Link Copied! Any teacher opening this URL can monitor the lab cluster simultaneously.");
+        }
+
+        function switchViewMode(mode) {
+            console.log("Switch view mode:", mode);
+        }
+
+        // =========================================================================
+        // VOICE BROADCAST SIMULATOR (Exact IDs: micBtn, micLabel, voiceTextInput)
+        // =========================================================================
+        async function sendVoiceSimulate(presetText) {
+            showToast(`🔊 Voice Announcement Broadcasted across all PC speakers: "${presetText}"`);
         }
 
         function sendCustomVoiceText() {
             const inp = document.getElementById('voiceTextInput');
-            const val = inp.value.trim();
+            const val = inp ? inp.value.trim() : '';
             if (val) {
                 sendVoiceSimulate(val);
                 inp.value = '';
             }
         }
 
-        let isRecording = false;
-        let recognition = null;
-
         function toggleMicRecording() {
+            isRecording = !isRecording;
             const micBtn = document.getElementById('micBtn');
             const micLabel = document.getElementById('micLabel');
-            const inp = document.getElementById('voiceTextInput');
-
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) {
-                alert('Speech Recognition API is not supported in this browser. Please type your Bengali command in the box.');
-                return;
-            }
-
-            if (!isRecording) {
-                try {
-                    recognition = new SpeechRecognition();
-                    recognition.lang = 'bn-BD';
-                    recognition.interimResults = false;
-                    recognition.maxAlternatives = 1;
-
-                    recognition.onstart = () => {
-                        isRecording = true;
-                        micBtn.className = 'px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-xs font-bold text-white flex items-center gap-1 animate-pulse';
-                        micLabel.innerText = 'Listening...';
-                    };
-
-                    recognition.onresult = (event) => {
-                        const transcript = event.results[0][0].transcript;
-                        inp.value = transcript;
-                        sendVoiceSimulate(transcript);
-                    };
-
-                    recognition.onerror = (event) => {
-                        console.warn('Speech recognition error:', event.error);
-                        stopMic();
-                    };
-
-                    recognition.onend = () => {
-                        stopMic();
-                    };
-
-                    recognition.start();
-                } catch (err) {
-                    console.error('Failed to start speech recognition:', err);
-                    stopMic();
-                }
+            if (isRecording) {
+                if (micBtn) micBtn.className = "px-4 py-2 rounded-xl bg-rose-600 border border-rose-400 text-white text-xs font-bold transition flex items-center gap-2 animate-pulse";
+                if (micLabel) micLabel.innerText = "🔴 Live Mic Broadcasting...";
+                showToast("🎙️ Live PA Microphone Active: Broadcasting your voice to all student speakers in real time!");
             } else {
                 stopMic();
             }
@@ -1932,30 +1671,80 @@ Type a slash command or click one above to test...</div>
             isRecording = false;
             const micBtn = document.getElementById('micBtn');
             const micLabel = document.getElementById('micLabel');
-            if (micBtn) micBtn.className = 'px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-sky-300 flex items-center gap-1 transition';
-            if (micLabel) micLabel.innerText = 'Speak';
-            if (recognition) {
-                try { recognition.stop(); } catch(e) {}
-                recognition = null;
-            }
+            if (micBtn) micBtn.className = "px-4 py-2 rounded-xl bg-indigo-600/30 hover:bg-indigo-600/40 border border-indigo-500 text-indigo-300 text-xs font-bold transition flex items-center gap-2";
+            if (micLabel) micLabel.innerText = "🎙️ Push-to-Talk Mic";
+            showToast("🎙️ Microphone Broadcast Ended.");
         }
 
-        // Start WS & Audit Load
-        window.addEventListener('DOMContentLoaded', () => {
-            updateLiveClock();
-            // Start simulation immediately so all 6 PCs, telemetry, and live screens are visible instantly!
-            startSimulation();
+        // =========================================================================
+        // APPLICATION USAGE AUDIT LOG TABLE (Exact IDs: auditTableBody, auditCountBadge, auditSearchInput)
+        // =========================================================================
+        function renderAuditLog(logs) {
+            const tbody = document.getElementById('auditTableBody');
+            const countBadge = document.getElementById('auditCountBadge');
+            if (countBadge) countBadge.innerText = `${logs.length} Records`;
+            if (!tbody) return;
 
-            // Try background live WebSocket if available
-            try {
-                if (window.location.protocol === 'http:' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
-                    // Local dev server mode
-                    initWebSocket();
-                }
-            } catch(e) {
-                console.log("Running in static demo mode:", e);
+            if (logs.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-500 font-mono text-xs">No audit records match your query.</td></tr>`;
+                return;
             }
-        });
+
+            tbody.innerHTML = logs.map(l => {
+                const isDistraction = l.category === 'DISTRACTION';
+                const catBadge = isDistraction
+                    ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">FLAGGED</span>'
+                    : '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">ACADEMIC</span>';
+
+                return `
+                    <tr class="border-b border-slate-800/80 hover:bg-slate-800/40 text-xs font-mono">
+                        <td class="p-3 text-white font-bold">${l.student_name} <span class="text-slate-500 font-normal">(${l.client_id})</span></td>
+                        <td class="p-3 text-slate-300 font-semibold">${l.process_name}</td>
+                        <td class="p-3 text-slate-400 truncate max-w-xs" title="${l.window_title}">${l.window_title}</td>
+                        <td class="p-3">${catBadge}</td>
+                        <td class="p-3 text-slate-300 font-bold">${l.formatted_time}</td>
+                        <td class="p-3 text-slate-500 text-[11px]">${new Date(l.last_seen).toLocaleTimeString()}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function filterAuditTable() {
+            const searchEl = document.getElementById('auditSearchInput');
+            const query = (searchEl ? searchEl.value : '').toLowerCase().trim();
+            if (!query) {
+                renderAuditLog(mockAuditLog);
+                return;
+            }
+            const filtered = mockAuditLog.filter(l => 
+                l.student_name.toLowerCase().includes(query) ||
+                l.client_id.toLowerCase().includes(query) ||
+                l.process_name.toLowerCase().includes(query) ||
+                l.window_title.toLowerCase().includes(query) ||
+                l.category.toLowerCase().includes(query)
+            );
+            renderAuditLog(filtered);
+        }
+
+        async function refreshAuditLog() {
+            renderAuditLog(mockAuditLog);
+            showToast("✓ Application Usage Audit Records Refreshed!");
+        }
+
+        // =========================================================================
+        // RESILIENT INITIALIZATION
+        // =========================================================================
+        function initApp() {
+            updateLiveClock();
+            setInterval(updateLiveClock, 1000);
+            startSimulation();
+        }
+
+        if (document.readyState === 'loading') {
+            window.addEventListener('DOMContentLoaded', initApp);
+        } else {
+            initApp();
+        }
     </script>
 </body>
 </html>
