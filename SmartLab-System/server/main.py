@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from fastapi import FastAPI, HTTPException, Query, Request, Response, WebSocket, WebSocketDisconnect, status
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
 from pydantic import BaseModel
 import uvicorn
 
@@ -153,6 +153,14 @@ app = FastAPI(
 # ==============================================================================
 # Instructor Command Dashboard Web Route
 # ==============================================================================
+
+
+@app.get("/download-agent")
+async def download_agent():
+    zip_path = Path(__file__).resolve().parent.parent / "SmartLab-Student-Agent.zip"
+    if zip_path.exists():
+        return FileResponse(zip_path, media_type="application/zip", filename="SmartLab-Student-Agent.zip")
+    raise HTTPException(status_code=404, detail="Agent package not found")
 
 @app.get("/", response_class=HTMLResponse)
 @app.get("/dashboard", response_class=HTMLResponse)
