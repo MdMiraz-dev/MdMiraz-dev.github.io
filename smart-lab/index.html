@@ -16,6 +16,17 @@
     <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <!-- Portfolio Navigation & Author -->
+            <!-- Multi-Instructor Seat Indicator -->
+            <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-indigo-950/60 border border-indigo-500/40 text-xs">
+                <span class="flex h-2 w-2 relative">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+                </span>
+                <span class="text-indigo-200 font-medium">👥 3 Teachers Connected (Multi-Seat View)</span>
+                <button onclick="copyInstructorLink()" title="অন্য টিচারদের লিংক পাঠিয়ে একসাথে মনিটর করুন" class="ml-2 px-2 py-0.5 rounded bg-indigo-600/40 hover:bg-indigo-600 text-[11px] font-bold text-indigo-100 transition border border-indigo-400/30">
+                    🔗 Share Monitor Link
+                </button>
+            </div>
             <div class="flex items-center gap-3">
                 <a href="../index.html" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition shadow-sm">
                     <span>&larr;</span> Portfolio (mdmiraz.com)
@@ -984,19 +995,14 @@ Type a slash command or click one above to test...</div>
                                 ` : ''}
                             </div>
 
-                            <!-- Live Screen Thumbnail (Veyon Preview) -->
-                            <div onclick="openScreenModal('${pc.client_id}', '${pc.student_name}')" class="relative group cursor-pointer overflow-hidden rounded-xl border border-slate-800/80 bg-slate-950 aspect-video flex items-center justify-center mt-3 shadow-inner">
-                                ${pc.screen_thumbnail ? `
-                                    <img src="${pc.screen_thumbnail}" alt="Live Preview" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
-                                ` : `
-                                    <div class="text-center p-3 text-slate-600 font-mono text-[11px]">
-                                        <span class="text-xl block mb-1">🖥️</span>
-                                        <span>Awaiting Stream...</span>
-                                    </div>
-                                `}
-                                <div class="absolute inset-0 bg-slate-950/70 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-1.5 text-xs font-bold text-indigo-300 backdrop-blur-[2px]">
+                            <!-- Live Screen Thumbnail (Real-Time Student Screen Preview) -->
+                            <div onclick="openScreenModal('${pc.client_id}', '${pc.student_name}')" class="relative group cursor-pointer overflow-hidden rounded-xl border border-slate-800 bg-slate-950 aspect-video flex items-center justify-center mt-3 shadow-inner">
+                                <div class="w-full h-full">
+                                    ${getStudentScreenPreview(pc)}
+                                </div>
+                                <div class="absolute inset-0 bg-slate-950/75 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-1.5 text-xs font-bold text-indigo-300 backdrop-blur-[1px]">
                                     <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                                    <span>Expand Live View</span>
+                                    <span>🔍 Click to View Full Screen</span>
                                 </div>
                             </div>
                         </div>
@@ -1123,7 +1129,152 @@ Type a slash command or click one above to test...</div>
         let activeScreenTarget = null;
         let screenRefreshTimer = null;
 
-        async function openScreenModal(clientId, studentName) {
+        async 
+        // --- MULTI-INSTRUCTOR LINK COPY ---
+        function copyInstructorLink() {
+            navigator.clipboard.writeText(window.location.href);
+            showToast("✓ Instructor Monitor Link Copied! Any teacher opening this URL can monitor all student screens simultaneously.");
+        }
+
+        // --- VIEW MODE TOGGLE (CARDS vs LIVE SCREENS MATRIX) ---
+        let currentViewMode = 'cards'; // 'cards' or 'screens'
+        function switchViewMode(mode) {
+            currentViewMode = mode;
+            const cardsBtn = document.getElementById('viewModeCardsBtn');
+            const screensBtn = document.getElementById('viewModeScreensBtn');
+            if (mode === 'screens') {
+                screensBtn.className = 'px-3 py-1.5 rounded-lg bg-indigo-600/40 border border-indigo-400 text-indigo-200 text-xs font-bold transition flex items-center gap-1.5 shadow-lg shadow-indigo-950/40 animate-pulse';
+                cardsBtn.className = 'px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-xs font-bold transition flex items-center gap-1.5 shadow-sm';
+            } else {
+                cardsBtn.className = 'px-3 py-1.5 rounded-lg bg-emerald-600/30 border border-emerald-500 text-emerald-300 text-xs font-bold transition flex items-center gap-1.5 shadow-sm';
+                screensBtn.className = 'px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-xs font-bold transition flex items-center gap-1.5 shadow-sm';
+            }
+            renderCluster(clusterData);
+        }
+
+        // --- REALISTIC LIVE STUDENT SCREEN GENERATOR ---
+        function getStudentScreenPreview(pc) {
+            if (pc.locked) {
+                return `
+                    <div class="w-full h-full bg-slate-950 flex flex-col items-center justify-center p-3 text-center border border-red-500/50">
+                        <span class="text-3xl mb-1">🔒</span>
+                        <span class="text-xs font-bold text-red-400 font-mono">CURFEW LOCK ACTIVE</span>
+                        <span class="text-[10px] text-slate-400 mt-1">Screen Locked by Instructor</span>
+                    </div>
+                `;
+            }
+            if (pc.status === 'DISTRACTED') {
+                return `
+                    <div class="w-full h-full bg-slate-950 flex flex-col justify-between p-2.5 relative border border-rose-500/80 overflow-hidden">
+                        <div class="flex items-center justify-between text-[10px] text-rose-300 font-mono bg-rose-950/80 px-2 py-1 rounded">
+                            <span class="font-bold flex items-center gap-1"><span>⚠️</span> REELS/SHORTS DETECTED</span>
+                            <span class="animate-pulse">BLOCKED</span>
+                        </div>
+                        <div class="my-auto text-center space-y-1">
+                            <div class="w-10 h-10 mx-auto rounded-full bg-rose-500/20 flex items-center justify-center text-rose-400 text-lg">▶️</div>
+                            <p class="text-[11px] font-bold text-rose-200">YouTube Shorts / Reels</p>
+                            <p class="text-[9px] text-slate-400">Distraction Watchdog Triggered</p>
+                        </div>
+                        <div class="text-[9px] text-rose-400 bg-rose-950/50 text-center py-0.5 rounded">
+                            Auto-Warning Delivered to Student
+                        </div>
+                    </div>
+                `;
+            }
+            if (pc.client_id === 'LAB-PC-01') {
+                return `
+                    <div class="w-full h-full bg-[#1e1e1e] flex flex-col justify-between p-2 font-mono text-[10px] text-slate-300 border border-slate-800">
+                        <div class="flex items-center justify-between bg-[#2d2d2d] px-2 py-0.5 rounded text-[9px] text-slate-400">
+                            <span>📄 client_agent.py - VS Code</span>
+                            <span class="text-emerald-400">Python 3.12</span>
+                        </div>
+                        <div class="space-y-0.5 text-[9px] text-slate-400 overflow-hidden pl-1 border-l-2 border-emerald-500">
+                            <p><span class="text-purple-400">async def</span> <span class="text-blue-400">sync_heartbeat</span>():</p>
+                            <p class="pl-2">payload = { <span class="text-emerald-300">'status'</span>: <span class="text-amber-300">'ACTIVE'</span> }</p>
+                            <p class="pl-2"><span class="text-purple-400">await</span> ws.send(json.dumps(payload))</p>
+                        </div>
+                        <div class="bg-[#181818] p-1 rounded text-[8px] text-emerald-400 flex items-center justify-between">
+                            <span>TERMINAL: pytest tests/ - 12 passed</span>
+                            <span class="text-slate-500">Focus 98%</span>
+                        </div>
+                    </div>
+                `;
+            }
+            if (pc.client_id === 'LAB-PC-02') {
+                return `
+                    <div class="w-full h-full bg-slate-900 flex flex-col justify-between p-2 font-mono text-[10px] text-slate-300 border border-slate-800">
+                        <div class="flex items-center justify-between bg-slate-800 px-2 py-0.5 rounded text-[9px] text-slate-300">
+                            <span>🌐 Chrome - As-Sunnah LMS Portal</span>
+                            <span class="text-blue-400">Lecture #4</span>
+                        </div>
+                        <div class="my-auto text-center p-1 bg-slate-950/80 rounded border border-slate-800">
+                            <span class="text-base block mb-0.5">🎥</span>
+                            <p class="text-[10px] font-bold text-white">Full-Stack Python & AI Systems</p>
+                            <p class="text-[8px] text-emerald-400">Educational Video Stream Allowed</p>
+                        </div>
+                        <div class="text-[8px] text-slate-400 flex justify-between">
+                            <span>Video Progress: 42:15 / 55:00</span>
+                            <span class="text-emerald-400">100% Focused</span>
+                        </div>
+                    </div>
+                `;
+            }
+            if (pc.client_id === 'LAB-PC-04') {
+                return `
+                    <div class="w-full h-full bg-black flex flex-col justify-between p-2 font-mono text-[10px] text-green-400 border border-slate-800">
+                        <div class="flex items-center justify-between text-[9px] text-slate-400 border-b border-slate-800 pb-0.5">
+                            <span>>_ PowerShell Administrator</span>
+                            <span>Git 2.45</span>
+                        </div>
+                        <div class="space-y-0.5 text-[9px]">
+                            <p>PS C:\Project> git add .</p>
+                            <p>PS C:\Project> git commit -m "Finish task"</p>
+                            <p class="text-yellow-400">[main a4f91c] 4 files changed</p>
+                            <p>PS C:\Project> git push origin main</p>
+                            <p class="text-emerald-400">&#x2713; Everything up-to-date</p>
+                        </div>
+                        <div class="text-[8px] text-slate-500 text-right">CPU 12% • Active</div>
+                    </div>
+                `;
+            }
+            if (pc.client_id === 'LAB-PC-05') {
+                return `
+                    <div class="w-full h-full bg-[#1a1a24] flex flex-col justify-between p-2 font-mono text-[10px] text-slate-300 border border-slate-800">
+                        <div class="flex items-center justify-between bg-[#242435] px-2 py-0.5 rounded text-[9px]">
+                            <span class="text-amber-400 font-bold">POST</span>
+                            <span>/api/v1/workstations/verify</span>
+                            <span class="text-emerald-400">200 OK</span>
+                        </div>
+                        <div class="p-1 bg-[#12121a] rounded text-[8px] text-slate-400 font-mono">
+                            <p>{ "success": <span class="text-blue-400">true</span>,</p>
+                            <p>&nbsp;&nbsp;"token": <span class="text-emerald-300">"sb_auth_909"</span> }</p>
+                        </div>
+                        <div class="text-[8px] text-slate-400 flex justify-between">
+                            <span>Response Time: 34ms</span>
+                            <span class="text-emerald-400">Focus 96%</span>
+                        </div>
+                    </div>
+                `;
+            }
+            return `
+                <div class="w-full h-full bg-[#2c2c2c] flex flex-col justify-between p-2 font-mono text-[10px] text-slate-300 border border-slate-800">
+                    <div class="flex items-center justify-between bg-[#383838] px-2 py-0.5 rounded text-[9px]">
+                        <span>🎨 Figma - Lab Command UI Layout</span>
+                        <span class="text-purple-400">Design</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-1 my-auto p-1 bg-[#202020] rounded">
+                        <div class="h-6 bg-slate-700/60 rounded flex items-center justify-center text-[8px]">Wireframe A</div>
+                        <div class="h-6 bg-slate-700/60 rounded flex items-center justify-center text-[8px]">Wireframe B</div>
+                    </div>
+                    <div class="text-[8px] text-slate-400 flex justify-between">
+                        <span>Canvas Zoom: 100%</span>
+                        <span class="text-emerald-400">Focus 94%</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openScreenModal(clientId, studentName) {
             activeScreenTarget = clientId;
             document.getElementById('screenModalTitle').innerText = clientId;
             document.getElementById('screenModalStudent').innerText = studentName;
