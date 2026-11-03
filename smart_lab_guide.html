@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<title>Smart Lab Command Center — সম্পূর্ণ ব্যবহার ও ডেমো নির্দেশিকা</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap');
+
+@page {
+    size: A4 portrait;
+    margin: 14mm 14mm 14mm 14mm;
+}
+
+* {
+    box-sizing: border-box;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+}
+
+body {
+    font-family: 'Hind Siliguri', 'Kalpurush', 'SolaimanLipi', 'Nirmala UI', 'Segoe UI', Tahoma, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #ffffff;
+    color: #1e293b;
+    font-size: 13.5px;
+    line-height: 1.55;
+}
+
+.page {
+    width: 100%;
+    page-break-after: always;
+    position: relative;
+    padding-bottom: 25px;
+}
+.page:last-child {
+    page-break-after: avoid;
+}
+
+/* Page Header & Footer */
+.page-top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1.5px solid #e2e8f0;
+    padding-bottom: 6px;
+    margin-bottom: 14px;
+    font-size: 10.5px;
+    color: #64748b;
+    font-weight: 500;
+}
+.page-bottom-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 6px;
+    font-size: 10.5px;
+    color: #64748b;
+}
+
+/* Header Banner */
+.header-box {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: #ffffff;
+    padding: 16px 20px;
+    border-radius: 8px;
+    margin-bottom: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.header-box h1 {
+    margin: 0 0 4px 0;
+    font-size: 21px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #ffffff;
+}
+.header-box p {
+    margin: 0;
+    font-size: 12.5px;
+    color: #94a3b8;
+}
+.header-badge {
+    background: rgba(16, 185, 129, 0.18);
+    border: 1px solid #10b981;
+    color: #34d399;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+}
+
+/* Meta Table */
+.meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 9px 14px;
+    margin-bottom: 14px;
+    font-size: 12px;
+}
+.meta-item b {
+    color: #0f172a;
+}
+
+/* Typography */
+h2 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 12px 0 6px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-left: 4px solid #2563eb;
+    padding-left: 8px;
+}
+h3 {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 8px 0 3px 0;
+}
+p {
+    margin: 0 0 8px 0;
+    text-align: justify;
+}
+
+/* Cards & Pillars */
+.three-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+.col-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 10px;
+}
+.col-card.blue { border-top: 3px solid #2563eb; }
+.col-card.rose { border-top: 3px solid #e11d48; }
+.col-card.emerald { border-top: 3px solid #059669; }
+
+.col-card h4 {
+    margin: 0 0 4px 0;
+    font-size: 13px;
+    font-weight: 700;
+    color: #0f172a;
+}
+.col-card p {
+    margin: 0;
+    font-size: 11.5px;
+    line-height: 1.45;
+    color: #475569;
+}
+
+/* Steps */
+.step-item {
+    display: flex;
+    gap: 12px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 9px 12px;
+    margin-bottom: 8px;
+}
+.step-badge {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #2563eb;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 12px;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+.step-body {
+    flex-grow: 1;
+}
+.step-body h4 {
+    margin: 0 0 3px 0;
+    font-size: 13px;
+    font-weight: 700;
+    color: #0f172a;
+}
+.step-body p {
+    margin: 0;
+    font-size: 12px;
+    color: #475569;
+    line-height: 1.45;
+}
+.code-inline {
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    color: #0369a1;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: Consolas, monospace;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+/* Callout Box */
+.callout {
+    background: #ecfdf5;
+    border: 1px solid #10b981;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+.callout-icon {
+    font-size: 18px;
+    color: #059669;
+    flex-shrink: 0;
+    line-height: 1;
+}
+.callout-body b {
+    color: #065f46;
+    font-size: 13px;
+}
+.callout-body p {
+    margin: 2px 0 0 0;
+    color: #047857;
+    font-size: 12px;
+}
+
+/* Tables */
+table.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0 12px 0;
+    font-size: 12px;
+}
+table.data-table th, table.data-table td {
+    border: 1px solid #e2e8f0;
+    padding: 7px 10px;
+    text-align: left;
+    vertical-align: top;
+}
+table.data-table th {
+    background: #f1f5f9;
+    color: #0f172a;
+    font-weight: 700;
+}
+table.data-table tr:nth-child(even) {
+    background: #f8fafc;
+}
+
+/* Demo Step Table */
+.demo-table td:first-child {
+    font-weight: 600;
+    color: #0f172a;
+    width: 32%;
+    background: #f8fafc;
+}
+
+/* Contact Footer */
+.contact-box {
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-top: 14px;
+}
+.contact-box h4 {
+    margin: 0 0 4px 0;
+    font-size: 12.5px;
+    color: #0f172a;
+}
+.contact-box p {
+    margin: 0;
+    font-size: 11.5px;
+    color: #475569;
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== PAGE 1 ==================== -->
+<div class="page">
+    <div class="page-top-bar">
+        <span>স্মার্ট ল্যাব কমান্ড সেন্টার (Smart Lab Command Center)</span>
+        <span>অফিসিয়াল ব্যবহার ও ডেমো নির্দেশিকা</span>
+    </div>
+
+    <div class="header-box">
+        <div>
+            <h1>SMART LAB COMMAND CENTER</h1>
+            <p>সম্পূর্ণ ব্যবহার, নেটওয়ার্ক সেটআপ এবং প্রাতিষ্ঠানিক ডেমোনস্ট্রেশন গাইডলাইন</p>
+        </div>
+        <div class="header-badge">ভার্সন ২.৪ প্রোডাকশন</div>
+    </div>
+
+    <div class="meta-grid">
+        <div class="meta-item"><b>সফটওয়্যার:</b> Smart Lab Command Center v2.4</div>
+        <div class="meta-item"><b>ডেভেলপার:</b> মেরাজুল ইসলাম (Merajul Islam)</div>
+        <div class="meta-item"><b>পোর্টফোলিও:</b> mdmiraz.com | GitHub: MdMiraz-dev</div>
+        <div class="meta-item"><b>উদ্দেশ্য:</b> প্রাতিষ্ঠানিক কম্পিউটার ল্যাব সেন্ট্রাল মনিটরিং ও অটোলক</div>
+    </div>
+
+    <h2>১. সিস্টেম পরিচিতি — এটি কেন তৈরি করা হয়েছে?</h2>
+    <p>
+        সাধারণ কম্পিউটার ল্যাবে শিক্ষককে সারাক্ষণ হেঁটে হেঁটে প্রতিটি ছাত্রের পেছনে গিয়ে দেখতে হয় ছাত্ররা কী করছে। এতে শিক্ষকের প্রচুর সময় নষ্ট হয় এবং ছাত্ররা শিক্ষক কাছে এলেই দ্রুত ট্যাব বদলে পড়ার ভান করে। <b>Smart Lab Command Center</b> এই বাস্তব সমস্যার একটি স্বয়ংক্রিয় ডিজিটাল সমাধান। শিক্ষক তার নিজস্ব টেবিলে বসেই একটি স্ক্রিনে পুরো ল্যাবের ৩০ থেকে ৫০টি কম্পিউটার রিয়েল-টাইমে দেখতে পারেন এবং এক ক্লিকে নিয়ন্ত্রণ করতে পারেন।
+    </p>
+
+    <div class="three-cols">
+        <div class="col-card blue">
+            <h4>১. লাইভ সেন্ট্রাল মনিটরিং</h4>
+            <p>এক স্ক্রিন থেকেই প্রতিটি ছাত্রের লাইভ ডিসপ্লে, প্রসেসর (CPU) ও মেমরি (RAM) সেকেন্ডে সেকেন্ডে আপডেট হতে থাকে।</p>
+        </div>
+        <div class="col-card rose">
+            <h4>২. ডিস্ট্রাকশন ওয়াচডগ</h4>
+            <p>ছাত্ররা পড়ার সময় ইউটিউব, ফেসবুক বা গেম চালালেই শিক্ষকের স্ক্রিনে লাল সতর্কতা আসে এবং প্রমাণস্বরূপ স্ক্রিনশট সংরক্ষিত হয়।</p>
+        </div>
+        <div class="col-card emerald">
+            <h4>৩. অটোলক ও রাত ৯টা কার্ফিউ</h4>
+            <p>ল্যাব ছুটির সময় বা রাত ৯টা বাজলেই পুরো ল্যাব স্বয়ংক্রিয়ভাবে লক হয়ে বিদ্যুৎ বাঁচায়। এছাড়া শিক্ষক যেকোনো পিসি তাৎক্ষণিক লক করতে পারেন।</p>
+        </div>
+    </div>
+
+    <h2>২. ল্যাবে সেটআপ ও চালু করার ৩টি সহজ ধাপ</h2>
+
+    <div class="step-item">
+        <div class="step-badge">১</div>
+        <div class="step-body">
+            <h4>শিক্ষক কম্পিউটারে সার্ভার চালু করা</h4>
+            <p>
+                শিক্ষক কম্পিউটারের ফোল্ডারে থাকা <span class="code-inline">Start-Teacher-Server.bat</span> ফাইলে ডাবল ক্লিক করুন। কালো উইন্ডোটিতে শিক্ষক কম্পিউটারের লোকাল আইপি অ্যাড্রেস (যেমন: <span class="code-inline">10.13.108.16</span>) স্পষ্টভাবে দেখা যাবে। এবার ব্রাউজারে <span class="code-inline">http://localhost:8500</span> লিংকে ঢুকলেই সেন্ট্রাল কন্ট্রোল ড্যাশবোর্ড চালু হয়ে যাবে।
+            </p>
+        </div>
+    </div>
+
+    <div class="step-item">
+        <div class="step-badge">২</div>
+        <div class="step-body">
+            <h4>পেনড্রাইভ ছাড়া ছাত্র কম্পিউটারে ফাইল নেওয়া (Direct LAN Download)</h4>
+            <p>
+                ছাত্র কম্পিউটারের গুগল ক্রোম বা এজ ব্রাউজারের অ্যাড্রেস বারে সরাসরি লিখুন:<br/>
+                <span class="code-inline">http://10.13.108.16:8500/download-agent</span> (শিক্ষক কম্পিউটারের আইপি অনুযায়ী)। ব্রাউজার সাথে সাথে মাত্র ৯ কিলোবাইটের <span class="code-inline">SmartLab-Student-Agent.zip</span> ফাইলটি ডাউনলোড করে দেবে। কোনো পেনড্রাইভ লাগবে না! ফাইলটির ওপর রাইট ক্লিক করে <b>Extract All...</b> দিয়ে আনজিপ করুন।
+            </p>
+        </div>
+    </div>
+
+    <div class="step-item">
+        <div class="step-badge">৩</div>
+        <div class="step-body">
+            <h4>ছাত্র কম্পিউটারে এজেন্ট চালু করা</h4>
+            <p>
+                আনজিপ করা ফোল্ডারে ঢুকে <span class="code-inline">Start-Student-Workstation.bat</span> ফাইলে ডাবল ক্লিক করুন। কালো উইন্ডোতে শিক্ষক পিসির আইপি চাইবে—সেখানে শিক্ষক পিসির আইপি (যেমন: <span class="code-inline">10.13.108.16</span>) লিখে Enter চাপুন। এরপর কম্পিউটারের নাম (যেমন: LAB-PC-01) ও ছাত্রের নাম লিখে Enter চাপুন। উইন্ডোটি মিনিমাইজ করে রাখুন, কাজ শেষ!
+            </p>
+        </div>
+    </div>
+
+    <div class="callout">
+        <div class="callout-icon">✓</div>
+        <div class="callout-body">
+            <b>ফলাফল যাচাই:</b>
+            <p>এবার শিক্ষক কম্পিউটারের ড্যাশবোর্ডে তাকালেই দেখবেন ছাত্র কম্পিউটারের কার্ডটি সবুজ বাতি জ্বালিয়ে একটিভ হয়ে গেছে এবং ছাত্র তার স্ক্রিনে যা করছে শিক্ষক সাথে সাথে তা দেখতে পাচ্ছেন!</p>
+        </div>
+    </div>
+
+    <div class="page-bottom-bar">
+        <span>Smart Lab Command Center • Designed & Developed by Merajul Islam</span>
+        <span>পৃষ্ঠা ১ / ৩</span>
+    </div>
+</div>
+
+<!-- ==================== PAGE 2 ==================== -->
+<div class="page">
+    <div class="page-top-bar">
+        <span>স্মার্ট ল্যাব কমান্ড সেন্টার (Smart Lab Command Center)</span>
+        <span>অফিসিয়াল ব্যবহার ও ডেমো নির্দেশিকা</span>
+    </div>
+
+    <h2>৩. স্ক্রিনের ভেতর স্ক্রিনের সুরঙ্গ (Droste Effect) কেন হয় এবং সমাধানের নিয়ম</h2>
+    <p>
+        একই কম্পিউটারে শিক্ষক ও ছাত্র উভয় অংশ টেস্ট করার সময় স্ক্রিনে একটার ভেতর আরেকটা ছবির সুরঙ্গ বা আয়নার মতো তৈরি হয়। এটি কেন হয় এবং অন্যকে কীভাবে বুঝিয়ে বলবেন:
+    </p>
+
+    <table class="data-table">
+        <tr>
+            <th style="width: 25%;">বিষয়</th>
+            <th>বিস্তারিত ব্যাখ্যা</th>
+        </tr>
+        <tr>
+            <td><b>সমস্যার মূল কারণ</b></td>
+            <td>যখন আপনি একই মনিটরে শিক্ষকের ড্যাশবোর্ডও খুলে রাখেন এবং ছাত্র সফটওয়্যারও চালু করেন, তখন ছাত্র সফটওয়্যার প্রতি সেকেন্ডে পুরো মনিটরের ছবি তোলে। মনিটরে যেহেতু শিক্ষকের ড্যাশবোর্ডও খোলা থাকে, তাই ড্যাশবোর্ডের ছবি আবার ড্যাশবোর্ডের ভেতরে গিয়ে পড়ে। আয়নার সামনে আরেকটি আয়না ধরলে যেমন অনন্ত সুরঙ্গ তৈরি হয়, ঠিক তেমনই ঘটে।</td>
+        </tr>
+        <tr>
+            <td><b>আসল ল্যাব টেস্ট<br/>(০% সমস্যা)</b></td>
+            <td>ল্যাবের ছাত্র কম্পিউটারে তো আর শিক্ষকের ড্যাশবোর্ড খোলা থাকবে না! ছাত্রের স্ক্রিনে থাকবে শুধু তার পড়া, ইউটিউব কিংবা কোডিং। ফলে শিক্ষকের স্ক্রিনে ছাত্রের স্ক্রিন ১০০% নিখুঁত, পরিষ্কার এবং ফুল কোয়ালিটিতে ভেসে উঠবে—কোনো সুরঙ্গ বা মিরর ইফেক্ট থাকবে না।</td>
+        </tr>
+        <tr>
+            <td><b>১টি পিসিতে টেস্ট করার কৌশল</b></td>
+            <td>যদি আপনি ১টি কম্পিউটারেই অন্য কাউকে বা ক্লায়েন্টকে ডেমো দেখাতে চান, তবে শিক্ষকের ড্যাশবোর্ডটি কম্পিউটারে মিনিমাইজ করে রাখুন এবং আপনার স্মার্টফোনের ব্রাউজার দিয়ে <span class="code-inline">http://10.13.108.16:8500</span> লিংকে ঢুকুন। তখন ফোনে শিক্ষক ড্যাশবোর্ড একদম আয়নার ইফেক্ট ছাড়া ক্রিস্টাল ক্লিয়ার দেখাবে।</td>
+        </tr>
+    </table>
+
+    <h2>৪. শিক্ষক, অধ্যক্ষ কিংবা ক্লায়েন্টকে ডেমো দেখানোর ৬টি ম্যাজিক স্টেপ</h2>
+    <p>
+        আপনি যখন কোনো মাদরাসা, স্কুল বা কম্পিউটার ল্যাবের কর্তৃপক্ষের সামনে এই সফটওয়্যারটি উপস্থাপন করবেন, তখন নিচের ক্রমানুসারে ডেমো দেখালে তারা সবচেয়ে বেশি মুগ্ধ হবে:
+    </p>
+
+    <table class="data-table demo-table">
+        <tr>
+            <th>ধাপ ও ফিচার</th>
+            <th>ডেমো উপস্থাপনের কৌশল ও স্ক্রিনে যা দেখাবেন</th>
+        </tr>
+        <tr>
+            <td>১. লাইভ স্ক্রিন স্ট্রিমিং</td>
+            <td>শিক্ষক ড্যাশবোর্ড প্রজেক্টরে বা শিক্ষক পিসিতে ওপেন রাখুন। ছাত্র পিসিতে কোনো ব্রাউজার খুলুন বা কোড লিখুন। দেখান যে শিক্ষক কোনো ক্লিক না করেই সাথে সাথে ছাত্রের স্ক্রিন আপডেট দেখতে পাচ্ছেন।</td>
+        </tr>
+        <tr>
+            <td>২. ইউটিউব / ফেসবুক ধরার ম্যাজিক</td>
+            <td>ছাত্র কম্পিউটারে ইউটিউব ওপেন করুন বা কোনো বিনোদনমূলক ভিডিও প্লে করুন। শিক্ষক স্ক্রিনে দেখান—সাথে সাথে ছাত্রের কার্ডে লাল রঙের 'ENTERTAINMENT DETECTED' সতর্কতা চলে এসেছে এবং ড্যাশবোর্ডে অ্যালার্ম বেজে উঠেছে।</td>
+        </tr>
+        <tr>
+            <td>৩. অকাট্য প্রমাণের স্ক্রিনশট<br/>(Daily Audit Report)</td>
+            <td>ছাত্র যদি বলে 'আমি তো ইউটিউব দেখিনি!', তখন শিক্ষক ড্যাশবোর্ডে থাকা 'Daily Audit Report' বাটনে চাপ দিন। সেখানে ছাত্র কোন সময় থেকে কোন সময় ইউটিউব দেখেছে তা গুগল শিটের মতো নিখুঁত টেবিল আকারে চলে আসবে এবং সাথে তারিখ, সময়, আইপি ও ম্যাক অ্যাড্রেস ওয়াটারমার্কযুক্ত ফুল স্ক্রিনশট দেখা যাবে।</td>
+        </tr>
+        <tr>
+            <td>৪. রিমোট পিসি লক<br/>(Remote Lockdown)</td>
+            <td>শিক্ষক ড্যাশবোর্ড থেকে 'Lock PC' বাটনে ক্লিক করুন। সাথে সাথে ছাত্রের কম্পিউটারের স্ক্রিন বন্ধ হয়ে গিয়ে বড় করে 'CLASS IN SESSION - SCREEN LOCKED' ভেসে উঠবে। ছাত্রের মাউস বা কিবোর্ড কোনো কাজ করবে না।</td>
+        </tr>
+        <tr>
+            <td>৫. স্বয়ংক্রিয় রাত ৯টা কার্ফিউ<br/>(Curfew Auto-Lock)</td>
+            <td>ল্যাব ছুটির সময় বা রাত ৯টা বাজলে কাউকে গিয়ে একটি একটি করে পিসি বন্ধ করতে হয় না। সফটওয়্যার নিজে থেকেই পুরো ল্যাবের সব পিসি একযোগে অফ করে প্রতিষ্ঠানের বিদ্যুৎ সাশ্রয় নিশ্চিত করে।</td>
+        </tr>
+        <tr>
+            <td>৬. মোবাইল টেলিগ্রাম বট<br/>(Anywhere Supervision)</td>
+            <td>শিক্ষক বা প্রধান শিক্ষক ল্যাবের বাইরে থাকলেও মোবাইল ফোনের টেলিগ্রাম বট দিয়ে /status দিলে পুরো ল্যাবের অবস্থা জানতে পারেন এবং /lock দিলে ফোন থেকেই ল্যাব লক করতে পারেন।</td>
+        </tr>
+    </table>
+
+    <div class="page-bottom-bar">
+        <span>Smart Lab Command Center • Designed & Developed by Merajul Islam</span>
+        <span>পৃষ্ঠা ২ / ৩</span>
+    </div>
+</div>
+
+<!-- ==================== PAGE 3 ==================== -->
+<div class="page">
+    <div class="page-top-bar">
+        <span>স্মার্ট ল্যাব কমান্ড সেন্টার (Smart Lab Command Center)</span>
+        <span>অফিসিয়াল ব্যবহার ও ডেমো নির্দেশিকা</span>
+    </div>
+
+    <h2>৫. বহুল জিজ্ঞাসিত প্রশ্ন ও উত্তর (FAQs)</h2>
+
+    <table class="data-table">
+        <tr>
+            <th style="width: 35%;">প্রশ্ন</th>
+            <th>উত্তর</th>
+        </tr>
+        <tr>
+            <td><b>ল্যাবে কি ইন্টারনেট কানেকশন বাধ্যতামূলক?</b></td>
+            <td><b>না!</b> এই সফটওয়্যারটি ১০০% লোকাল নেটওয়ার্কে (Local Offline LAN / Wi-Fi Router) কাজ করে। ব্রডব্যান্ড ইন্টারনেট বন্ধ থাকলেও ল্যাব মনিটরিং, স্ক্রিনশট এবং পিসি লক পুরোদমে সচল থাকে।</td>
+        </tr>
+        <tr>
+            <td><b>ছাত্ররা কি সফটওয়্যারটি বন্ধ করে দিতে পারবে?</b></td>
+            <td><b>না।</b> ছাত্র এজেন্ট ব্যাকগ্রাউন্ড সার্ভিস হিসেবে চলে। কোনো ছাত্র যদি টাস্ক ম্যানেজার থেকে বন্ধ করার চেষ্টা করে, সাথে সাথে শিক্ষকের ড্যাশবোর্ডে 'OFFLINE DISCONNECT ALERT' লাল বাতি জ্বলে ওঠে।</td>
+        </tr>
+        <tr>
+            <td><b>কম্পিউটার কি স্লো হয়ে যাবে?</b></td>
+            <td><b>একদমই না।</b> ছাত্র সফটওয়্যারটি অতি হালকা পাইথন স্ক্রিপ্ট হিসেবে তৈরি। এটি মাত্র ১৫ থেকে ২৫ মেগাবাইট র‍্যাম এবং ০.৫% এরও কম সিপিইউ ব্যবহার করে, ফলে সাধারণ মানের কম্পিউটারেও কোনো ল্যাগ হয় না।</td>
+        </tr>
+        <tr>
+            <td><b>শিক্ষক ল্যাবের বাইরে থাকলে মনিটর করবেন কীভাবে?</b></td>
+            <td>স্মার্ট ল্যাব টেলিগ্রাম বটের মাধ্যমে যুক্ত। শিক্ষক ল্যাব থেকে দূরে নিজের বাসায় বা অফিসে বসেও মোবাইল ফোনে টেলিগ্রামের মাধ্যমে ল্যাবের নোটিফিকেশন পান এবং কমান্ড পাঠাতে পারেন।</td>
+        </tr>
+        <tr>
+            <td><b>দৈনিক অডিট রিপোর্ট কি প্রিন্ট বা এক্সেল করা যায়?</b></td>
+            <td><b>হ্যাঁ।</b> ড্যাশবোর্ডের 'Daily Audit Report' থেকে এক ক্লিকেই গুগল শিট বা এক্সেল ফরম্যাটে (.CSV) সমস্ত তথ্য ডাউনলোড ও প্রিন্ট করা যায়।</td>
+        </tr>
+    </table>
+
+    <h2>৬. প্রাতিষ্ঠানিক সুবিধা ও ক্লায়েন্ট কনভিন্স করার মূল পয়েন্ট</h2>
+    <p>
+        যেকোনো শিক্ষা প্রতিষ্ঠান বা মাদরাসার প্রিন্সিপালকে সফটওয়্যারটির প্রাতিষ্ঠানিক মূল্য বোঝানোর জন্য এই ৩টি বিষয় তুলে ধরবেন:
+    </p>
+
+    <div class="three-cols">
+        <div class="col-card blue">
+            <h4>১. পড়াশোনার মনোযোগ ১০০%</h4>
+            <p>ছাত্ররা ক্লাসের সময় গেম বা ইউটিউবে না গিয়ে ক্লাসের বিষয়ে মনোযোগী থাকে। অভিভাবকরাও আশ্বস্ত হন যে তাদের সন্তান সময় নষ্ট করছে না।</p>
+        </div>
+        <div class="col-card rose">
+            <h4>২. বিদ্যুৎ ও হার্ডওয়্যার সুরক্ষা</h4>
+            <p>রাত ৯টায় স্বয়ংক্রিয় শাটডাউন ল্যাবের বিদ্যুৎ বিল সাশ্রয় করে এবং সারারাত পিসি অন থাকার কারণে যন্ত্রাংশ গরম হওয়া ও নষ্ট হওয়া রোধ করে।</p>
+        </div>
+        <div class="col-card emerald">
+            <h4>৩. নিজস্ব ও নিরাপদ ডেটা</h4>
+            <p>কোনো থার্ড-পার্টি ক্লাউড সার্ভারে ছাত্রদের ছবি যায় না। সব কিছু প্রতিষ্ঠানের নিজস্ব রাউটার ও শিক্ষক কম্পিউটারের লোকাল স্টোরেজে থাকে।</p>
+        </div>
+    </div>
+
+    <div class="contact-box">
+        <h4>অফিসিয়াল সিস্টেম সাপোর্ট ও যোগাযোগ:</h4>
+        <p>
+            সফটওয়্যারটি তৈরি ও পরিচালনা করছেন <b>মেরাজুল ইসলাম (Merajul Islam)</b>। ল্যাবে কাস্টম ইন্সটলেশন, একাধিক ব্রাঞ্চ নেটওয়ার্কিং কিংবা টেলিগ্রাম বট কনফিগারেশনের জন্য যেকোনো সময় পোর্টফোলিও বা সরাসরি যোগাযোগ করা যাবে।<br/>
+            🌐 <b>ওয়েবসাইট পোর্টফোলিও:</b> https://mdmiraz.com &nbsp;&nbsp;|&nbsp;&nbsp; 💻 <b>GitHub:</b> https://github.com/MdMiraz-dev<br/>
+            📍 <b>ঠিকানা:</b> আশুগঞ্জ, ব্রাহ্মণবাড়িয়া, বাংলাদেশ © ২০২৬
+        </p>
+    </div>
+
+    <div class="page-bottom-bar">
+        <span>Smart Lab Command Center • Designed & Developed by Merajul Islam</span>
+        <span>পৃষ্ঠা ৩ / ৩</span>
+    </div>
+</div>
+
+</body>
+</html>
