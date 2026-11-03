@@ -110,45 +110,59 @@
 
         <!-- Master Command Control Bar -->
         <div class="bg-gradient-to-r from-slate-900 via-slate-900/90 to-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 flex flex-wrap items-center justify-between gap-3 shadow-xl">
-            <div class="flex items-center gap-2">
-                <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Institutional Controls:</span>
+            <div class="flex items-center justify-between gap-2 mb-1">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Institutional Controls:</span>
+                    <span class="text-[10px] font-mono text-emerald-400/90 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">● Instant Live Feedback</span>
+                </div>
+                <span class="text-[11px] text-slate-500 font-mono hidden sm:inline">Click buttons below to trigger lab cluster automation</span>
             </div>
 
             <div class="flex flex-wrap items-center gap-2">
                 <!-- Feature 2: Focus Mode Master Toggle -->
-                <button onclick="toggleFocusMode()" id="focusModeBtn" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                <button onclick="toggleFocusMode()" id="focusModeBtn" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-90 active:ring-2 active:ring-teal-500 border border-slate-700 text-slate-300 text-xs font-bold transition-all duration-150 flex items-center gap-1.5 shadow-sm cursor-pointer select-none">
                     <span>🎯 Focus Mode: OFF</span>
                 </button>
 
                 <!-- Feature 4: USB Storage Policy Master Toggle -->
-                <button onclick="toggleUsbPolicy()" id="usbPolicyBtn" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                <button onclick="toggleUsbPolicy()" id="usbPolicyBtn" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-90 active:ring-2 active:ring-amber-500 border border-slate-700 text-slate-300 text-xs font-bold transition-all duration-150 flex items-center gap-1.5 shadow-sm cursor-pointer select-none">
                     <span>💾 USB: ALLOWED</span>
                 </button>
 
                 <!-- Feature 3: File Broadcast & Collect -->
-                <button onclick="openBroadcastFileModal()" class="px-3.5 py-2 rounded-xl bg-teal-600/20 hover:bg-teal-600/30 border border-teal-500/40 text-teal-300 text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                <button onclick="openBroadcastFileModal()" id="broadcastFileBtn" class="px-3.5 py-2 rounded-xl bg-teal-600/20 hover:bg-teal-600/30 active:scale-90 active:ring-2 active:ring-teal-500 border border-teal-500/40 text-teal-300 text-xs font-bold transition-all duration-150 flex items-center gap-1.5 shadow-sm cursor-pointer select-none">
                     <span>📤 Broadcast File</span>
                 </button>
-                <button onclick="openAssignmentsModal()" class="px-3.5 py-2 rounded-xl bg-cyan-600/20 hover:bg-cyan-600/30 border border-cyan-500/40 text-cyan-300 text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                <button onclick="triggerCollectAssignments()" id="collectAssignmentsBtn" class="px-3.5 py-2 rounded-xl bg-cyan-600/20 hover:bg-cyan-600/30 active:scale-90 active:ring-2 active:ring-cyan-500 border border-cyan-500/40 text-cyan-300 text-xs font-bold transition-all duration-150 flex items-center gap-1.5 shadow-sm cursor-pointer select-none">
                     <span>📥 Collect Assignments</span>
                 </button>
 
                 <!-- Master Push Power Actions -->
-                <button onclick="broadcastCommand('LOCK')" class="px-3.5 py-2 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/40 text-purple-300 text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                <button onclick="broadcastCommand('LOCK')" id="lockAllBtn" class="px-3.5 py-2 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 active:scale-90 active:ring-2 active:ring-purple-500 border border-purple-500/40 text-purple-300 text-xs font-bold transition-all duration-150 flex items-center gap-1.5 shadow-sm cursor-pointer select-none">
                     <span>🔒 Lock All</span>
                 </button>
-                <button onclick="broadcastCommand('UNLOCK')" class="px-3.5 py-2 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                <button onclick="broadcastCommand('UNLOCK')" id="unlockAllBtn" class="px-3.5 py-2 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 active:scale-90 active:ring-2 active:ring-emerald-500 border border-emerald-500/40 text-emerald-300 text-xs font-bold transition-all duration-150 flex items-center gap-1.5 shadow-sm cursor-pointer select-none">
                     <span>🔓 Unlock All</span>
                 </button>
-                <button onclick="confirmLabShutdown()" class="px-3.5 py-2 rounded-xl bg-rose-600/20 hover:bg-rose-600/30 border border-rose-500/40 text-rose-300 text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                <button onclick="confirmLabShutdown()" id="shutdownAllBtn" class="px-3.5 py-2 rounded-xl bg-rose-600/20 hover:bg-rose-600/30 active:scale-90 active:ring-2 active:ring-rose-500 border border-rose-500/40 text-rose-300 text-xs font-bold transition-all duration-150 flex items-center gap-1.5 shadow-sm cursor-pointer select-none">
                     <span>⚡ Shutdown All</span>
                 </button>
-                <button onclick="promptBroadcastMessage()" class="px-3.5 py-2 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/40 text-indigo-300 text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                <button onclick="promptBroadcastMessage()" id="noticeBtn" class="px-3.5 py-2 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 active:scale-90 active:ring-2 active:ring-indigo-500 border border-indigo-500/40 text-indigo-300 text-xs font-bold transition-all duration-150 flex items-center gap-1.5 shadow-sm cursor-pointer select-none">
                     <span>📢 Notice</span>
                 </button>
-                <button onclick="toggleCurfewOverride()" id="overrideBtn" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-xs font-semibold transition flex items-center gap-1.5">
+                <button onclick="toggleCurfewOverride()" id="overrideBtn" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-90 active:ring-2 active:ring-purple-500 border border-slate-700 text-slate-300 text-xs font-semibold transition-all duration-150 flex items-center gap-1.5 cursor-pointer select-none">
                     <span>⚙️ Curfew Override</span>
                 </button>
+            </div>
+
+            <!-- Instant Action Confirmation HUD Bar -->
+            <div id="actionFeedbackBar" class="mt-3 p-3 rounded-xl bg-slate-950/80 border border-slate-800 flex items-center justify-between text-xs font-mono transition-all duration-300">
+                <div class="flex items-center gap-2.5">
+                    <span id="actionFeedbackDot" class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span class="text-slate-400">Action HUD:</span>
+                    <strong id="actionFeedbackText" class="text-emerald-300">System Ready • Click any button above for live automated action</strong>
+                </div>
+                <span id="actionFeedbackTime" class="text-[11px] text-slate-500 font-mono">Live</span>
             </div>
         </div>
 
@@ -762,19 +776,153 @@ Type a slash command or click one above to test...</div>
             audit_log: mockAuditLog
         };
 
-        // UI Toast Notification
-        function showToast(msg, isWarning = false) {
+        // =========================================================================
+        // REAL-TIME AUDIO SYNTHESIZER (Web Audio API - Crisp High-Tech Click Chime)
+        // =========================================================================
+        function playActionSound(type = 'success') {
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) return;
+                const ctx = new AudioCtx();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                if (type === 'lock') {
+                    // Futuristic lock tone
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(650, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(320, ctx.currentTime + 0.16);
+                    gain.gain.setValueAtTime(0.08, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.16);
+                    osc.start(ctx.currentTime);
+                    osc.stop(ctx.currentTime + 0.17);
+                } else if (type === 'unlock') {
+                    // Cheerful rising unlock tone
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(440, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.18);
+                    gain.gain.setValueAtTime(0.09, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
+                    osc.start(ctx.currentTime);
+                    osc.stop(ctx.currentTime + 0.19);
+                } else if (type === 'toggle') {
+                    // Tactile toggle click
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(800, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(1100, ctx.currentTime + 0.08);
+                    gain.gain.setValueAtTime(0.07, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+                    osc.start(ctx.currentTime);
+                    osc.stop(ctx.currentTime + 0.09);
+                } else {
+                    // General pleasant success chord
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(520, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(780, ctx.currentTime + 0.12);
+                    gain.gain.setValueAtTime(0.07, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+                    osc.start(ctx.currentTime);
+                    osc.stop(ctx.currentTime + 0.13);
+                }
+            } catch (e) {
+                // AudioContext silent fallback if blocked by browser policy
+            }
+        }
+
+        // =========================================================================
+        // ACTION STATUS HUD BANNER (Directly above the Workstations Grid)
+        // =========================================================================
+        function updateActionHUD(icon, text, theme = 'emerald') {
+            const bar = document.getElementById('actionFeedbackBar');
+            const dot = document.getElementById('actionFeedbackDot');
+            const txt = document.getElementById('actionFeedbackText');
+            const time = document.getElementById('actionFeedbackTime');
+
+            if (!bar || !txt) return;
+
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+            if (time) time.innerText = timeStr;
+            txt.innerHTML = `${icon} <span class="text-white font-semibold">${text}</span>`;
+
+            // Dynamic color themes
+            let dotColor = 'bg-emerald-400';
+            let barBorder = 'border-emerald-500/50 bg-emerald-950/30';
+
+            if (theme === 'purple') {
+                dotColor = 'bg-purple-400';
+                barBorder = 'border-purple-500/50 bg-purple-950/40';
+            } else if (theme === 'amber') {
+                dotColor = 'bg-amber-400';
+                barBorder = 'border-amber-500/50 bg-amber-950/40';
+            } else if (theme === 'rose') {
+                dotColor = 'bg-rose-400';
+                barBorder = 'border-rose-500/50 bg-rose-950/40';
+            } else if (theme === 'teal' || theme === 'cyan') {
+                dotColor = 'bg-teal-400';
+                barBorder = 'border-teal-500/50 bg-teal-950/40';
+            } else if (theme === 'indigo') {
+                dotColor = 'bg-indigo-400';
+                barBorder = 'border-indigo-500/50 bg-indigo-950/40';
+            }
+
+            if (dot) dot.className = `w-2.5 h-2.5 rounded-full ${dotColor} animate-ping`;
+            setTimeout(() => {
+                if (dot) dot.className = `w-2.5 h-2.5 rounded-full ${dotColor} animate-pulse`;
+            }, 1000);
+
+            bar.className = `mt-3 p-3 rounded-xl border ${barBorder} flex items-center justify-between text-xs font-mono transition-all duration-300 shadow-lg`;
+        }
+
+        // =========================================================================
+        // PROMINENT TOP-CENTER TOAST NOTIFICATION
+        // =========================================================================
+        function showToast(msg, theme = 'emerald') {
             const oldToast = document.getElementById("demoToast");
             if (oldToast && oldToast.remove) oldToast.remove();
+
+            let borderStyle = 'border-emerald-500 text-emerald-300 shadow-[0_0_35px_rgba(16,185,129,0.35)]';
+            let icon = '✓';
+
+            if (theme === 'purple') {
+                borderStyle = 'border-purple-500 text-purple-300 shadow-[0_0_35px_rgba(168,85,247,0.4)]';
+                icon = '🔒';
+            } else if (theme === 'amber') {
+                borderStyle = 'border-amber-500 text-amber-300 shadow-[0_0_35px_rgba(245,158,11,0.4)]';
+                icon = '⚠️';
+            } else if (theme === 'rose') {
+                borderStyle = 'border-rose-500 text-rose-300 shadow-[0_0_35px_rgba(244,63,94,0.4)]';
+                icon = '⚡';
+            } else if (theme === 'teal' || theme === 'cyan') {
+                borderStyle = 'border-teal-400 text-teal-200 shadow-[0_0_35px_rgba(20,184,166,0.35)]';
+                icon = '🎯';
+            } else if (theme === 'indigo') {
+                borderStyle = 'border-indigo-400 text-indigo-200 shadow-[0_0_35px_rgba(99,102,241,0.35)]';
+                icon = '📢';
+            }
+
             const toast = document.createElement("div");
             toast.id = "demoToast";
-            toast.className = `fixed bottom-5 right-5 z-50 ${isWarning ? 'bg-amber-950/90 text-amber-200 border-amber-500/50' : 'bg-slate-900/95 text-emerald-300 border-emerald-500/50'} border px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3 font-semibold text-sm backdrop-blur-md transition-all duration-300`;
-            toast.innerHTML = `<span class="text-base">${isWarning ? '⚠️' : '✓'}</span> <span>${msg}</span>`;
+            toast.className = `fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-slate-900/95 border-2 ${borderStyle} px-5 sm:px-7 py-3 rounded-2xl flex items-center gap-3.5 font-bold text-xs sm:text-sm backdrop-blur-xl transition-all duration-300 transform -translate-y-2 opacity-0 select-none`;
+            toast.innerHTML = `<span class="text-base sm:text-lg">${icon}</span> <span class="tracking-wide">${msg}</span>`;
             document.body.appendChild(toast);
+
+            // Pop in smoothly
+            requestAnimationFrame(() => {
+                toast.classList.remove('-translate-y-2', 'opacity-0');
+                toast.classList.add('translate-y-0', 'opacity-100');
+            });
+
+            // Fade out smoothly
             setTimeout(() => {
-                toast.style.opacity = '0';
-                setTimeout(() => toast.remove(), 400);
-            }, 3800);
+                toast.classList.add('opacity-0', '-translate-y-2');
+                setTimeout(() => {
+                    if (toast.remove) toast.remove();
+                }, 400);
+            }, 3200);
         }
 
         // Live Clock
@@ -830,10 +978,10 @@ Type a slash command or click one above to test...</div>
             const focusBtn = document.getElementById('focusModeBtn');
             if (focusBtn) {
                 if (data.focus_mode_active) {
-                    focusBtn.className = 'px-3.5 py-2 rounded-xl bg-teal-600/30 hover:bg-teal-600/40 border border-teal-500 text-teal-300 text-xs font-bold transition flex items-center gap-1.5 shadow-lg shadow-teal-950/40 animate-pulse';
+                    focusBtn.className = 'px-3.5 py-2 rounded-xl bg-teal-600/30 hover:bg-teal-600/40 active:scale-90 active:ring-2 active:ring-teal-500 border border-teal-500 text-teal-300 text-xs font-bold transition-all duration-150 flex items-center gap-1.5 shadow-lg shadow-teal-950/40 animate-pulse cursor-pointer select-none';
                     focusBtn.innerHTML = '<span>🎯 Focus Mode: ON</span>';
                 } else {
-                    focusBtn.className = 'px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-xs font-bold transition flex items-center gap-1.5 shadow-sm';
+                    focusBtn.className = 'px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-90 active:ring-2 active:ring-slate-500 border border-slate-700 text-slate-300 text-xs font-bold transition-all duration-150 flex items-center gap-1.5 shadow-sm cursor-pointer select-none';
                     focusBtn.innerHTML = '<span>🎯 Focus Mode: OFF</span>';
                 }
             }
@@ -842,10 +990,10 @@ Type a slash command or click one above to test...</div>
             const usbBtn = document.getElementById('usbPolicyBtn');
             if (usbBtn) {
                 if (data.usb_storage_blocked) {
-                    usbBtn.className = 'px-3.5 py-2 rounded-xl bg-amber-600/30 hover:bg-amber-600/40 border border-amber-500 text-amber-300 text-xs font-bold transition flex items-center gap-1.5 shadow-lg';
+                    usbBtn.className = 'px-3.5 py-2 rounded-xl bg-amber-600/30 hover:bg-amber-600/40 active:scale-90 active:ring-2 active:ring-amber-500 border border-amber-500 text-amber-300 text-xs font-bold transition-all duration-150 flex items-center gap-1.5 shadow-lg cursor-pointer select-none';
                     usbBtn.innerHTML = '<span>🔒 USB: BLOCKED</span>';
                 } else {
-                    usbBtn.className = 'px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-xs font-bold transition flex items-center gap-1.5 shadow-sm';
+                    usbBtn.className = 'px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-90 active:ring-2 active:ring-slate-500 border border-slate-700 text-slate-300 text-xs font-bold transition-all duration-150 flex items-center gap-1.5 shadow-sm cursor-pointer select-none';
                     usbBtn.innerHTML = '<span>💾 USB: ALLOWED</span>';
                 }
             }
@@ -889,13 +1037,13 @@ Type a slash command or click one above to test...</div>
                 let statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">ONLINE</span>';
 
                 if (pc.curfew_locked || pc.status === 'CURFEW_LOCKED') {
-                    borderClass = 'border-purple-500/50 shadow-lg shadow-purple-950/20';
+                    borderClass = 'border-purple-500/70 shadow-lg shadow-purple-950/30 bg-purple-950/10';
                     statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/40">🔒 CURFEW LOCKED</span>';
                 } else if (pc.status === 'DISTRACTED') {
-                    borderClass = 'border-rose-500/50 shadow-lg shadow-rose-950/20';
+                    borderClass = 'border-rose-500/70 shadow-lg shadow-rose-950/30 bg-rose-950/10';
                     statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40 animate-pulse">⚠️ DISTRACTED (REELS)</span>';
                 } else if (pc.status === 'DISCONNECTED_TAMPERED' || !pc.connected) {
-                    borderClass = 'border-amber-500/50 shadow-lg shadow-amber-950/20';
+                    borderClass = 'border-amber-500/50 shadow-lg shadow-amber-950/20 bg-amber-950/10';
                     statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">🚨 POWERED OFF</span>';
                 }
 
@@ -912,7 +1060,7 @@ Type a slash command or click one above to test...</div>
                     : '';
 
                 return `
-                    <div class="bg-slate-900/90 border ${borderClass} rounded-2xl p-4 sm:p-5 flex flex-col justify-between space-y-4 hover:border-slate-700 transition">
+                    <div class="bg-slate-900/90 border ${borderClass} rounded-2xl p-4 sm:p-5 flex flex-col justify-between space-y-4 hover:border-slate-700 transition duration-200">
                         <div>
                             <div class="flex items-start justify-between gap-2 mb-2">
                                 <div>
@@ -966,7 +1114,7 @@ Type a slash command or click one above to test...</div>
                             </div>
 
                             <!-- Live Screen Thumbnail (Click to view full screen) -->
-                            <div onclick="openScreenModal('${pc.client_id}', '${pc.student_name}')" class="relative group cursor-pointer overflow-hidden rounded-xl border border-slate-800 bg-slate-950 aspect-video flex items-center justify-center mt-3 shadow-inner">
+                            <div onclick="openScreenModal('${pc.client_id}', '${pc.student_name}')" class="relative group cursor-pointer overflow-hidden rounded-xl border border-slate-800 bg-slate-950 aspect-video flex items-center justify-center mt-3 shadow-inner hover:border-indigo-500/50 transition">
                                 <div class="w-full h-full">
                                     ${getStudentScreenPreview(pc)}
                                 </div>
@@ -981,21 +1129,21 @@ Type a slash command or click one above to test...</div>
                         <div class="space-y-2 pt-2 border-t border-slate-800/80">
                             <div class="grid grid-cols-2 gap-2">
                                 ${pc.curfew_locked || pc.status === 'CURFEW_LOCKED' ? `
-                                    <button onclick="sendClientCommand('${pc.client_id}', 'UNLOCK')" class="py-1.5 rounded-xl bg-purple-600/30 hover:bg-purple-600/40 border border-purple-500/50 text-xs font-bold text-purple-300 transition flex items-center justify-center gap-1">
+                                    <button onclick="sendClientCommand('${pc.client_id}', 'UNLOCK')" class="py-1.5 rounded-xl bg-purple-600/30 hover:bg-purple-600/40 active:scale-90 active:ring-2 active:ring-purple-400 border border-purple-500/50 text-xs font-bold text-purple-300 transition-all flex items-center justify-center gap-1 cursor-pointer select-none">
                                         <span>🔓</span> Unlock
                                     </button>
                                 ` : `
-                                    <button onclick="sendClientCommand('${pc.client_id}', 'LOCK')" class="py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold text-slate-300 transition flex items-center justify-center gap-1">
+                                    <button onclick="sendClientCommand('${pc.client_id}', 'LOCK')" class="py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-90 active:ring-2 active:ring-slate-500 border border-slate-700 text-xs font-bold text-slate-300 transition-all flex items-center justify-center gap-1 cursor-pointer select-none">
                                         <span>🔒</span> Lock
                                     </button>
                                 `}
-                                <button onclick="openMsgModal('${pc.client_id}', '${pc.student_name}')" class="py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold text-slate-300 transition flex items-center justify-center gap-1">
+                                <button onclick="openMsgModal('${pc.client_id}', '${pc.student_name}')" class="py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-90 active:ring-2 active:ring-indigo-500 border border-slate-700 text-xs font-bold text-slate-300 transition-all flex items-center justify-center gap-1 cursor-pointer select-none">
                                     <span>💬</span> Message
                                 </button>
                             </div>
                             <div class="flex items-center justify-between text-[11px] text-slate-500 font-mono px-1">
                                 <span>MAC: ${pc.mac_address}</span>
-                                <button onclick="sendClientCommand('${pc.client_id}', 'SHUTDOWN')" class="hover:text-rose-400 transition" title="Graceful shutdown">
+                                <button onclick="sendClientCommand('${pc.client_id}', 'SHUTDOWN')" class="hover:text-rose-400 transition cursor-pointer" title="Graceful shutdown">
                                     ⚡ Shutdown
                                 </button>
                             </div>
@@ -1130,33 +1278,68 @@ Type a slash command or click one above to test...</div>
         }
 
         // =========================================================================
-        // INSTITUTIONAL ACTION HANDLERS (STANDALONE & INSTANTANEOUS)
+        // INSTITUTIONAL ACTION HANDLERS (CRYSTAL CLEAR CONFIRMATION)
         // =========================================================================
         async function broadcastCommand(cmd, message = null) {
             console.log("Broadcast Command Triggered:", cmd, message);
+            const upper = (cmd || '').toUpperCase();
 
-            if (cmd === 'lock_all') {
+            if (upper === 'LOCK' || upper === 'LOCK_ALL') {
+                playActionSound('lock');
                 mockWorkstations.forEach(pc => {
                     pc.curfew_locked = true;
                     pc.status = 'CURFEW_LOCKED';
                 });
                 clusterData.total_distracted = 0;
-                showToast("🔒 All 6 Workstations Locked with Curfew Maintenance Screen!");
-            } else if (cmd === 'unlock_all') {
+
+                // Tactile feedback on Lock All button
+                const btn = document.getElementById('lockAllBtn');
+                if (btn) {
+                    btn.innerHTML = '<span>🔒 LOCKED! (6 PCs)</span>';
+                    btn.className = 'px-3.5 py-2 rounded-xl bg-purple-600 border border-purple-400 text-white text-xs font-bold transition-all shadow-lg shadow-purple-900/60 flex items-center gap-1.5 animate-pulse';
+                    setTimeout(() => {
+                        btn.innerHTML = '<span>🔒 Lock All</span>';
+                        btn.className = 'px-3.5 py-2 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 active:scale-90 active:ring-2 active:ring-purple-500 border border-purple-500/40 text-purple-300 text-xs font-bold transition-all duration-150 flex items-center gap-1.5 shadow-sm cursor-pointer select-none';
+                    }, 2200);
+                }
+
+                updateActionHUD('🔒', 'Curfew Lock Dispatched: All 6 student workstations locked with institutional curfew screen', 'purple');
+                showToast("🔒 All 6 Workstations Locked with Curfew Maintenance Screen!", 'purple');
+            } else if (upper === 'UNLOCK' || upper === 'UNLOCK_ALL') {
+                playActionSound('unlock');
                 mockWorkstations.forEach(pc => {
                     pc.curfew_locked = false;
                     pc.status = pc.client_id === 'LAB-PC-03' && !clusterData.focus_mode_active ? 'DISTRACTED' : 'ACTIVE';
                 });
-                showToast("🔓 All Workstations Unlocked & Restored to Normal Operation!");
-            } else if (cmd === 'shutdown_all') {
+                clusterData.total_online = 6;
+
+                // Tactile feedback on Unlock All button
+                const btn = document.getElementById('unlockAllBtn');
+                if (btn) {
+                    btn.innerHTML = '<span>🔓 UNLOCKED! (6 PCs)</span>';
+                    btn.className = 'px-3.5 py-2 rounded-xl bg-emerald-600 border border-emerald-400 text-white text-xs font-bold transition-all shadow-lg shadow-emerald-900/60 flex items-center gap-1.5 animate-pulse';
+                    setTimeout(() => {
+                        btn.innerHTML = '<span>🔓 Unlock All</span>';
+                        btn.className = 'px-3.5 py-2 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 active:scale-90 active:ring-2 active:ring-emerald-500 border border-emerald-500/40 text-emerald-300 text-xs font-bold transition-all duration-150 flex items-center gap-1.5 shadow-sm cursor-pointer select-none';
+                    }, 2200);
+                }
+
+                updateActionHUD('🔓', 'Curfew Lock Released: All 6 workstations restored to normal student access', 'emerald');
+                showToast("🔓 All Workstations Unlocked & Restored to Normal Operation!", 'emerald');
+            } else if (upper === 'SHUTDOWN' || upper === 'SHUTDOWN_ALL') {
+                playActionSound('lock');
                 mockWorkstations.forEach(pc => {
                     pc.connected = false;
                     pc.status = 'DISCONNECTED_TAMPERED';
                 });
                 clusterData.total_online = 0;
-                showToast("⚡ Graceful Auto-Shutdown Broadcasted across Lab Cluster!");
-            } else if (cmd === 'BROADCAST_MESSAGE') {
-                showToast(`📢 Announcement Broadcasted to all student screens: "${message}"`);
+
+                updateActionHUD('⚡', 'Lab Power Off: Graceful shutdown broadcasted to all workstations', 'rose');
+                showToast("⚡ Graceful Auto-Shutdown Broadcasted across Lab Cluster!", 'rose');
+            } else if (upper === 'BROADCAST_MESSAGE') {
+                playActionSound('success');
+                updateActionHUD('📢', `Broadcast Notice Delivered: "${message}"`, 'indigo');
+                showToast(`📢 Announcement Broadcasted to all student screens: "${message}"`, 'indigo');
                 mockAuditLog.unshift({
                     id: "aud-" + Date.now(),
                     client_id: "ALL-PCS",
@@ -1174,8 +1357,9 @@ Type a slash command or click one above to test...</div>
         }
 
         function confirmLabShutdown() {
+            playActionSound('lock');
             if (confirm("🚨 Are you sure you want to gracefully power off ALL workstations in the lab?")) {
-                broadcastCommand('shutdown_all');
+                broadcastCommand('SHUTDOWN_ALL');
             }
         }
 
@@ -1183,27 +1367,35 @@ Type a slash command or click one above to test...</div>
             const pc = mockWorkstations.find(w => w.client_id === clientId);
             if (pc) {
                 if (action === 'LOCK') {
+                    playActionSound('lock');
                     pc.curfew_locked = true;
                     pc.status = 'CURFEW_LOCKED';
-                    showToast(`🔒 Workstation ${clientId} Screen Locked!`);
+                    updateActionHUD('🔒', `Workstation ${clientId} Screen Locked by Instructor`, 'purple');
+                    showToast(`🔒 Workstation ${clientId} Screen Locked!`, 'purple');
                 } else if (action === 'UNLOCK') {
+                    playActionSound('unlock');
                     pc.curfew_locked = false;
                     pc.status = 'ACTIVE';
-                    showToast(`🔓 Workstation ${clientId} Screen Unlocked!`);
+                    updateActionHUD('🔓', `Workstation ${clientId} Unlocked & Restored`, 'emerald');
+                    showToast(`🔓 Workstation ${clientId} Screen Unlocked!`, 'emerald');
                 } else if (action === 'SHUTDOWN') {
+                    playActionSound('lock');
                     pc.connected = false;
                     pc.status = 'DISCONNECTED_TAMPERED';
                     clusterData.total_online = Math.max(0, clusterData.total_online - 1);
-                    showToast(`⚡ Workstation ${clientId} Powered Off!`);
+                    updateActionHUD('⚡', `Workstation ${clientId} Powered Off`, 'rose');
+                    showToast(`⚡ Workstation ${clientId} Powered Off!`, 'rose');
                 }
                 renderCluster(clusterData);
             }
         }
 
         function toggleFocusMode() {
+            playActionSound('toggle');
             clusterData.focus_mode_active = !clusterData.focus_mode_active;
             if (clusterData.focus_mode_active) {
-                showToast("🎯 Focus Mode ACTIVATED: Non-academic URLs, Reels & Shorts blocked lab-wide!");
+                updateActionHUD('🎯', 'Focus Mode Activated: YouTube Shorts, Reels & distraction websites blocked', 'teal');
+                showToast("🎯 Focus Mode ACTIVATED: Reels & non-academic sites blocked lab-wide!", 'teal');
                 const pc3 = mockWorkstations.find(w => w.client_id === 'LAB-PC-03');
                 if (pc3) {
                     pc3.status = 'ACTIVE';
@@ -1213,19 +1405,28 @@ Type a slash command or click one above to test...</div>
                 clusterData.alerts = [];
                 clusterData.total_distracted = 0;
             } else {
-                showToast("🎯 Focus Mode DEACTIVATED: Standard browsing permitted.");
+                updateActionHUD('🎯', 'Focus Mode Deactivated: Standard open web browsing permitted', 'slate');
+                showToast("🎯 Focus Mode DEACTIVATED: Standard browsing permitted.", 'slate');
             }
             renderCluster(clusterData);
         }
 
         function toggleUsbPolicy() {
+            playActionSound('toggle');
             clusterData.usb_storage_blocked = !clusterData.usb_storage_blocked;
             mockWorkstations.forEach(pc => pc.usb_blocked = clusterData.usb_storage_blocked);
-            showToast(clusterData.usb_storage_blocked ? "🔒 USB Storage BLOCKED: Mass-storage read/write denied across all workstations!" : "💾 USB Storage ALLOWED across lab workstations.");
+            if (clusterData.usb_storage_blocked) {
+                updateActionHUD('🔒', 'USB Storage Policy: Removable flash drives blocked on all PCs', 'amber');
+                showToast("🔒 USB Storage BLOCKED: Mass-storage denied across all workstations!", 'amber');
+            } else {
+                updateActionHUD('💾', 'USB Storage Policy: Removable flash drives allowed on all PCs', 'emerald');
+                showToast("💾 USB Storage ALLOWED across lab workstations.", 'emerald');
+            }
             renderCluster(clusterData);
         }
 
         function promptBroadcastMessage() {
+            playActionSound('toggle');
             const msg = prompt("ল্যাবের সব ছাত্রের স্ক্রিনে পাঠানোর জন্য নোটিশ লিখুন (Enter Broadcast Message):", "ক্লাস শেষ হতে ১০ মিনিট বাকি। অনুগ্রহ করে সব ফাইল সেভ করুন।");
             if (msg && msg.trim()) {
                 broadcastCommand('BROADCAST_MESSAGE', msg.trim());
@@ -1233,6 +1434,7 @@ Type a slash command or click one above to test...</div>
         }
 
         async function ackAlert(alertId) {
+            playActionSound('unlock');
             clusterData.alerts = [];
             clusterData.total_distracted = 0;
             const pc = mockWorkstations.find(w => w.client_id === 'LAB-PC-03');
@@ -1242,7 +1444,8 @@ Type a slash command or click one above to test...</div>
                 pc.latest_telemetry.active_window_title = 'Visual Studio Code - Python Project';
                 pc.productivity_score = 92;
             }
-            showToast("✓ Distraction Alert Acknowledged & Cleared by Instructor!");
+            updateActionHUD('✓', 'Distraction alert acknowledged and student warned by Instructor', 'emerald');
+            showToast("✓ Distraction Alert Acknowledged & Cleared by Instructor!", 'emerald');
             renderCluster(clusterData);
         }
 
@@ -1250,6 +1453,7 @@ Type a slash command or click one above to test...</div>
         // FULL-SCREEN LIVE SCREEN MONITOR MODAL (VEYON / APPLE CLASSROOM STYLE)
         // =========================================================================
         async function openScreenModal(clientId, studentName) {
+            playActionSound('toggle');
             activeScreenTarget = clientId;
             document.getElementById('screenModalTitle').innerText = clientId;
             document.getElementById('screenModalStudent').innerText = studentName;
@@ -1267,6 +1471,7 @@ Type a slash command or click one above to test...</div>
         }
 
         function closeScreenModal() {
+            playActionSound('toggle');
             document.getElementById('screenModal').classList.add('hidden');
             activeScreenTarget = null;
             if (screenRefreshTimer) {
@@ -1280,10 +1485,10 @@ Type a slash command or click one above to test...</div>
             if (!lockBtn) return;
             const isLocked = pc && (pc.curfew_locked || pc.status === 'CURFEW_LOCKED');
             if (isLocked) {
-                lockBtn.className = 'px-3 py-1.5 rounded-xl bg-purple-600/30 hover:bg-purple-600/40 border border-purple-500 text-xs font-semibold text-purple-300 transition flex items-center gap-1.5';
+                lockBtn.className = 'px-3 py-1.5 rounded-xl bg-purple-600/30 hover:bg-purple-600/40 border border-purple-500 text-xs font-semibold text-purple-300 transition flex items-center gap-1.5 cursor-pointer';
                 lockBtn.innerHTML = '<span>🔓 Unlock Workstation</span>';
             } else {
-                lockBtn.className = 'px-3 py-1.5 rounded-xl bg-rose-600/30 hover:bg-rose-600/40 border border-rose-500 text-xs font-semibold text-rose-300 transition flex items-center gap-1.5';
+                lockBtn.className = 'px-3 py-1.5 rounded-xl bg-rose-600/30 hover:bg-rose-600/40 border border-rose-500 text-xs font-semibold text-rose-300 transition flex items-center gap-1.5 cursor-pointer';
                 lockBtn.innerHTML = '<span>🔒 Lock Workstation</span>';
             }
         }
@@ -1295,13 +1500,17 @@ Type a slash command or click one above to test...</div>
 
             const isLocked = pc.curfew_locked || pc.status === 'CURFEW_LOCKED';
             if (isLocked) {
+                playActionSound('unlock');
                 pc.curfew_locked = false;
                 pc.status = 'ACTIVE';
-                showToast(`🔓 Workstation ${activeScreenTarget} Unlocked!`);
+                updateActionHUD('🔓', `Workstation ${activeScreenTarget} Screen Unlocked`, 'emerald');
+                showToast(`🔓 Workstation ${activeScreenTarget} Unlocked!`, 'emerald');
             } else {
+                playActionSound('lock');
                 pc.curfew_locked = true;
                 pc.status = 'CURFEW_LOCKED';
-                showToast(`🔒 Workstation ${activeScreenTarget} Screen Locked!`);
+                updateActionHUD('🔒', `Workstation ${activeScreenTarget} Screen Locked`, 'purple');
+                showToast(`🔒 Workstation ${activeScreenTarget} Screen Locked!`, 'purple');
             }
             updateScreenModalLockBtn(pc);
             requestFreshScreen();
@@ -1391,6 +1600,7 @@ Type a slash command or click one above to test...</div>
         }
 
         function toggleModalFullscreen() {
+            playActionSound('toggle');
             const container = document.getElementById('screenModalImgContainer');
             if (!container) return;
             if (!document.fullscreenElement) {
@@ -1405,6 +1615,7 @@ Type a slash command or click one above to test...</div>
         // DIRECT STUDENT MESSAGING MODAL (Exact IDs: modalTarget, modalMsgInput)
         // =========================================================================
         function openMsgModal(clientId, studentName) {
+            playActionSound('toggle');
             activeModalTarget = clientId;
             const targetEl = document.getElementById('modalTarget');
             if (targetEl) targetEl.innerText = `${studentName} (${clientId})`;
@@ -1417,6 +1628,7 @@ Type a slash command or click one above to test...</div>
         }
 
         function closeMsgModal() {
+            playActionSound('toggle');
             document.getElementById('msgModal').classList.add('hidden');
             activeModalTarget = null;
         }
@@ -1433,7 +1645,9 @@ Type a slash command or click one above to test...</div>
             const msg = inp ? inp.value.trim() : '';
             if (!msg) return;
 
-            showToast(`💬 Direct message sent to ${activeModalTarget}: "${msg}"`);
+            playActionSound('success');
+            updateActionHUD('💬', `Direct Message sent to ${activeModalTarget}: "${msg}"`, 'indigo');
+            showToast(`💬 Direct message sent to ${activeModalTarget}: "${msg}"`, 'indigo');
             closeMsgModal();
         }
 
@@ -1441,19 +1655,23 @@ Type a slash command or click one above to test...</div>
         // BROADCAST FILE MODAL (Exact IDs: broadcastFileName, broadcastFileContent)
         // =========================================================================
         function openBroadcastFileModal() {
+            playActionSound('toggle');
             document.getElementById('broadcastFileModal').classList.remove('hidden');
         }
 
         function closeBroadcastFileModal() {
+            playActionSound('toggle');
             document.getElementById('broadcastFileModal').classList.add('hidden');
         }
 
         async function submitBroadcastFile(e) {
             if (e && e.preventDefault) e.preventDefault();
+            playActionSound('success');
             const fileNameInput = document.getElementById('broadcastFileName');
             const fileName = fileNameInput && fileNameInput.value.trim() ? fileNameInput.value.trim() : "Lecture_4_StarterCode.py";
             
-            showToast(`📤 File broadcasted to all 6 workstations: C:/SmartLab/Received_Files/${fileName}`);
+            updateActionHUD('📤', `File Broadcasted: C:/SmartLab/Received_Files/${fileName} sent to 6 PCs`, 'teal');
+            showToast(`📤 File broadcasted to all 6 workstations: C:/SmartLab/Received_Files/${fileName}`, 'teal');
             closeBroadcastFileModal();
         }
 
@@ -1461,20 +1679,34 @@ Type a slash command or click one above to test...</div>
         // ASSIGNMENTS COLLECTION MODAL (Exact ID: assignmentsTableBody)
         // =========================================================================
         function openAssignmentsModal() {
+            playActionSound('toggle');
             document.getElementById('assignmentsModal').classList.remove('hidden');
             loadAssignmentsList();
         }
 
         function closeAssignmentsModal() {
+            playActionSound('toggle');
             document.getElementById('assignmentsModal').classList.add('hidden');
         }
 
         async function triggerCollectAssignments() {
-            showToast("📥 Collecting latest assignments from all 6 student workstations...");
+            playActionSound('success');
+            const btn = document.getElementById('collectAssignmentsBtn');
+            if (btn) {
+                btn.innerHTML = '<span>⏳ Collecting Files...</span>';
+                btn.className = 'px-3.5 py-2 rounded-xl bg-cyan-600 text-white text-xs font-bold transition-all shadow-lg shadow-cyan-900/60 flex items-center gap-1.5 animate-pulse cursor-pointer';
+            }
+            updateActionHUD('📥', 'Collecting project assignments from all 6 active workstations...', 'cyan');
+            showToast("📥 Collecting latest assignments from all 6 student workstations...", 'cyan');
             setTimeout(() => {
-                showToast("✓ Collected 6 assignment files into C:/SmartLab/Collected_Assignments/");
+                if (btn) {
+                    btn.innerHTML = '<span>📥 Collect Assignments</span>';
+                    btn.className = 'px-3.5 py-2 rounded-xl bg-cyan-600/20 hover:bg-cyan-600/30 active:scale-90 active:ring-2 active:ring-cyan-500 border border-cyan-500/40 text-cyan-300 text-xs font-bold transition-all duration-150 flex items-center gap-1.5 shadow-sm cursor-pointer select-none';
+                }
+                updateActionHUD('✓', 'Collected 6 student project files into C:/SmartLab/Collected_Assignments/', 'emerald');
+                showToast("✓ Collected 6 assignment files into C:/SmartLab/Collected_Assignments/", 'emerald');
                 openAssignmentsModal();
-            }, 600);
+            }, 650);
         }
 
         function loadAssignmentsList() {
@@ -1490,7 +1722,7 @@ Type a slash command or click one above to test...</div>
                         <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">✓ ${a.status}</span>
                     </td>
                     <td class="p-3 text-right">
-                        <button onclick="showToast('📥 Downloading ${a.filename}...')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-indigo-300 font-sans text-xs transition">
+                        <button onclick="playActionSound('toggle'); showToast('📥 Downloading ${a.filename}...', 'indigo')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 active:scale-90 text-indigo-300 font-sans text-xs transition cursor-pointer">
                             Download
                         </button>
                     </td>
@@ -1502,6 +1734,7 @@ Type a slash command or click one above to test...</div>
         // DAILY REPORT CARD MODAL (Exact IDs: repAvgScore, repTotalStudents, etc.)
         // =========================================================================
         async function openDailyReportModal() {
+            playActionSound('toggle');
             document.getElementById('dailyReportModal').classList.remove('hidden');
             const setTxt = (id, val) => {
                 const el = document.getElementById(id);
@@ -1541,9 +1774,12 @@ Type a slash command or click one above to test...</div>
                     </div>
                 `;
             }
+
+            updateActionHUD('📊', 'Daily AI Productivity Report Card Generated (Average Lab Score 96%)', 'emerald');
         }
 
         function closeDailyReportModal() {
+            playActionSound('toggle');
             document.getElementById('dailyReportModal').classList.add('hidden');
         }
 
@@ -1551,16 +1787,20 @@ Type a slash command or click one above to test...</div>
         // TELEGRAM REMOTE CONTROL BOT SIMULATOR (Exact IDs: telegramConsoleOutput, telegramInput)
         // =========================================================================
         function openTelegramModal() {
+            playActionSound('toggle');
             document.getElementById('telegramModal').classList.remove('hidden');
             const statusEl = document.getElementById('telegramConfigStatus');
             if (statusEl) statusEl.innerText = "Bot @SmartLab_Admin_Bot Connected";
+            updateActionHUD('🤖', 'Telegram Remote Bot Simulator Opened', 'indigo');
         }
 
         function closeTelegramModal() {
+            playActionSound('toggle');
             document.getElementById('telegramModal').classList.add('hidden');
         }
 
         async function runTelegramCmd(cmd) {
+            playActionSound('success');
             const consoleOut = document.getElementById('telegramConsoleOutput');
             if (!consoleOut) return;
 
@@ -1570,10 +1810,10 @@ Type a slash command or click one above to test...</div>
             if (cmd === '/status') {
                 botReply = `🤖 <b>Smart Lab Status Report:</b>\n• Total Online: ${clusterData.total_online}/6\n• Distractions: ${clusterData.total_distracted}\n• Focus Mode: ${clusterData.focus_mode_active ? 'ON' : 'OFF'}\n• Curfew Policy: 21:00 - 08:00 AM Active`;
             } else if (cmd === '/lock_all') {
-                broadcastCommand('lock_all');
+                broadcastCommand('LOCK_ALL');
                 botReply = `🔒 <b>Curfew Command Dispatched:</b> All 6 workstations have been locked remotely via Telegram!`;
             } else if (cmd === '/unlock_all') {
-                broadcastCommand('unlock_all');
+                broadcastCommand('UNLOCK_ALL');
                 botReply = `🔓 <b>Workstations Restored:</b> All PCs unlocked and normal student access granted.`;
             } else if (cmd === '/stats') {
                 botReply = `📊 <b>Productivity Index:</b> ${clusterData.lab_average_productivity}% average across 6 active seats.`;
@@ -1598,40 +1838,57 @@ Type a slash command or click one above to test...</div>
         // MASTER ADMIN HOST & EXTRA UTILITY ACTIONS
         // =========================================================================
         async function lockHostPC() {
-            showToast("🔒 Master Admin PC Screen Locked!");
+            playActionSound('lock');
+            updateActionHUD('🔒', 'Master Central Controller PC Screen Locked', 'purple');
+            showToast("🔒 Master Admin PC Screen Locked!", 'purple');
         }
 
         async function unlockHostPC() {
-            showToast("🔓 Master Admin PC Screen Unlocked!");
+            playActionSound('unlock');
+            updateActionHUD('🔓', 'Master Central Controller PC Screen Unlocked', 'emerald');
+            showToast("🔓 Master Admin PC Screen Unlocked!", 'emerald');
         }
 
         async function sleepHostPC() {
-            showToast("🌙 Master Admin PC Display put to sleep.");
+            playActionSound('toggle');
+            updateActionHUD('🌙', 'Master Central Controller display put to standby sleep', 'amber');
+            showToast("🌙 Master Admin PC Display put to sleep.", 'amber');
         }
 
         function toggleCurfewOverride() {
+            playActionSound('toggle');
             isOverrideActive = !isOverrideActive;
             const badge = document.getElementById('statCurfew');
             const btn = document.getElementById('overrideBtn');
             if (isOverrideActive) {
                 if (badge) badge.innerText = "23:00 - 08:00 AM";
-                if (btn) btn.className = "px-3 py-1.5 rounded-xl bg-purple-600/30 hover:bg-purple-600/40 border border-purple-500 text-purple-300 text-xs font-semibold transition flex items-center gap-1.5";
-                showToast("⏰ Curfew Override ACTIVATED: Extended lab session until 23:00");
+                if (btn) {
+                    btn.className = "px-3.5 py-2 rounded-xl bg-purple-600/30 hover:bg-purple-600/40 active:scale-90 border border-purple-500 text-purple-300 text-xs font-bold transition-all duration-150 flex items-center gap-1.5 shadow-lg shadow-purple-950/40 animate-pulse cursor-pointer select-none";
+                    btn.innerHTML = '<span>⏰ Override: ACTIVE (23:00)</span>';
+                }
+                updateActionHUD('⏰', 'Curfew Override Active: Lab operating hours extended until 23:00 (11:00 PM)', 'purple');
+                showToast("⏰ Curfew Override ACTIVATED: Extended lab session until 23:00", 'purple');
             } else {
                 if (badge) badge.innerText = "21:00 - 08:00 AM";
-                if (btn) btn.className = "px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 transition flex items-center gap-1.5";
-                showToast("⏰ Curfew Policy Reset: Standard 21:00 Curfew Enforced.");
+                if (btn) {
+                    btn.className = "px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-90 border border-slate-700 text-slate-300 text-xs font-semibold transition-all duration-150 flex items-center gap-1.5 cursor-pointer select-none";
+                    btn.innerHTML = '<span>⚙️ Curfew Override</span>';
+                }
+                updateActionHUD('⏰', 'Curfew Policy Reset: Standard 21:00 curfew lock restored', 'slate');
+                showToast("⏰ Curfew Policy Reset: Standard 21:00 Curfew Enforced.", 'slate');
             }
         }
 
         function copyInstructorLink() {
+            playActionSound('success');
             const dummy = document.createElement("input");
             document.body.appendChild(dummy);
             dummy.value = window.location.href;
             dummy.select();
             document.execCommand("copy");
             document.body.removeChild(dummy);
-            showToast("✓ Instructor Monitor Link Copied! Any teacher opening this URL can monitor the lab cluster simultaneously.");
+            updateActionHUD('🔗', 'Instructor Multi-Seat Monitor link copied to clipboard', 'emerald');
+            showToast("✓ Instructor Monitor Link Copied! Any teacher opening this URL can monitor the lab cluster.", 'emerald');
         }
 
         function switchViewMode(mode) {
@@ -1642,7 +1899,9 @@ Type a slash command or click one above to test...</div>
         // VOICE BROADCAST SIMULATOR (Exact IDs: micBtn, micLabel, voiceTextInput)
         // =========================================================================
         async function sendVoiceSimulate(presetText) {
-            showToast(`🔊 Voice Announcement Broadcasted across all PC speakers: "${presetText}"`);
+            playActionSound('success');
+            updateActionHUD('🔊', `Voice PA Announcement: "${presetText}"`, 'indigo');
+            showToast(`🔊 Voice Announcement Broadcasted across all PC speakers: "${presetText}"`, 'indigo');
         }
 
         function sendCustomVoiceText() {
@@ -1659,9 +1918,11 @@ Type a slash command or click one above to test...</div>
             const micBtn = document.getElementById('micBtn');
             const micLabel = document.getElementById('micLabel');
             if (isRecording) {
-                if (micBtn) micBtn.className = "px-4 py-2 rounded-xl bg-rose-600 border border-rose-400 text-white text-xs font-bold transition flex items-center gap-2 animate-pulse";
+                playActionSound('toggle');
+                if (micBtn) micBtn.className = "px-4 py-2 rounded-xl bg-rose-600 border border-rose-400 text-white text-xs font-bold transition flex items-center gap-2 animate-pulse cursor-pointer";
                 if (micLabel) micLabel.innerText = "🔴 Live Mic Broadcasting...";
-                showToast("🎙️ Live PA Microphone Active: Broadcasting your voice to all student speakers in real time!");
+                updateActionHUD('🎙️', 'Live Microphone Broadcast Active to all 6 student workstation speakers', 'rose');
+                showToast("🎙️ Live PA Microphone Active: Broadcasting your voice to all student speakers in real time!", 'rose');
             } else {
                 stopMic();
             }
@@ -1669,11 +1930,13 @@ Type a slash command or click one above to test...</div>
 
         function stopMic() {
             isRecording = false;
+            playActionSound('toggle');
             const micBtn = document.getElementById('micBtn');
             const micLabel = document.getElementById('micLabel');
-            if (micBtn) micBtn.className = "px-4 py-2 rounded-xl bg-indigo-600/30 hover:bg-indigo-600/40 border border-indigo-500 text-indigo-300 text-xs font-bold transition flex items-center gap-2";
+            if (micBtn) micBtn.className = "px-4 py-2 rounded-xl bg-indigo-600/30 hover:bg-indigo-600/40 border border-indigo-500 text-indigo-300 text-xs font-bold transition flex items-center gap-2 cursor-pointer";
             if (micLabel) micLabel.innerText = "🎙️ Push-to-Talk Mic";
-            showToast("🎙️ Microphone Broadcast Ended.");
+            updateActionHUD('🎙️', 'Live Microphone Broadcast Terminated', 'slate');
+            showToast("🎙️ Microphone Broadcast Ended.", 'slate');
         }
 
         // =========================================================================
@@ -1727,8 +1990,10 @@ Type a slash command or click one above to test...</div>
         }
 
         async function refreshAuditLog() {
+            playActionSound('toggle');
             renderAuditLog(mockAuditLog);
-            showToast("✓ Application Usage Audit Records Refreshed!");
+            updateActionHUD('✓', 'Application Usage Audit Log Synchronized & Refreshed', 'emerald');
+            showToast("✓ Application Usage Audit Records Refreshed!", 'emerald');
         }
 
         // =========================================================================
