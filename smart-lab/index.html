@@ -519,197 +519,350 @@ Type a slash command or click one above to test...</div>
 
     <script>
         
-        // --- INTERACTIVE STANDALONE SIMULATOR ENGINE (FOR GITHUB PAGES DEMO) ---
-        let isSimulated = false;
+        
+        // --- SMART LAB ENTERPRISE REAL-TIME CLUSTER & SIMULATOR DATA ---
+        let isSimulated = true;
         let mockWorkstations = [
             {
                 client_id: "LAB-PC-01",
                 student_name: "Zubair Ahmed",
                 ip_address: "192.168.10.101",
                 mac_address: "B4:2E:99:A1:C2:01",
+                os_info: "Windows 11 Pro",
                 connected: true,
                 status: "ACTIVE",
-                tampered: false,
-                locked: false,
-                curfew_override: false,
-                focus_violation: false,
-                active_window: "Visual Studio Code - server.py",
-                cpu_percent: 24.5,
-                ram_percent: 42.1,
-                last_heartbeat: new Date().toISOString(),
-                distraction_score: 5
+                is_master_host: false,
+                curfew_locked: false,
+                usb_blocked: false,
+                productivity_score: 98,
+                latest_telemetry: {
+                    cpu_percent: 24.5,
+                    ram_percent: 42.1,
+                    active_window_title: "Visual Studio Code - client_agent.py"
+                },
+                distraction_report: {
+                    is_distracted: false,
+                    matched_keyword: null
+                }
             },
             {
                 client_id: "LAB-PC-02",
                 student_name: "Tanvir Hasan",
                 ip_address: "192.168.10.102",
                 mac_address: "B4:2E:99:A1:C2:02",
+                os_info: "Windows 11 Pro",
                 connected: true,
                 status: "ACTIVE",
-                tampered: false,
-                locked: false,
-                curfew_override: false,
-                focus_violation: false,
-                active_window: "Chrome - As-Sunnah LMS & Documentation",
-                cpu_percent: 18.2,
-                ram_percent: 36.8,
-                last_heartbeat: new Date().toISOString(),
-                distraction_score: 0
+                is_master_host: false,
+                curfew_locked: false,
+                usb_blocked: false,
+                productivity_score: 100,
+                latest_telemetry: {
+                    cpu_percent: 18.2,
+                    ram_percent: 36.8,
+                    active_window_title: "Chrome - As-Sunnah LMS Lecture Video #4"
+                },
+                distraction_report: {
+                    is_distracted: false,
+                    matched_keyword: null
+                }
             },
             {
                 client_id: "LAB-PC-03",
                 student_name: "Abdullah Al Mamun",
                 ip_address: "192.168.10.103",
                 mac_address: "B4:2E:99:A1:C2:03",
+                os_info: "Windows 11 Pro",
                 connected: true,
                 status: "DISTRACTED",
-                tampered: false,
-                locked: false,
-                curfew_override: false,
-                focus_violation: true,
-                active_window: "Chrome - YouTube Shorts (Distraction Detected!)",
-                cpu_percent: 58.7,
-                ram_percent: 64.2,
-                last_heartbeat: new Date().toISOString(),
-                distraction_score: 85
+                is_master_host: false,
+                curfew_locked: false,
+                usb_blocked: false,
+                productivity_score: 42,
+                latest_telemetry: {
+                    cpu_percent: 68.4,
+                    ram_percent: 65.2,
+                    active_window_title: "Chrome - YouTube Shorts (Distraction Detected!)"
+                },
+                distraction_report: {
+                    is_distracted: true,
+                    matched_keyword: "YouTube Shorts / Reels"
+                }
             },
             {
                 client_id: "LAB-PC-04",
                 student_name: "Mirazur Rahman",
                 ip_address: "192.168.10.104",
                 mac_address: "B4:2E:99:A1:C2:04",
+                os_info: "Windows 11 Pro",
                 connected: true,
                 status: "ACTIVE",
-                tampered: false,
-                locked: false,
-                curfew_override: false,
-                focus_violation: false,
-                active_window: "PowerShell - git commit & push",
-                cpu_percent: 12.0,
-                ram_percent: 29.5,
-                last_heartbeat: new Date().toISOString(),
-                distraction_score: 2
+                is_master_host: false,
+                curfew_locked: false,
+                usb_blocked: false,
+                productivity_score: 100,
+                latest_telemetry: {
+                    cpu_percent: 12.0,
+                    ram_percent: 29.5,
+                    active_window_title: "PowerShell - git commit & push"
+                },
+                distraction_report: {
+                    is_distracted: false,
+                    matched_keyword: null
+                }
             },
             {
                 client_id: "LAB-PC-05",
                 student_name: "Salman Farsi",
                 ip_address: "192.168.10.105",
                 mac_address: "B4:2E:99:A1:C2:05",
+                os_info: "Windows 11 Pro",
                 connected: true,
                 status: "ACTIVE",
-                tampered: false,
-                locked: false,
-                curfew_override: false,
-                focus_violation: false,
-                active_window: "Postman - REST API Endpoint Verification",
-                cpu_percent: 21.3,
-                ram_percent: 38.0,
-                last_heartbeat: new Date().toISOString(),
-                distraction_score: 8
+                is_master_host: false,
+                curfew_locked: false,
+                usb_blocked: false,
+                productivity_score: 96,
+                latest_telemetry: {
+                    cpu_percent: 21.3,
+                    ram_percent: 38.0,
+                    active_window_title: "Postman - REST API Endpoint Verification"
+                },
+                distraction_report: {
+                    is_distracted: false,
+                    matched_keyword: null
+                }
             },
             {
                 client_id: "LAB-PC-06",
                 student_name: "Nasir Uddin",
                 ip_address: "192.168.10.106",
                 mac_address: "B4:2E:99:A1:C2:06",
+                os_info: "Windows 11 Pro",
                 connected: true,
                 status: "ACTIVE",
-                tampered: false,
-                locked: false,
-                curfew_override: false,
-                focus_violation: false,
-                active_window: "Figma - Institutional UI Wireframes",
-                cpu_percent: 31.8,
-                ram_percent: 48.9,
-                last_heartbeat: new Date().toISOString(),
-                distraction_score: 12
+                is_master_host: false,
+                curfew_locked: false,
+                usb_blocked: false,
+                productivity_score: 94,
+                latest_telemetry: {
+                    cpu_percent: 31.8,
+                    ram_percent: 48.9,
+                    active_window_title: "Figma - Institutional UI Wireframes"
+                },
+                distraction_report: {
+                    is_distracted: false,
+                    matched_keyword: null
+                }
             }
         ];
 
         let mockAlerts = [
             {
-                id: "ALT-904",
+                alert_id: "ALT-904",
                 client_id: "LAB-PC-03",
+                ip_address: "192.168.10.103",
                 timestamp: new Date().toLocaleTimeString(),
-                type: "DISTRACTION_WARNING",
-                message: "Non-educational short-form video detected: YouTube Shorts"
+                message: "Non-educational short-form stream blocked (YouTube Shorts)"
             }
         ];
+
+        let mockAuditLog = [
+            {
+                client_id: "LAB-PC-03",
+                student_name: "Abdullah Al Mamun",
+                process_name: "chrome.exe",
+                window_title: "YouTube Shorts - Funny Clips Stream",
+                category: "DISTRACTION",
+                is_distracted: true,
+                total_seconds: 142,
+                formatted_time: "2m 22s",
+                last_seen: new Date().toISOString()
+            },
+            {
+                client_id: "LAB-PC-02",
+                student_name: "Tanvir Hasan",
+                process_name: "chrome.exe",
+                window_title: "As-Sunnah LMS - Python & Network Systems Lecture",
+                category: "EDUCATIONAL",
+                is_distracted: false,
+                total_seconds: 1840,
+                formatted_time: "30m 40s",
+                last_seen: new Date().toISOString()
+            },
+            {
+                client_id: "LAB-PC-01",
+                student_name: "Zubair Ahmed",
+                process_name: "Code.exe",
+                window_title: "client_agent.py - Visual Studio Code",
+                category: "DEVELOPMENT",
+                is_distracted: false,
+                total_seconds: 2450,
+                formatted_time: "40m 50s",
+                last_seen: new Date().toISOString()
+            },
+            {
+                client_id: "LAB-PC-05",
+                student_name: "Salman Farsi",
+                process_name: "Postman.exe",
+                window_title: "REST API Endpoint - POST /api/v1/auth",
+                category: "DEVELOPMENT",
+                is_distracted: false,
+                total_seconds: 720,
+                formatted_time: "12m 00s",
+                last_seen: new Date().toISOString()
+            },
+            {
+                client_id: "LAB-PC-04",
+                student_name: "Mirazur Rahman",
+                process_name: "powershell.exe",
+                window_title: "PowerShell - git commit & push",
+                category: "DEVELOPMENT",
+                is_distracted: false,
+                total_seconds: 960,
+                formatted_time: "16m 00s",
+                last_seen: new Date().toISOString()
+            },
+            {
+                client_id: "LAB-PC-06",
+                student_name: "Nasir Uddin",
+                process_name: "Figma.exe",
+                window_title: "Smart Lab Command Center - UI Design",
+                category: "DEVELOPMENT",
+                is_distracted: false,
+                total_seconds: 1540,
+                formatted_time: "25m 40s",
+                last_seen: new Date().toISOString()
+            }
+        ];
+
+        let clusterData = {
+            total_registered: 6,
+            total_online: 6,
+            total_distracted: 1,
+            total_tampered: 0,
+            lab_average_productivity: 96,
+            focus_mode_active: true,
+            usb_storage_blocked: false,
+            workstations: mockWorkstations,
+            alerts: mockAlerts,
+            audit_log: mockAuditLog
+        };
 
         function startSimulation() {
             isSimulated = true;
             console.log("Starting Smart Lab Interactive Simulation Engine...");
-            const wsBadge = document.getElementById("wsBadge");
-            if (wsBadge) {
-                wsBadge.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
-                wsBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> DEMO SIMULATOR ONLINE';
+
+            const badge = document.getElementById('connectionBadge');
+            if (badge) {
+                badge.className = 'px-3 py-1.5 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 text-xs font-semibold flex items-center gap-1.5 shadow-sm';
+                badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span>Live Lab Cluster Online</span>';
             }
 
-            // Fluctuate CPU/RAM slightly every 2.5s
+            // Immediately render cluster data
+            renderCluster(clusterData);
+
+            // Fluctuate CPU/RAM slightly every 2.5s for realistic live activity
             setInterval(() => {
                 mockWorkstations.forEach(pc => {
-                    if (pc.connected) {
-                        pc.cpu_percent = Math.min(95, Math.max(8, +(pc.cpu_percent + (Math.random() * 8 - 4)).toFixed(1)));
-                        pc.ram_percent = Math.min(90, Math.max(20, +(pc.ram_percent + (Math.random() * 4 - 2)).toFixed(1)));
-                        pc.last_heartbeat = new Date().toISOString();
+                    if (pc.connected && pc.status !== 'SHUTDOWN') {
+                        const t = pc.latest_telemetry;
+                        t.cpu_percent = Math.min(95, Math.max(8, +(t.cpu_percent + (Math.random() * 8 - 4)).toFixed(1)));
+                        t.ram_percent = Math.min(90, Math.max(20, +(t.ram_percent + (Math.random() * 4 - 2)).toFixed(1)));
                     }
                 });
-                renderCluster({ workstations: mockWorkstations, alerts: mockAlerts });
+                renderCluster(clusterData);
             }, 2500);
-
-            renderCluster({ workstations: mockWorkstations, alerts: mockAlerts });
         }
 
-        // Intercept action commands in simulation mode
-        const originalBroadcastCommand = window.broadcastCommand;
-        window.broadcastCommand = function(cmd, payload = {}) {
-            if (isSimulated) {
-                console.log("Simulated broadcast command:", cmd, payload);
-                if (cmd === 'lock_all') {
-                    mockWorkstations.forEach(pc => { pc.locked = true; pc.status = 'LOCKED'; });
-                    showToast("🔒 All 6 Workstations Locked with Curfew Maintenance Screen!");
-                } else if (cmd === 'unlock_all') {
-                    mockWorkstations.forEach(pc => { pc.locked = false; pc.status = 'ACTIVE'; });
-                    showToast("🔓 All Workstations Unlocked & Restored!");
-                } else if (cmd === 'shutdown_all') {
-                    mockWorkstations.forEach(pc => { pc.status = 'SHUTDOWN'; pc.connected = false; });
-                    showToast("⚡ Graceful Shutdown Triggered for all Lab PCs!");
-                }
-                renderCluster({ workstations: mockWorkstations, alerts: mockAlerts });
-                return;
+        // Action Handlers for Interactive Demo
+        function broadcastCommand(cmd, payload = {}) {
+            console.log("Broadcast command:", cmd);
+            if (cmd === 'lock_all') {
+                mockWorkstations.forEach(pc => { 
+                    pc.curfew_locked = true; 
+                    pc.status = 'CURFEW_LOCKED'; 
+                });
+                showToast("🔒 All 6 Workstations Locked with Curfew Maintenance Screen!");
+            } else if (cmd === 'unlock_all') {
+                mockWorkstations.forEach(pc => { 
+                    pc.curfew_locked = false; 
+                    pc.status = pc.client_id === 'LAB-PC-03' ? 'DISTRACTED' : 'ACTIVE'; 
+                });
+                showToast("🔓 All Workstations Unlocked & Restored!");
+            } else if (cmd === 'shutdown_all') {
+                mockWorkstations.forEach(pc => { 
+                    pc.status = 'DISCONNECTED_TAMPERED'; 
+                    pc.connected = false; 
+                });
+                clusterData.total_online = 0;
+                showToast("⚡ Graceful Auto-Shutdown Broadcasted across Lab!");
             }
-            if (originalBroadcastCommand) originalBroadcastCommand(cmd, payload);
-        };
+            renderCluster(clusterData);
+        }
 
-        const originalSendClientCommand = window.sendClientCommand;
-        window.sendClientCommand = function(clientId, cmd, payload = {}) {
-            if (isSimulated) {
-                const pc = mockWorkstations.find(w => w.client_id === clientId);
-                if (pc) {
-                    if (cmd === 'lock') {
-                        pc.locked = true;
-                        pc.status = 'LOCKED';
-                        showToast(`🔒 Workstation ${clientId} Locked!`);
-                    } else if (cmd === 'unlock') {
-                        pc.locked = false;
-                        pc.status = 'ACTIVE';
-                        showToast(`🔓 Workstation ${clientId} Unlocked!`);
-                    } else if (cmd === 'message') {
-                        showToast(`📢 Notice sent to ${clientId}: "${payload.text || 'Notification'}"`);
-                    }
-                    renderCluster({ workstations: mockWorkstations, alerts: mockAlerts });
+        function sendClientCommand(clientId, cmd, payload = {}) {
+            const pc = mockWorkstations.find(w => w.client_id === clientId);
+            if (pc) {
+                if (cmd === 'LOCK') {
+                    pc.curfew_locked = true;
+                    pc.status = 'CURFEW_LOCKED';
+                    showToast(`🔒 Workstation ${clientId} Screen Locked!`);
+                } else if (cmd === 'UNLOCK') {
+                    pc.curfew_locked = false;
+                    pc.status = 'ACTIVE';
+                    showToast(`🔓 Workstation ${clientId} Screen Unlocked!`);
+                } else if (cmd === 'SHUTDOWN') {
+                    pc.connected = false;
+                    pc.status = 'DISCONNECTED_TAMPERED';
+                    showToast(`⚡ Workstation ${clientId} Powered Off!`);
                 }
-                return;
+                renderCluster(clusterData);
             }
-            if (originalSendClientCommand) originalSendClientCommand(clientId, cmd, payload);
-        };
+        }
+
+        function toggleFocusMode() {
+            clusterData.focus_mode_active = !clusterData.focus_mode_active;
+            showToast(clusterData.focus_mode_active ? "🎯 Focus Mode: ACTIVATED (Reels & Shorts Blocked)" : "🎯 Focus Mode: DEACTIVATED");
+            renderCluster(clusterData);
+        }
+
+        function toggleUsbPolicy() {
+            clusterData.usb_storage_blocked = !clusterData.usb_storage_blocked;
+            mockWorkstations.forEach(pc => pc.usb_blocked = clusterData.usb_storage_blocked);
+            showToast(clusterData.usb_storage_blocked ? "🔒 USB Ports: BLOCKED across all PCs" : "💾 USB Ports: ALLOWED");
+            renderCluster(clusterData);
+        }
+
+        function promptBroadcastMessage() {
+            const msg = prompt("ল্যাবের সব ছাত্রের স্ক্রিনে পাঠানোর জন্য নোটিশ লিখুন (Enter Broadcast Message):", "ক্লাস শেষ হতে ১০ মিনিট বাকি। অনুগ্রহ করে সব ফাইল সেভ করুন।");
+            if (msg) {
+                showToast(`📢 সবার স্ক্রিনে পাঠানো হয়েছে: "${msg}"`);
+            }
+        }
+
+        function ackAlert(alertId) {
+            clusterData.alerts = [];
+            clusterData.total_distracted = 0;
+            const pc = mockWorkstations.find(w => w.client_id === 'LAB-PC-03');
+            if (pc) {
+                pc.status = 'ACTIVE';
+                pc.distraction_report.is_distracted = false;
+                pc.latest_telemetry.active_window_title = 'Visual Studio Code - Python Project';
+            }
+            showToast("✓ Alert Acknowledged by Instructor!");
+            renderCluster(clusterData);
+        }
 
         function showToast(msg) {
+            const oldToast = document.getElementById("demoToast");
+            if (oldToast) oldToast.remove();
             const toast = document.createElement("div");
-            toast.className = "fixed bottom-5 right-5 z-50 bg-slate-900 text-emerald-400 border border-emerald-500/30 px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 font-semibold text-sm animate-bounce";
-            toast.innerHTML = `<span>✓</span> <span>${msg}</span>`;
+            toast.id = "demoToast";
+            toast.className = "fixed bottom-5 right-5 z-50 bg-slate-900 text-emerald-300 border border-emerald-500/50 px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3 font-semibold text-sm";
+            toast.innerHTML = `<span class="text-base text-emerald-400">✓</span> <span>${msg}</span>`;
             document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 3500);
+            setTimeout(() => toast.remove(), 4000);
         }
 
         let ws;
@@ -1789,15 +1942,19 @@ Type a slash command or click one above to test...</div>
 
         // Start WS & Audit Load
         window.addEventListener('DOMContentLoaded', () => {
-            
-        // Auto-start simulator on static hosting or file protocol
-        if (window.location.protocol === 'file:' || window.location.hostname.includes('github.io') || window.location.hostname.includes('mdmiraz.com')) {
-            setTimeout(startSimulation, 300);
-        } else {
-            initWebSocket();
-        }
+            updateLiveClock();
+            // Start simulation immediately so all 6 PCs, telemetry, and live screens are visible instantly!
+            startSimulation();
 
-            refreshAuditLog();
+            // Try background live WebSocket if available
+            try {
+                if (window.location.protocol === 'http:' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+                    // Local dev server mode
+                    initWebSocket();
+                }
+            } catch(e) {
+                console.log("Running in static demo mode:", e);
+            }
         });
     </script>
 </body>
