@@ -1,0 +1,1653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Lab Command Center — As-Sunnah Computer Lab</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen antialiased">
+    <!-- Top Navigation -->
+    <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <!-- Portfolio Navigation & Author -->
+            <div class="flex items-center gap-3">
+                <a href="../index.html" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition shadow-sm">
+                    <span>&larr;</span> Portfolio (mdmiraz.com)
+                </a>
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-medium border border-emerald-500/20">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    Live Interactive Demo
+                </span>
+            </div>
+            <!-- Brand & Lab Identifier -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 via-teal-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-emerald-500/20 flex-shrink-0">
+                    <span class="text-xl">🖥️</span>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="font-extrabold text-lg text-white">Smart Lab Command Center</h1>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                            As-Sunnah Lab Edition
+                        </span>
+                    </div>
+                    <p class="text-xs text-slate-400">Live Workstation Telemetry • Distraction Detection • 21:00 Curfew Enforcer</p>
+                </div>
+            </div>
+
+            <!-- Top Right: Curfew Clock & Live Badge -->
+            <!-- Top Right: Curfew Clock & Live Badge -->
+            <div class="flex flex-wrap items-center gap-3">
+                <!-- Action Buttons: Daily Report & Telegram -->
+                <button onclick="openDailyReportModal()" class="px-3 py-1.5 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/40 text-indigo-300 text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                    <span>📊 Daily Report Card</span>
+                </button>
+                <button onclick="openTelegramModal()" class="px-3 py-1.5 rounded-xl bg-sky-600/20 hover:bg-sky-600/30 border border-sky-500/40 text-sky-300 text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                    <span>🤖 Telegram Remote</span>
+                </button>
+
+                <!-- Live Clock & Schedule -->
+                <div class="px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 flex items-center gap-2 font-mono text-xs">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span id="liveClock" class="text-white font-bold">--:--:--</span>
+                    <span class="text-slate-500">|</span>
+                    <span class="text-indigo-400">Curfew: <strong>21:00</strong> → <strong class="text-emerald-400">08:00 AM</strong></span>
+                </div>
+
+                <div id="connectionBadge" class="px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-semibold flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+                    <span>Connecting WS...</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+        <!-- Master Metrics Strip -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4">
+                <span class="text-xs text-slate-400 font-medium">Registered PCs</span>
+                <div id="statTotal" class="text-2xl font-extrabold text-white mt-1">0</div>
+            </div>
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4">
+                <span class="text-xs text-emerald-400 font-medium">Online & Active</span>
+                <div id="statOnline" class="text-2xl font-extrabold text-emerald-400 mt-1">0</div>
+            </div>
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4">
+                <span class="text-xs text-rose-400 font-medium">Distracted (Reels)</span>
+                <div id="statDistracted" class="text-2xl font-extrabold text-rose-400 mt-1">0</div>
+            </div>
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4">
+                <span class="text-xs text-indigo-400 font-medium">AI Productivity</span>
+                <div id="statProductivity" class="text-2xl font-extrabold text-indigo-300 mt-1">100%</div>
+            </div>
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4">
+                <span class="text-xs text-amber-400 font-medium">Tampered / Silent</span>
+                <div id="statTampered" class="text-2xl font-extrabold text-amber-400 mt-1">0</div>
+            </div>
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4">
+                <span class="text-xs text-purple-400 font-medium">Curfew Schedule</span>
+                <div id="statCurfew" class="text-xs font-bold text-purple-300 mt-2">21:00 - 08:00 AM</div>
+            </div>
+        </div>
+
+        <!-- Master Command Control Bar -->
+        <div class="bg-gradient-to-r from-slate-900 via-slate-900/90 to-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 flex flex-wrap items-center justify-between gap-3 shadow-xl">
+            <div class="flex items-center gap-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Institutional Controls:</span>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+                <!-- Feature 2: Focus Mode Master Toggle -->
+                <button onclick="toggleFocusMode()" id="focusModeBtn" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                    <span>🎯 Focus Mode: OFF</span>
+                </button>
+
+                <!-- Feature 4: USB Storage Policy Master Toggle -->
+                <button onclick="toggleUsbPolicy()" id="usbPolicyBtn" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                    <span>💾 USB: ALLOWED</span>
+                </button>
+
+                <!-- Feature 3: File Broadcast & Collect -->
+                <button onclick="openBroadcastFileModal()" class="px-3.5 py-2 rounded-xl bg-teal-600/20 hover:bg-teal-600/30 border border-teal-500/40 text-teal-300 text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                    <span>📤 Broadcast File</span>
+                </button>
+                <button onclick="openAssignmentsModal()" class="px-3.5 py-2 rounded-xl bg-cyan-600/20 hover:bg-cyan-600/30 border border-cyan-500/40 text-cyan-300 text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                    <span>📥 Collect Assignments</span>
+                </button>
+
+                <!-- Master Push Power Actions -->
+                <button onclick="broadcastCommand('LOCK')" class="px-3.5 py-2 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/40 text-purple-300 text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                    <span>🔒 Lock All</span>
+                </button>
+                <button onclick="broadcastCommand('UNLOCK')" class="px-3.5 py-2 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                    <span>🔓 Unlock All</span>
+                </button>
+                <button onclick="confirmLabShutdown()" class="px-3.5 py-2 rounded-xl bg-rose-600/20 hover:bg-rose-600/30 border border-rose-500/40 text-rose-300 text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                    <span>⚡ Shutdown All</span>
+                </button>
+                <button onclick="promptBroadcastMessage()" class="px-3.5 py-2 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/40 text-indigo-300 text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                    <span>📢 Notice</span>
+                </button>
+                <button onclick="toggleCurfewOverride()" id="overrideBtn" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-xs font-semibold transition flex items-center gap-1.5">
+                    <span>⚙️ Curfew Override</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Tamper Alert Banner (Appears when disconnections/heartbeat drop occurs) -->
+        <div id="tamperAlertSection" class="hidden space-y-3">
+            <div class="p-4 rounded-2xl bg-amber-950/60 border border-amber-500/40 text-amber-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg">
+                <div class="flex items-center gap-3">
+                    <span class="text-2xl animate-bounce">⚠️</span>
+                    <div>
+                        <h4 class="font-bold text-sm text-amber-100">Tamper & Disconnect Alert Detected!</h4>
+                        <p id="tamperAlertText" class="text-xs text-amber-300 mt-0.5">One or more student workstations have stopped reporting telemetry.</p>
+                    </div>
+                </div>
+                <div id="tamperBadges" class="flex flex-wrap items-center gap-2"></div>
+            </div>
+        </div>
+
+        <!-- Live Workstation Grid Header -->
+        <div class="flex items-center justify-between pt-2">
+            <div>
+                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                    <span>Workstations Grid Overview</span>
+                    <span id="gridCountBadge" class="px-2 py-0.5 rounded-full text-[11px] font-mono bg-slate-800 text-indigo-300">0 PCs</span>
+                </h3>
+                <p class="text-xs text-slate-400">Click any workstation for direct lock, student messaging, or graceful shutdown.</p>
+            </div>
+            <div class="flex items-center gap-2 text-xs">
+                <span class="inline-flex items-center gap-1 text-slate-400"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> Normal</span>
+                <span class="inline-flex items-center gap-1 text-slate-400"><span class="w-2 h-2 rounded-full bg-rose-500"></span> Distracted</span>
+                <span class="inline-flex items-center gap-1 text-slate-400"><span class="w-2 h-2 rounded-full bg-amber-500"></span> Tampered</span>
+                <span class="inline-flex items-center gap-1 text-slate-400"><span class="w-2 h-2 rounded-full bg-purple-500"></span> Locked</span>
+            </div>
+        </div>
+
+        <!-- Live PC Cards Grid -->
+        <div id="workstationGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <!-- Workstation cards dynamically rendered -->
+            <div class="col-span-full py-16 text-center text-slate-500">
+                <span class="text-4xl block mb-2">⏳</span>
+                <p class="text-sm">Waiting for student workstations to connect to the cluster...</p>
+                <p class="text-xs text-slate-600 mt-1">Start workstation client agents using: <code>python -m agent.client_agent</code></p>
+            </div>
+        </div>
+
+        <!-- Application Usage Audit Log Section -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-xl">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800/80">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-xl">
+                        ⏱️
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="font-extrabold text-base text-white">Application Usage Audit Log</h3>
+                            <span id="auditCountBadge" class="px-2 py-0.5 rounded-full text-[11px] font-mono bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">0 Records</span>
+                        </div>
+                        <p class="text-xs text-slate-400">Real-time dwell time tracking across software, IDEs, and browser windows</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <input type="text" id="auditSearchInput" onkeyup="filterAuditTable()" placeholder="Filter by student, app, or window..." class="px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 w-52 sm:w-64" />
+                    <button onclick="refreshAuditLog()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 transition flex items-center gap-1">
+                        <span>🔄</span> Refresh
+                    </button>
+                </div>
+            </div>
+
+            <!-- Audit Log Table -->
+            <div class="overflow-x-auto rounded-xl border border-slate-800/80">
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead>
+                        <tr class="bg-slate-950/80 text-slate-400 border-b border-slate-800 font-mono text-[11px]">
+                            <th class="py-3 px-4">Student & PC</th>
+                            <th class="py-3 px-4">Process Name</th>
+                            <th class="py-3 px-4">Window Title / URL Activity</th>
+                            <th class="py-3 px-4">Category</th>
+                            <th class="py-3 px-4 text-right">Time Spent</th>
+                            <th class="py-3 px-4 text-right">Last Active</th>
+                        </tr>
+                    </thead>
+                    <tbody id="auditTableBody" class="divide-y divide-slate-800/60 font-mono">
+                        <tr>
+                            <td colspan="6" class="py-8 text-center text-slate-500 font-sans">
+                                <span>No application usage telemetry recorded yet. Active dwell time will update here.</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Client Message Modal -->
+    <div id="msgModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+            <h3 class="text-base font-bold text-white">Send Notice to <span id="modalTarget" class="text-indigo-400"></span></h3>
+            <textarea id="modalMsgInput" rows="3" placeholder="Type notification message to be displayed on student's screen..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500"></textarea>
+            <div class="flex justify-end gap-2">
+                <button onclick="closeMsgModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300">Cancel</button>
+                <button onclick="submitTargetMessage()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white">Send Message</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Screen Preview Modal (Veyon-style) -->
+    <div id="screenModal" class="hidden fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-6">
+        <div class="bg-slate-900 border border-slate-700/80 rounded-3xl max-w-4xl w-full p-4 sm:p-6 space-y-4 shadow-2xl relative">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-lg">
+                        🖥️
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 id="screenModalTitle" class="text-base sm:text-lg font-bold text-white font-mono">LAB-PC-01</h3>
+                            <span id="screenModalStudent" class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-800 text-indigo-300 border border-slate-700"></span>
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                                <span>Live Veyon Stream</span>
+                            </span>
+                        </div>
+                        <p id="screenModalApp" class="text-xs text-slate-400 truncate mt-0.5 font-mono"></p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="toggleModalFullscreen()" title="Toggle Fullscreen" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-xs font-bold transition">
+                        ⛶
+                    </button>
+                    <button onclick="closeScreenModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-sm font-bold transition">
+                        ✕
+                    </button>
+                </div>
+            </div>
+
+            <!-- Live Screen Image Display Container -->
+            <div id="screenModalImgContainer" class="relative bg-black rounded-2xl overflow-hidden border border-slate-800 aspect-video flex items-center justify-center shadow-inner">
+                <img id="screenModalImg" src="" alt="Live Workstation Screen" class="w-full h-full object-contain" />
+                <div id="screenModalLoading" class="hidden absolute inset-0 bg-slate-950/80 flex flex-col items-center justify-center text-slate-400 gap-2">
+                    <span class="text-3xl animate-spin">🔄</span>
+                    <span class="text-xs font-mono">Streaming workstation display...</span>
+                </div>
+            </div>
+
+            <!-- Modal Bottom Actions Strip -->
+            <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
+                <div class="flex items-center gap-2 text-xs text-slate-400 font-mono">
+                    <span>Frame: <strong class="text-emerald-400">Live Active</strong></span>
+                    <span>•</span>
+                    <span id="screenModalTime"></span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="requestFreshScreen()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 transition flex items-center gap-1.5">
+                        <span>🔄 Refresh Frame</span>
+                    </button>
+                    <button id="screenModalLockBtn" onclick="toggleScreenModalLock()" class="px-3 py-1.5 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 text-xs font-bold text-purple-300 transition">
+                        <span>🔒 Lock PC</span>
+                    </button>
+                    <button onclick="openMsgModalFromScreen()" class="px-3 py-1.5 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/30 text-xs font-bold text-indigo-300 transition">
+                        <span>📢 Message Student</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 1. Daily Report Card Modal -->
+    <div id="dailyReportModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+        <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-3xl w-full p-5 sm:p-7 space-y-5 shadow-2xl my-auto">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-xl">
+                        📊
+                    </div>
+                    <div>
+                        <h3 class="text-base sm:text-lg font-bold text-white">Daily AI Productivity Report Card</h3>
+                        <p class="text-xs text-slate-400">As-Sunnah Computer Lab • Automated End-of-Day Audit</p>
+                    </div>
+                </div>
+                <button onclick="closeDailyReportModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-sm font-bold transition">✕</button>
+            </div>
+
+            <!-- Report KPI Cards -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+                    <span class="text-[11px] text-slate-400">Lab Avg Score</span>
+                    <div id="repAvgScore" class="text-xl font-bold text-emerald-400 mt-0.5">--</div>
+                </div>
+                <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+                    <span class="text-[11px] text-slate-400">Active Students</span>
+                    <div id="repTotalStudents" class="text-xl font-bold text-white mt-0.5">--</div>
+                </div>
+                <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+                    <span class="text-[11px] text-emerald-400">Total Focused Time</span>
+                    <div id="repFocusedTime" class="text-xl font-bold text-emerald-300 mt-0.5">--</div>
+                </div>
+                <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
+                    <span class="text-[11px] text-rose-400">Distraction Time</span>
+                    <div id="repDistractedTime" class="text-xl font-bold text-rose-300 mt-0.5">--</div>
+                </div>
+            </div>
+
+            <!-- Leaderboard & Attention Lists -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Top Focused Students -->
+                <div class="bg-slate-950/70 p-4 rounded-2xl border border-slate-800/80 space-y-2">
+                    <h4 class="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+                        <span>🏆</span> Top Focused Students
+                    </h4>
+                    <div id="repTopFocusedList" class="space-y-1.5 text-xs font-mono">
+                        <div class="text-slate-500 py-3 text-center">Loading report...</div>
+                    </div>
+                </div>
+
+                <!-- Distraction / Needs Attention -->
+                <div class="bg-slate-950/70 p-4 rounded-2xl border border-slate-800/80 space-y-2">
+                    <h4 class="text-xs font-bold text-rose-400 uppercase tracking-wider flex items-center gap-1.5">
+                        <span>⚠️</span> Distraction Flags
+                    </h4>
+                    <div id="repTopDistractedList" class="space-y-1.5 text-xs font-mono">
+                        <div class="text-slate-500 py-3 text-center">Loading report...</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center pt-2 border-t border-slate-800/80">
+                <span id="repGeneratedAt" class="text-[11px] text-slate-500 font-mono"></span>
+                <button onclick="closeDailyReportModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-200">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Central File Broadcast Modal -->
+    <div id="broadcastFileModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                <div class="flex items-center gap-2.5">
+                    <span class="text-xl">📤</span>
+                    <h3 class="text-base font-bold text-white">Broadcast File to Lab PCs</h3>
+                </div>
+                <button onclick="closeBroadcastFileModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-sm font-bold">✕</button>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1">Target Filename</label>
+                <input type="text" id="broadcastFileName" placeholder="e.g. lab_exercise_04.py, lecture_notes.txt" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-teal-500 font-mono" />
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1">Code / File Content (or Paste Text)</label>
+                <textarea id="broadcastFileContent" rows="6" placeholder="# Paste Python code, lab tasks, or markdown content to send to student workstations..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-teal-500 font-mono"></textarea>
+            </div>
+            <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
+                <button onclick="closeBroadcastFileModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300">Cancel</button>
+                <button onclick="submitBroadcastFile()" class="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-500 text-xs font-bold text-white">Broadcast to All PCs</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Collected Assignments Modal -->
+    <div id="assignmentsModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+        <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-3xl w-full p-5 sm:p-6 space-y-4 shadow-2xl my-auto">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                <div class="flex items-center gap-3">
+                    <span class="text-xl">📥</span>
+                    <div>
+                        <h3 class="text-base font-bold text-white">Central Assignment Submissions</h3>
+                        <p class="text-xs text-slate-400">Collected student project files from lab workstations</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="triggerCollectAssignments()" class="px-3 py-1.5 rounded-xl bg-cyan-600/20 hover:bg-cyan-600/30 border border-cyan-500/40 text-cyan-300 text-xs font-bold transition flex items-center gap-1">
+                        <span>⚡</span> Trigger Collect All
+                    </button>
+                    <button onclick="closeAssignmentsModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-sm font-bold">✕</button>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-800">
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead>
+                        <tr class="bg-slate-950 text-slate-400 border-b border-slate-800 font-mono text-[11px]">
+                            <th class="py-2.5 px-3">Student & PC</th>
+                            <th class="py-2.5 px-3">Filename</th>
+                            <th class="py-2.5 px-3">Size</th>
+                            <th class="py-2.5 px-3 text-right">Submitted At</th>
+                        </tr>
+                    </thead>
+                    <tbody id="assignmentsTableBody" class="divide-y divide-slate-800/60 font-mono">
+                        <tr>
+                            <td colspan="4" class="py-8 text-center text-slate-500 font-sans">
+                                Click "Trigger Collect All" to fetch student assignment files from workstations.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="flex justify-end pt-2">
+                <button onclick="closeAssignmentsModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Telegram Remote Control Simulator Modal -->
+    <div id="telegramModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-6">
+        <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-xl w-full p-5 sm:p-6 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                <div class="flex items-center gap-2.5">
+                    <span class="text-2xl">🤖</span>
+                    <div>
+                        <h3 class="text-base font-bold text-white">Telegram Remote Control Simulator</h3>
+                        <p class="text-xs text-sky-400 font-mono" id="telegramConfigStatus">Bot Integration Active</p>
+                    </div>
+                </div>
+                <button onclick="closeTelegramModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-sm font-bold">✕</button>
+            </div>
+
+            <!-- Quick Command Shortcuts -->
+            <div class="flex flex-wrap gap-1.5 text-xs">
+                <button onclick="runTelegramCmd('/status')" class="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 hover:border-sky-500/50 text-slate-300 font-mono">/status</button>
+                <button onclick="runTelegramCmd('/report')" class="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 hover:border-sky-500/50 text-slate-300 font-mono">/report</button>
+                <button onclick="runTelegramCmd('/focus on')" class="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 hover:border-sky-500/50 text-slate-300 font-mono">/focus on</button>
+                <button onclick="runTelegramCmd('/focus off')" class="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 hover:border-sky-500/50 text-slate-300 font-mono">/focus off</button>
+                <button onclick="runTelegramCmd('/usb lock')" class="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 hover:border-sky-500/50 text-slate-300 font-mono">/usb lock</button>
+                <button onclick="runTelegramCmd('/curfew toggle')" class="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 hover:border-sky-500/50 text-slate-300 font-mono">/curfew toggle</button>
+                <button onclick="runTelegramCmd('/lockall')" class="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 hover:border-purple-500/50 text-purple-300 font-mono">/lockall</button>
+                <button onclick="runTelegramCmd('/unlockall')" class="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 hover:border-emerald-500/50 text-emerald-300 font-mono">/unlockall</button>
+                <button onclick="runTelegramCmd('/host lock')" class="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 hover:border-amber-500/50 text-amber-300 font-mono">/host lock</button>
+            </div>
+
+            <!-- Bengali AI Voice Command Engine Section -->
+            <div class="bg-slate-950/80 rounded-2xl p-3 border border-sky-500/30 space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-sky-300 flex items-center gap-1.5">
+                        <span>🎙️</span> AI Voice Recognition (Gemini & Bengali NLP)
+                    </span>
+                    <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-sky-950 text-sky-400 border border-sky-800">Voice AI</span>
+                </div>
+                <div class="flex flex-wrap gap-1.5 text-[11px]">
+                    <button onclick="sendVoiceSimulate('ল্যাব লক করো')" class="px-2 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-purple-500/50 text-purple-300 transition">🗣️ "ল্যাব লক করো"</button>
+                    <button onclick="sendVoiceSimulate('সবাইকে আনলক করো')" class="px-2 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-emerald-500/50 text-emerald-300 transition">🗣️ "সবাইকে আনলক করো"</button>
+                    <button onclick="sendVoiceSimulate('ল্যাব স্ট্যাটাস বলো')" class="px-2 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-sky-500/50 text-sky-300 transition">🗣️ "ল্যাব স্ট্যাটাস বলো"</button>
+                    <button onclick="sendVoiceSimulate('কার্ফিউ চালু করো')" class="px-2 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-amber-500/50 text-amber-300 transition">🗣️ "কার্ফিউ চালু করো"</button>
+                    <button onclick="sendVoiceSimulate('ফোকাস মোড অন করো')" class="px-2 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-teal-500/50 text-teal-300 transition">🗣️ "ফোকাস মোড অন করো"</button>
+                    <button onclick="sendVoiceSimulate('আজকের রিপোর্ট দাও')" class="px-2 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-blue-500/50 text-blue-300 transition">🗣️ "আজকের রিপোর্ট দাও"</button>
+                    <button onclick="sendVoiceSimulate('হোস্ট পিসি লক করো')" class="px-2 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-yellow-500/50 text-yellow-300 transition">🗣️ "হোস্ট পিসি লক করো"</button>
+                </div>
+                <div class="flex gap-1.5 pt-1">
+                    <input type="text" id="voiceTextInput" onkeydown="if(event.key==='Enter') sendCustomVoiceText()" placeholder="বাংলায় ভয়েস টেক্সট বলুন বা লিখুন (যেমন: ল্যাব লক করো)..." class="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 font-sans" />
+                    <button onclick="toggleMicRecording()" id="micBtn" title="Speak into microphone" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-sky-300 flex items-center gap-1 transition">
+                        <span>🎤</span> <span id="micLabel">Speak</span>
+                    </button>
+                    <button onclick="sendCustomVoiceText()" class="px-3 py-1.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-xs font-bold text-white transition">Voice Run</button>
+                </div>
+            </div>
+
+            <!-- Console Terminal Window -->
+            <div class="bg-black/90 rounded-2xl p-4 border border-slate-800 font-mono text-xs text-slate-300 h-48 overflow-y-auto whitespace-pre-wrap shadow-inner" id="telegramConsoleOutput">[Telegram Remote Bot Initialized]
+Type a slash command or click one above to test...</div>
+
+            <!-- Command Input Box -->
+            <div class="flex gap-2">
+                <input type="text" id="telegramInput" onkeydown="if(event.key==='Enter') sendTelegramInput()" placeholder="Type command, e.g. /status or /report..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-sky-500" />
+                <button onclick="sendTelegramInput()" class="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-xs font-bold text-white">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        
+        // --- INTERACTIVE STANDALONE SIMULATOR ENGINE (FOR GITHUB PAGES DEMO) ---
+        let isSimulated = false;
+        let mockWorkstations = [
+            {
+                client_id: "LAB-PC-01",
+                student_name: "Zubair Ahmed",
+                ip_address: "192.168.10.101",
+                mac_address: "B4:2E:99:A1:C2:01",
+                connected: true,
+                status: "ACTIVE",
+                tampered: false,
+                locked: false,
+                curfew_override: false,
+                focus_violation: false,
+                active_window: "Visual Studio Code - server.py",
+                cpu_percent: 24.5,
+                ram_percent: 42.1,
+                last_heartbeat: new Date().toISOString(),
+                distraction_score: 5
+            },
+            {
+                client_id: "LAB-PC-02",
+                student_name: "Tanvir Hasan",
+                ip_address: "192.168.10.102",
+                mac_address: "B4:2E:99:A1:C2:02",
+                connected: true,
+                status: "ACTIVE",
+                tampered: false,
+                locked: false,
+                curfew_override: false,
+                focus_violation: false,
+                active_window: "Chrome - As-Sunnah LMS & Documentation",
+                cpu_percent: 18.2,
+                ram_percent: 36.8,
+                last_heartbeat: new Date().toISOString(),
+                distraction_score: 0
+            },
+            {
+                client_id: "LAB-PC-03",
+                student_name: "Abdullah Al Mamun",
+                ip_address: "192.168.10.103",
+                mac_address: "B4:2E:99:A1:C2:03",
+                connected: true,
+                status: "DISTRACTED",
+                tampered: false,
+                locked: false,
+                curfew_override: false,
+                focus_violation: true,
+                active_window: "Chrome - YouTube Shorts (Distraction Detected!)",
+                cpu_percent: 58.7,
+                ram_percent: 64.2,
+                last_heartbeat: new Date().toISOString(),
+                distraction_score: 85
+            },
+            {
+                client_id: "LAB-PC-04",
+                student_name: "Mirazur Rahman",
+                ip_address: "192.168.10.104",
+                mac_address: "B4:2E:99:A1:C2:04",
+                connected: true,
+                status: "ACTIVE",
+                tampered: false,
+                locked: false,
+                curfew_override: false,
+                focus_violation: false,
+                active_window: "PowerShell - git commit & push",
+                cpu_percent: 12.0,
+                ram_percent: 29.5,
+                last_heartbeat: new Date().toISOString(),
+                distraction_score: 2
+            },
+            {
+                client_id: "LAB-PC-05",
+                student_name: "Salman Farsi",
+                ip_address: "192.168.10.105",
+                mac_address: "B4:2E:99:A1:C2:05",
+                connected: true,
+                status: "ACTIVE",
+                tampered: false,
+                locked: false,
+                curfew_override: false,
+                focus_violation: false,
+                active_window: "Postman - REST API Endpoint Verification",
+                cpu_percent: 21.3,
+                ram_percent: 38.0,
+                last_heartbeat: new Date().toISOString(),
+                distraction_score: 8
+            },
+            {
+                client_id: "LAB-PC-06",
+                student_name: "Nasir Uddin",
+                ip_address: "192.168.10.106",
+                mac_address: "B4:2E:99:A1:C2:06",
+                connected: true,
+                status: "ACTIVE",
+                tampered: false,
+                locked: false,
+                curfew_override: false,
+                focus_violation: false,
+                active_window: "Figma - Institutional UI Wireframes",
+                cpu_percent: 31.8,
+                ram_percent: 48.9,
+                last_heartbeat: new Date().toISOString(),
+                distraction_score: 12
+            }
+        ];
+
+        let mockAlerts = [
+            {
+                id: "ALT-904",
+                client_id: "LAB-PC-03",
+                timestamp: new Date().toLocaleTimeString(),
+                type: "DISTRACTION_WARNING",
+                message: "Non-educational short-form video detected: YouTube Shorts"
+            }
+        ];
+
+        function startSimulation() {
+            isSimulated = true;
+            console.log("Starting Smart Lab Interactive Simulation Engine...");
+            const wsBadge = document.getElementById("wsBadge");
+            if (wsBadge) {
+                wsBadge.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+                wsBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> DEMO SIMULATOR ONLINE';
+            }
+
+            // Fluctuate CPU/RAM slightly every 2.5s
+            setInterval(() => {
+                mockWorkstations.forEach(pc => {
+                    if (pc.connected) {
+                        pc.cpu_percent = Math.min(95, Math.max(8, +(pc.cpu_percent + (Math.random() * 8 - 4)).toFixed(1)));
+                        pc.ram_percent = Math.min(90, Math.max(20, +(pc.ram_percent + (Math.random() * 4 - 2)).toFixed(1)));
+                        pc.last_heartbeat = new Date().toISOString();
+                    }
+                });
+                renderCluster({ workstations: mockWorkstations, alerts: mockAlerts });
+            }, 2500);
+
+            renderCluster({ workstations: mockWorkstations, alerts: mockAlerts });
+        }
+
+        // Intercept action commands in simulation mode
+        const originalBroadcastCommand = window.broadcastCommand;
+        window.broadcastCommand = function(cmd, payload = {}) {
+            if (isSimulated) {
+                console.log("Simulated broadcast command:", cmd, payload);
+                if (cmd === 'lock_all') {
+                    mockWorkstations.forEach(pc => { pc.locked = true; pc.status = 'LOCKED'; });
+                    showToast("🔒 All 6 Workstations Locked with Curfew Maintenance Screen!");
+                } else if (cmd === 'unlock_all') {
+                    mockWorkstations.forEach(pc => { pc.locked = false; pc.status = 'ACTIVE'; });
+                    showToast("🔓 All Workstations Unlocked & Restored!");
+                } else if (cmd === 'shutdown_all') {
+                    mockWorkstations.forEach(pc => { pc.status = 'SHUTDOWN'; pc.connected = false; });
+                    showToast("⚡ Graceful Shutdown Triggered for all Lab PCs!");
+                }
+                renderCluster({ workstations: mockWorkstations, alerts: mockAlerts });
+                return;
+            }
+            if (originalBroadcastCommand) originalBroadcastCommand(cmd, payload);
+        };
+
+        const originalSendClientCommand = window.sendClientCommand;
+        window.sendClientCommand = function(clientId, cmd, payload = {}) {
+            if (isSimulated) {
+                const pc = mockWorkstations.find(w => w.client_id === clientId);
+                if (pc) {
+                    if (cmd === 'lock') {
+                        pc.locked = true;
+                        pc.status = 'LOCKED';
+                        showToast(`🔒 Workstation ${clientId} Locked!`);
+                    } else if (cmd === 'unlock') {
+                        pc.locked = false;
+                        pc.status = 'ACTIVE';
+                        showToast(`🔓 Workstation ${clientId} Unlocked!`);
+                    } else if (cmd === 'message') {
+                        showToast(`📢 Notice sent to ${clientId}: "${payload.text || 'Notification'}"`);
+                    }
+                    renderCluster({ workstations: mockWorkstations, alerts: mockAlerts });
+                }
+                return;
+            }
+            if (originalSendClientCommand) originalSendClientCommand(clientId, cmd, payload);
+        };
+
+        function showToast(msg) {
+            const toast = document.createElement("div");
+            toast.className = "fixed bottom-5 right-5 z-50 bg-slate-900 text-emerald-400 border border-emerald-500/30 px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 font-semibold text-sm animate-bounce";
+            toast.innerHTML = `<span>✓</span> <span>${msg}</span>`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3500);
+        }
+
+        let ws;
+        let clusterData = { workstations: [], alerts: [] };
+        let activeModalTarget = null;
+        let isOverrideActive = false;
+
+        // Live Clock
+        function updateLiveClock() {
+            const now = new Date();
+            document.getElementById('liveClock').innerText = now.toLocaleTimeString('en-US', { hour12: false });
+        }
+        setInterval(updateLiveClock, 1000);
+        updateLiveClock();
+
+        // WebSocket Setup
+        function initWebSocket() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${window.location.host}/ws/admin`;
+            
+            ws = new WebSocket(wsUrl);
+
+            ws.onopen = () => {
+                const badge = document.getElementById('connectionBadge');
+                badge.className = 'px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-semibold flex items-center gap-1.5';
+                badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400"></span><span>Live Sync Active</span>';
+            };
+
+            ws.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    if (data.type === 'CLUSTER_UPDATE') {
+                        renderCluster(data);
+                    }
+                } catch (e) {
+                    console.error('Error parsing WS message:', e);
+                }
+            };
+
+            ws.onclose = () => { if (!isSimulated) startSimulation();
+                const badge = document.getElementById('connectionBadge');
+                badge.className = 'px-3 py-1.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-semibold flex items-center gap-1.5';
+                badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-rose-400 animate-pulse"></span><span>Reconnecting...</span>';
+                setTimeout(initWebSocket, 2000);
+            };
+        }
+
+        function renderCluster(data) {
+            clusterData = data;
+            document.getElementById('statTotal').innerText = data.total_registered;
+            document.getElementById('statOnline').innerText = data.total_online;
+            document.getElementById('statDistracted').innerText = data.total_distracted;
+            document.getElementById('statTampered').innerText = data.total_tampered;
+            document.getElementById('statProductivity').innerText = (data.lab_average_productivity !== undefined ? data.lab_average_productivity : 100) + '%';
+            document.getElementById('gridCountBadge').innerText = `${data.workstations.length} PCs`;
+
+            // Update Focus Mode Button
+            const focusBtn = document.getElementById('focusModeBtn');
+            if (focusBtn) {
+                if (data.focus_mode_active) {
+                    focusBtn.className = 'px-3.5 py-2 rounded-xl bg-teal-600/30 hover:bg-teal-600/40 border border-teal-500 text-teal-300 text-xs font-bold transition flex items-center gap-1.5 shadow-lg shadow-teal-950/40 animate-pulse';
+                    focusBtn.innerHTML = '<span>🎯 Focus Mode: ON</span>';
+                } else {
+                    focusBtn.className = 'px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-xs font-bold transition flex items-center gap-1.5 shadow-sm';
+                    focusBtn.innerHTML = '<span>🎯 Focus Mode: OFF</span>';
+                }
+            }
+
+            // Update USB Storage Policy Button
+            const usbBtn = document.getElementById('usbPolicyBtn');
+            if (usbBtn) {
+                if (data.usb_storage_blocked) {
+                    usbBtn.className = 'px-3.5 py-2 rounded-xl bg-amber-600/30 hover:bg-amber-600/40 border border-amber-500 text-amber-300 text-xs font-bold transition flex items-center gap-1.5 shadow-lg';
+                    usbBtn.innerHTML = '<span>🔒 USB: BLOCKED</span>';
+                } else {
+                    usbBtn.className = 'px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-xs font-bold transition flex items-center gap-1.5 shadow-sm';
+                    usbBtn.innerHTML = '<span>💾 USB: ALLOWED</span>';
+                }
+            }
+
+            if (data.audit_log) {
+                renderAuditLog(data.audit_log);
+            }
+
+            // Tamper Alerts Section
+            const alertSec = document.getElementById('tamperAlertSection');
+            const alertBadges = document.getElementById('tamperBadges');
+            if (data.alerts && data.alerts.length > 0) {
+                alertSec.classList.remove('hidden');
+                alertBadges.innerHTML = data.alerts.map(a => `
+                    <span class="px-2.5 py-1 rounded-lg bg-amber-500/20 border border-amber-500/40 text-xs font-mono font-bold text-amber-200 flex items-center gap-1.5">
+                        <span>🚨 ${a.client_id} (${a.ip_address})</span>
+                        <button onclick="ackAlert('${a.alert_id}')" class="text-[10px] underline ml-1 hover:text-white">Ack</button>
+                    </span>
+                `).join('');
+            } else {
+                alertSec.classList.add('hidden');
+            }
+
+            // Render PC Cards Grid
+            const grid = document.getElementById('workstationGrid');
+            if (data.workstations.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full py-16 text-center text-slate-500">
+                        <span class="text-4xl block mb-2">⏳</span>
+                        <p class="text-sm">No workstations connected yet.</p>
+                        <p class="text-xs text-slate-600 mt-1">Start agents on student computers to populate the grid.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = data.workstations.map(pc => {
+                const t = pc.latest_telemetry || {};
+                const d = pc.distraction_report || {};
+                const cpu = t.cpu_percent ? t.cpu_percent.toFixed(0) : 0;
+                const ram = t.ram_percent ? t.ram_percent.toFixed(0) : 0;
+                const windowTitle = t.active_window_title || 'Idle / Background';
+
+                // Master Host PC Custom Rendering
+                if (pc.is_master_host || pc.client_id === 'MASTER-ADMIN-PC') {
+                    const isLocked = pc.curfew_locked;
+                    const lockBadge = isLocked 
+                        ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/40">🔒 HOST DISPLAY LOCKED</span>'
+                        : '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 animate-pulse">👑 CENTRAL HOST ACTIVE</span>';
+
+                    return `
+                        <div class="bg-gradient-to-br from-slate-900 via-amber-950/20 to-slate-900 border border-amber-500/50 rounded-2xl p-4 sm:p-5 flex flex-col justify-between space-y-4 shadow-xl shadow-amber-950/20 hover:border-amber-400 transition relative">
+                            <div>
+                                <div class="flex items-start justify-between gap-2 mb-2">
+                                    <div>
+                                        <div class="flex items-center gap-1.5">
+                                            <h4 class="font-bold text-base text-white font-mono flex items-center gap-1">
+                                                <span>👑</span> MASTER-ADMIN-PC
+                                            </h4>
+                                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 font-mono">HOST</span>
+                                        </div>
+                                        <p class="text-xs text-amber-200/80 mt-0.5">${pc.student_name} • <span class="text-slate-400">${pc.ip_address}</span></p>
+                                    </div>
+                                    <div class="flex flex-col items-end gap-1">
+                                        ${lockBadge}
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-slate-950 text-slate-300 border border-slate-800">${pc.os_info}</span>
+                                    </div>
+                                </div>
+
+                                <!-- Host Hardware Live Metrics -->
+                                <div class="grid grid-cols-2 gap-2 my-2 text-xs font-mono">
+                                    <div class="bg-slate-950/90 p-2.5 rounded-xl border border-amber-500/30">
+                                        <div class="flex justify-between text-slate-300 mb-1">
+                                            <span class="font-sans font-semibold text-amber-300">Host CPU</span>
+                                            <span class="font-bold text-white">${cpu}%</span>
+                                        </div>
+                                        <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                                            <div class="bg-amber-400 h-1.5 rounded-full transition-all duration-500" style="width: ${cpu}%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="bg-slate-950/90 p-2.5 rounded-xl border border-amber-500/30">
+                                        <div class="flex justify-between text-slate-300 mb-1">
+                                            <span class="font-sans font-semibold text-amber-300">Host RAM</span>
+                                            <span class="font-bold text-white">${ram}%</span>
+                                        </div>
+                                        <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                                            <div class="bg-purple-400 h-1.5 rounded-full transition-all duration-500" style="width: ${ram}%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Active Service Process Banner -->
+                                <div class="bg-slate-950/80 p-2.5 rounded-xl border border-slate-800 text-xs">
+                                    <span class="text-[10px] text-amber-400 font-bold uppercase tracking-wider block mb-1">Central Controller Service</span>
+                                    <p class="text-xs text-slate-200 font-mono truncate">
+                                        FastAPI • Smart Lab Central Server • Port 8500
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Host Direct Power & Lock Controls -->
+                            <div class="space-y-2 pt-2 border-t border-slate-800/80">
+                                <div class="grid grid-cols-2 gap-2">
+                                    ${isLocked ? `
+                                        <button onclick="unlockHostPC()" class="py-2 rounded-xl bg-emerald-600/30 hover:bg-emerald-600/40 border border-emerald-500/50 text-xs font-bold text-emerald-300 transition flex items-center justify-center gap-1.5 shadow-md">
+                                            <span>🔓</span> Unlock Host PC
+                                        </button>
+                                    ` : `
+                                        <button onclick="lockHostPC()" class="py-2 rounded-xl bg-purple-600/30 hover:bg-purple-600/40 border border-purple-500/50 text-xs font-bold text-purple-300 transition flex items-center justify-center gap-1.5 shadow-md">
+                                            <span>🔒</span> Lock Host PC
+                                        </button>
+                                    `}
+                                    <button onclick="sleepHostPC()" class="py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold text-amber-200 transition flex items-center justify-center gap-1.5">
+                                        <span>🌙</span> Sleep Host
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                let borderClass = 'border-slate-800';
+                let statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">ONLINE</span>';
+
+                if (pc.status === 'DISTRACTED') {
+                    borderClass = 'border-rose-500/50 shadow-lg shadow-rose-950/20';
+                    statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40 animate-pulse">⚠️ DISTRACTED (REELS)</span>';
+                } else if (pc.status === 'DISCONNECTED_TAMPERED') {
+                    borderClass = 'border-amber-500/50 shadow-lg shadow-amber-950/20';
+                    statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">🚨 TAMPERED / OFFLINE</span>';
+                } else if (pc.status === 'CURFEW_LOCKED') {
+                    borderClass = 'border-purple-500/50';
+                    statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/40">🔒 CURFEW LOCKED</span>';
+                }
+
+                // Productivity Score Styling
+                const score = pc.productivity_score !== undefined ? pc.productivity_score : 100;
+                let scoreTextClass = 'text-emerald-400';
+                let scoreBarClass = 'bg-emerald-500';
+                if (score < 50) {
+                    scoreTextClass = 'text-rose-400';
+                    scoreBarClass = 'bg-rose-500';
+                } else if (score < 80) {
+                    scoreTextClass = 'text-amber-400';
+                    scoreBarClass = 'bg-amber-500';
+                }
+
+                const usbBadge = pc.usb_blocked
+                    ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">🔒 USB Blocked</span>'
+                    : '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-800 text-slate-400">💾 USB Allowed</span>';
+
+                const focusBadge = data.focus_mode_active
+                    ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-teal-500/20 text-teal-300 border border-teal-500/30">🎯 Focus Active</span>'
+                    : '';
+
+                return `
+                    <div class="bg-slate-900/90 border ${borderClass} rounded-2xl p-4 sm:p-5 flex flex-col justify-between space-y-4 hover:border-slate-700 transition">
+                        <div>
+                            <div class="flex items-start justify-between gap-2 mb-2">
+                                <div>
+                                    <h4 class="font-bold text-base text-white font-mono">${pc.client_id}</h4>
+                                    <p class="text-xs text-slate-400">${pc.student_name} • <span class="text-slate-500">${pc.ip_address}</span></p>
+                                </div>
+                                <div class="flex flex-col items-end gap-1">
+                                    ${statusBadge}
+                                    <div class="flex items-center gap-1">${focusBadge} ${usbBadge}</div>
+                                </div>
+                            </div>
+
+                            <!-- AI Productivity Score Bar -->
+                            <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800/80 mb-3">
+                                <div class="flex items-center justify-between text-xs font-mono mb-1">
+                                    <span class="text-slate-400 font-sans">AI Productivity</span>
+                                    <span class="font-bold ${scoreTextClass}">${score}% Focused</span>
+                                </div>
+                                <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                                    <div class="${scoreBarClass} h-1.5 rounded-full transition-all duration-500" style="width: ${score}%"></div>
+                                </div>
+                            </div>
+
+                            <!-- Hardware Metrics -->
+                            <div class="grid grid-cols-2 gap-2 my-2 text-xs font-mono">
+                                <div class="bg-slate-950 p-2 rounded-xl border border-slate-800/80">
+                                    <div class="flex justify-between text-slate-400 mb-1"><span>CPU</span><span>${cpu}%</span></div>
+                                    <div class="w-full bg-slate-800 h-1 rounded-full overflow-hidden">
+                                        <div class="bg-indigo-500 h-1 rounded-full" style="width: ${cpu}%"></div>
+                                    </div>
+                                </div>
+                                <div class="bg-slate-950 p-2 rounded-xl border border-slate-800/80">
+                                    <div class="flex justify-between text-slate-400 mb-1"><span>RAM</span><span>${ram}%</span></div>
+                                    <div class="w-full bg-slate-800 h-1 rounded-full overflow-hidden">
+                                        <div class="bg-purple-500 h-1 rounded-full" style="width: ${ram}%"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Active Window Title -->
+                            <div class="bg-slate-950/60 p-2.5 rounded-xl border border-slate-800/60">
+                                <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider block mb-1">Active Foreground App</span>
+                                <p class="text-xs text-slate-200 truncate font-mono" title="${windowTitle}">
+                                    ${windowTitle}
+                                </p>
+                                ${d.is_distracted ? `
+                                    <div class="mt-1.5 p-1.5 rounded-lg bg-rose-500/10 border border-rose-500/20 text-[11px] text-rose-300 font-semibold">
+                                        🚨 Flagged: ${d.matched_keyword || 'Non-educational content'}
+                                    </div>
+                                ` : ''}
+                            </div>
+
+                            <!-- Live Screen Thumbnail (Veyon Preview) -->
+                            <div onclick="openScreenModal('${pc.client_id}', '${pc.student_name}')" class="relative group cursor-pointer overflow-hidden rounded-xl border border-slate-800/80 bg-slate-950 aspect-video flex items-center justify-center mt-3 shadow-inner">
+                                ${pc.screen_thumbnail ? `
+                                    <img src="${pc.screen_thumbnail}" alt="Live Preview" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
+                                ` : `
+                                    <div class="text-center p-3 text-slate-600 font-mono text-[11px]">
+                                        <span class="text-xl block mb-1">🖥️</span>
+                                        <span>Awaiting Stream...</span>
+                                    </div>
+                                `}
+                                <div class="absolute inset-0 bg-slate-950/70 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-1.5 text-xs font-bold text-indigo-300 backdrop-blur-[2px]">
+                                    <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                    <span>Expand Live View</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card Action Buttons -->
+                        <div class="space-y-2 pt-2 border-t border-slate-800/80">
+                            <!-- View Live Screen Button -->
+                            <button onclick="openScreenModal('${pc.client_id}', '${pc.student_name}')" class="w-full py-2 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/30 text-xs font-bold text-indigo-300 transition flex items-center justify-center gap-2 shadow-sm">
+                                <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                                <span>View Live Screen</span>
+                            </button>
+
+                            <div class="grid grid-cols-3 gap-1.5">
+                                ${pc.curfew_locked ? `
+                                    <button onclick="sendClientCommand('${pc.client_id}', 'UNLOCK')" class="py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-[11px] font-bold text-emerald-300 transition">Unlock</button>
+                                ` : `
+                                    <button onclick="sendClientCommand('${pc.client_id}', 'LOCK')" class="py-1.5 rounded-lg bg-purple-600/20 hover:bg-purple-600/30 text-[11px] font-bold text-purple-300 transition">Lock</button>
+                                `}
+                                <button onclick="openMsgModal('${pc.client_id}')" class="py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-bold text-slate-300 transition">Message</button>
+                                <button onclick="sendClientCommand('${pc.client_id}', 'SHUTDOWN')" class="py-1.5 rounded-lg bg-rose-600/20 hover:bg-rose-600/30 text-[11px] font-bold text-rose-300 transition">Power Off</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Action Handlers
+        async function broadcastCommand(cmd, message = null) {
+            if (!confirm(`Are you sure you want to broadcast ${cmd} to ALL workstations in the lab?`)) return;
+            try {
+                const res = await fetch('/api/admin/command/broadcast', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ command: cmd, message: message })
+                });
+                const data = await res.json();
+                alert(`Broadcast dispatched to ${data.dispatched_count} active workstations.`);
+            } catch (e) {
+                alert('Command failed: ' + e.message);
+            }
+        }
+
+        async function sendClientCommand(clientId, cmd, message = null) {
+            try {
+                const res = await fetch(`/api/admin/command/client/${clientId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ command: cmd, message: message })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    // Feedback
+                } else {
+                    alert(`Failed to deliver command to ${clientId}: ${data.message}`);
+                }
+            } catch (e) {
+                alert('Command delivery error: ' + e.message);
+            }
+        }
+
+        function promptBroadcastMessage() {
+            const msg = prompt('Enter announcement message to display on all student screens:');
+            if (msg && msg.trim()) {
+                broadcastCommand('BROADCAST_MESSAGE', msg.trim());
+            }
+        }
+
+        function confirmLabShutdown() {
+            if (confirm('DANGER: This will send an immediate graceful OS shutdown to ALL computers in the lab! Proceed?')) {
+                broadcastCommand('SHUTDOWN', 'As-Sunnah Lab closing. Workstation powering off.');
+            }
+        }
+
+        async function toggleCurfewOverride() {
+            isOverrideActive = !isOverrideActive;
+            const res = await fetch('/api/admin/curfew/override', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ active: isOverrideActive, reason: 'Instructor manual toggle' })
+            });
+            const data = await res.json();
+            const btn = document.getElementById('overrideBtn');
+            const stat = document.getElementById('statCurfew');
+            if (isOverrideActive) {
+                btn.className = 'px-3.5 py-2 rounded-xl bg-amber-600/20 hover:bg-amber-600/30 border border-amber-500/40 text-amber-300 text-xs font-bold transition flex items-center gap-1.5';
+                btn.innerHTML = '<span>⚠️ Override Active (Extended)</span>';
+                stat.innerText = 'OVERRIDDEN';
+                stat.className = 'text-sm font-bold text-amber-300 mt-2';
+            } else {
+                btn.className = 'px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-xs font-semibold transition flex items-center gap-1.5';
+                btn.innerHTML = '<span>⚙️ Curfew Override</span>';
+                stat.innerText = 'Active (21:00)';
+                stat.className = 'text-sm font-bold text-purple-300 mt-2';
+            }
+        }
+
+        async function ackAlert(alertId) {
+            await fetch(`/api/admin/alerts/ack/${alertId}`, { method: 'POST' });
+        }
+
+        // Modal Helpers
+        function openMsgModal(clientId) {
+            activeModalTarget = clientId;
+            document.getElementById('modalTarget').innerText = clientId;
+            document.getElementById('modalMsgInput').value = '';
+            document.getElementById('msgModal').classList.remove('hidden');
+        }
+
+        function closeMsgModal() {
+            document.getElementById('msgModal').classList.add('hidden');
+            activeModalTarget = null;
+        }
+
+        function submitTargetMessage() {
+            const text = document.getElementById('modalMsgInput').value.trim();
+            if (text && activeModalTarget) {
+                sendClientCommand(activeModalTarget, 'BROADCAST_MESSAGE', text);
+                closeMsgModal();
+            }
+        }
+
+        // Screen Modal Helpers
+        let activeScreenTarget = null;
+        let screenRefreshTimer = null;
+
+        async function openScreenModal(clientId, studentName) {
+            activeScreenTarget = clientId;
+            document.getElementById('screenModalTitle').innerText = clientId;
+            document.getElementById('screenModalStudent').innerText = studentName;
+            document.getElementById('screenModal').classList.remove('hidden');
+
+            const pc = (clusterData.workstations || []).find(w => w.client_id === clientId);
+            if (pc) {
+                const appTitle = pc.latest_telemetry ? pc.latest_telemetry.active_window_title : 'Active Session';
+                document.getElementById('screenModalApp').innerText = `Active Window: ${appTitle}`;
+                if (pc.screen_thumbnail) {
+                    document.getElementById('screenModalImg').src = pc.screen_thumbnail;
+                    document.getElementById('screenModalLoading').classList.add('hidden');
+                } else {
+                    document.getElementById('screenModalLoading').classList.remove('hidden');
+                }
+            }
+
+            document.getElementById('screenModalTime').innerText = `Updated: ${new Date().toLocaleTimeString()}`;
+            await requestFreshScreen();
+
+            // Auto-refresh loop while modal is open (every 1.5s for responsive streaming)
+            if (screenRefreshTimer) clearInterval(screenRefreshTimer);
+            screenRefreshTimer = setInterval(requestFreshScreen, 1500);
+        }
+
+        function closeScreenModal() {
+            document.getElementById('screenModal').classList.add('hidden');
+            activeScreenTarget = null;
+            if (screenRefreshTimer) {
+                clearInterval(screenRefreshTimer);
+                screenRefreshTimer = null;
+            }
+        }
+
+        function toggleModalFullscreen() {
+            const container = document.getElementById('screenModalImgContainer');
+            if (!container) return;
+            if (!document.fullscreenElement) {
+                if (container.requestFullscreen) {
+                    container.requestFullscreen();
+                } else if (container.webkitRequestFullscreen) {
+                    container.webkitRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        async function requestFreshScreen() {
+            if (!activeScreenTarget) return;
+            try {
+                const res = await fetch(`/api/admin/screen/${activeScreenTarget}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.image) {
+                        document.getElementById('screenModalImg').src = data.image;
+                        document.getElementById('screenModalLoading').classList.add('hidden');
+                    }
+                    if (data.active_title) {
+                        document.getElementById('screenModalApp').innerText = `Active Window: ${data.active_title}`;
+                    }
+                    document.getElementById('screenModalTime').innerText = `Updated: ${new Date().toLocaleTimeString()}`;
+                }
+            } catch (err) {
+                console.error('Failed to refresh screen:', err);
+            }
+        }
+
+        function toggleScreenModalLock() {
+            if (!activeScreenTarget) return;
+            const pc = (clusterData.workstations || []).find(w => w.client_id === activeScreenTarget);
+            const isLocked = pc && pc.curfew_locked;
+            const cmd = isLocked ? 'UNLOCK' : 'LOCK';
+            sendClientCommand(activeScreenTarget, cmd);
+            const btn = document.getElementById('screenModalLockBtn');
+            btn.innerText = isLocked ? '🔒 Lock PC' : '🔓 Unlock PC';
+        }
+
+        function openMsgModalFromScreen() {
+            if (activeScreenTarget) {
+                openMsgModal(activeScreenTarget);
+            }
+        }
+
+        // ==============================================================================
+        // Application Usage Audit Log Management
+        // ==============================================================================
+        let auditLogsCache = [];
+
+        function renderAuditLog(records) {
+            if (!records) records = [];
+            auditLogsCache = records;
+            filterAuditTable();
+        }
+
+        function filterAuditTable() {
+            const query = (document.getElementById('auditSearchInput')?.value || '').toLowerCase().trim();
+            const tbody = document.getElementById('auditTableBody');
+            const badge = document.getElementById('auditCountBadge');
+            if (!tbody) return;
+
+            const filtered = auditLogsCache.filter(r => {
+                if (!query) return true;
+                return (r.student_name || '').toLowerCase().includes(query) ||
+                       (r.client_id || '').toLowerCase().includes(query) ||
+                       (r.process_name || '').toLowerCase().includes(query) ||
+                       (r.window_title || '').toLowerCase().includes(query) ||
+                       (r.category || '').toLowerCase().includes(query);
+            });
+
+            if (badge) badge.innerText = `${filtered.length} Records`;
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="py-8 text-center text-slate-500 font-sans">
+                            ${query ? 'No audit records match your search filter.' : 'No application usage telemetry recorded yet. Active dwell time will appear here.'}
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(r => {
+                let catBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-800 text-slate-300">SYSTEM</span>';
+                if (r.is_distracted) {
+                    catBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">DISTRACTION</span>';
+                } else if (r.category === 'EDUCATIONAL') {
+                    catBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">EDUCATIONAL</span>';
+                } else if (r.category === 'DEVELOPMENT') {
+                    catBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">DEV / CODING</span>';
+                }
+
+                const lastSeenFormatted = r.last_seen ? new Date(r.last_seen).toLocaleTimeString() : '--';
+
+                return `
+                    <tr class="hover:bg-slate-800/40 transition">
+                        <td class="py-3 px-4 font-bold text-white">
+                            <div>${r.student_name || 'Student'}</div>
+                            <div class="text-[10px] text-slate-500 font-normal">${r.client_id}</div>
+                        </td>
+                        <td class="py-3 px-4 text-indigo-300 font-semibold">${r.process_name}</td>
+                        <td class="py-3 px-4 text-slate-300 max-w-xs truncate" title="${r.window_title}">${r.window_title}</td>
+                        <td class="py-3 px-4">${catBadge}</td>
+                        <td class="py-3 px-4 text-right font-bold text-emerald-400">${r.formatted_time || (r.total_seconds + 's')}</td>
+                        <td class="py-3 px-4 text-right text-slate-400">${lastSeenFormatted}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        async function refreshAuditLog() {
+            try {
+                const res = await fetch('/api/admin/audit-log');
+                if (res.ok) {
+                    const data = await res.json();
+                    renderAuditLog(data);
+                }
+            } catch (err) {
+                console.error('Failed to fetch audit log:', err);
+            }
+        }
+
+        // ==============================================================================
+        // Feature 1: Daily Report Modal Handlers
+        // ==============================================================================
+        async function openDailyReportModal() {
+            document.getElementById('dailyReportModal').classList.remove('hidden');
+            try {
+                const res = await fetch('/api/admin/reports/daily');
+                if (res.ok) {
+                    const rep = await res.json();
+                    document.getElementById('repAvgScore').innerText = rep.lab_average_score + '/100';
+                    document.getElementById('repTotalStudents').innerText = rep.total_students;
+                    document.getElementById('repFocusedTime').innerText = rep.total_focused_minutes + ' min';
+                    document.getElementById('repDistractedTime').innerText = rep.total_distraction_minutes + ' min';
+                    document.getElementById('repGeneratedAt').innerText = 'Generated: ' + new Date(rep.generated_at).toLocaleString();
+
+                    const topFocusedList = document.getElementById('repTopFocusedList');
+                    if (!rep.top_focused_students || rep.top_focused_students.length === 0) {
+                        topFocusedList.innerHTML = '<div class="text-slate-500 py-3 text-center font-sans">No student telemetry logged yet.</div>';
+                    } else {
+                        topFocusedList.innerHTML = rep.top_focused_students.map((s, i) => `
+                            <div class="flex items-center justify-between p-2 rounded-xl bg-slate-900 border border-slate-800">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold text-[10px] flex items-center justify-center">${i+1}</span>
+                                    <div>
+                                        <div class="font-bold text-white">${s.student_name}</div>
+                                        <div class="text-[10px] text-slate-500">${s.client_id} • ${s.top_used_app}</div>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-emerald-400 font-bold">${s.productivity_score}%</div>
+                                    <div class="text-[10px] text-slate-400">${s.formatted_focused_time}</div>
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+
+                    const topDistractList = document.getElementById('repTopDistractedList');
+                    if (!rep.top_distracted_students || rep.top_distracted_students.length === 0) {
+                        topDistractList.innerHTML = '<div class="text-emerald-400/80 py-3 text-center font-sans">Zero distraction incidents! Perfect focus across all PCs.</div>';
+                    } else {
+                        topDistractList.innerHTML = rep.top_distracted_students.map(s => `
+                            <div class="flex items-center justify-between p-2 rounded-xl bg-slate-900 border border-rose-950/40">
+                                <div>
+                                    <div class="font-bold text-rose-300">${s.student_name}</div>
+                                    <div class="text-[10px] text-slate-500">${s.client_id} • Violations: ${s.violation_count}</div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-rose-400 font-bold">${s.formatted_distraction_time}</div>
+                                    <div class="text-[10px] text-slate-500">Score: ${s.productivity_score}%</div>
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+                }
+            } catch (err) {
+                console.error('Failed to load report:', err);
+            }
+        }
+
+        function closeDailyReportModal() {
+            document.getElementById('dailyReportModal').classList.add('hidden');
+        }
+
+        // ==============================================================================
+        // Feature 2: One-Click Focus Mode Toggle Handler
+        // ==============================================================================
+        async function toggleFocusMode() {
+            const newState = !(clusterData.focus_mode_active);
+            try {
+                const res = await fetch('/api/admin/focus-mode/toggle', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ active: newState, reason: 'Instructor manual switch' })
+                });
+                const d = await res.json();
+                alert(`Focus Mode ${d.focus_mode_active ? 'ENABLED (Distractions Blocked) 🎯' : 'DISABLED 🔓'} across ${d.workstations_updated} workstation(s).`);
+            } catch (e) {
+                alert('Focus mode toggle failed: ' + e.message);
+            }
+        }
+
+        // ==============================================================================
+        // Feature 3: Central File Broadcast & Assignment Collection Handlers
+        // ==============================================================================
+        function openBroadcastFileModal() {
+            document.getElementById('broadcastFileModal').classList.remove('hidden');
+        }
+        function closeBroadcastFileModal() {
+            document.getElementById('broadcastFileModal').classList.add('hidden');
+        }
+        async function submitBroadcastFile() {
+            const name = document.getElementById('broadcastFileName').value.trim();
+            const content = document.getElementById('broadcastFileContent').value;
+            if (!name) { alert('Please enter a target filename (e.g. lab_exercise.py)'); return; }
+            const b64 = btoa(unescape(encodeURIComponent(content || '')));
+            try {
+                const res = await fetch('/api/admin/files/broadcast', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ filename: name, file_content_base64: b64, sender: 'Lab Instructor' })
+                });
+                const d = await res.json();
+                alert(`File '${name}' successfully broadcasted to ${d.dispatched_count} active workstation(s)!`);
+                closeBroadcastFileModal();
+            } catch (e) {
+                alert('Broadcast failed: ' + e.message);
+            }
+        }
+
+        function openAssignmentsModal() {
+            document.getElementById('assignmentsModal').classList.remove('hidden');
+            loadAssignmentsList();
+        }
+        function closeAssignmentsModal() {
+            document.getElementById('assignmentsModal').classList.add('hidden');
+        }
+        async function triggerCollectAssignments() {
+            try {
+                const res = await fetch('/api/admin/files/collect', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ assignment_name: 'submission.py' })
+                });
+                const d = await res.json();
+                alert(`Collection directive dispatched to ${d.dispatched_count} workstation(s). Files will populate shortly.`);
+                setTimeout(loadAssignmentsList, 1500);
+            } catch (e) {
+                alert('Collect assignments error: ' + e.message);
+            }
+        }
+        async function loadAssignmentsList() {
+            try {
+                const res = await fetch('/api/admin/files/collected');
+                if (res.ok) {
+                    const list = await res.json();
+                    const tbody = document.getElementById('assignmentsTableBody');
+                    if (list.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="4" class="py-8 text-center text-slate-500 font-sans">No assignment files collected yet. Click "Trigger Collect All" to fetch.</td></tr>';
+                        return;
+                    }
+                    tbody.innerHTML = list.map(item => `
+                        <tr class="hover:bg-slate-800/40 transition">
+                            <td class="py-2.5 px-3 font-bold text-white">${item.student_name} <span class="text-[10px] text-slate-500">(${item.client_id})</span></td>
+                            <td class="py-2.5 px-3 text-cyan-300 font-semibold">${item.filename}</td>
+                            <td class="py-2.5 px-3 text-slate-400">${item.size_bytes} Bytes</td>
+                            <td class="py-2.5 px-3 text-right text-slate-400">${new Date(item.submitted_at).toLocaleTimeString()}</td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (err) {
+                console.error('Failed to load assignments list:', err);
+            }
+        }
+
+        // ==============================================================================
+        // Feature 4: USB Storage Policy Toggle Handler
+        // ==============================================================================
+        async function toggleUsbPolicy() {
+            const newBlocked = !(clusterData.usb_storage_blocked);
+            try {
+                const res = await fetch('/api/admin/usb-policy/toggle', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ blocked: newBlocked })
+                });
+                const d = await res.json();
+                alert(`USB Mass Storage Policy updated: ${d.usb_storage_blocked ? 'BLOCKED 🔒' : 'ALLOWED 💾'} across ${d.workstations_updated} workstation(s).`);
+            } catch (e) {
+                alert('USB policy toggle failed: ' + e.message);
+            }
+        }
+
+        // ==============================================================================
+        // Feature 5: Telegram Remote Control Simulator Handlers
+        // ==============================================================================
+        function openTelegramModal() {
+            document.getElementById('telegramModal').classList.remove('hidden');
+        }
+        function closeTelegramModal() {
+            document.getElementById('telegramModal').classList.add('hidden');
+        }
+        async function runTelegramCmd(cmdText) {
+            const consoleOut = document.getElementById('telegramConsoleOutput');
+            consoleOut.innerText += `\n\n> ${cmdText}\n[Executing command...]`;
+            consoleOut.scrollTop = consoleOut.scrollHeight;
+            try {
+                const res = await fetch('/api/admin/telegram/simulate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ command: cmdText, user_name: 'Instructor Web Console' })
+                });
+                const d = await res.json();
+                consoleOut.innerText += `\n${d.response}`;
+                consoleOut.scrollTop = consoleOut.scrollHeight;
+            } catch (e) {
+                consoleOut.innerText += `\nError: ${e.message}`;
+            }
+        }
+        function sendTelegramInput() {
+            const inp = document.getElementById('telegramInput');
+            const val = inp.value.trim();
+            if (val) {
+                runTelegramCmd(val);
+                inp.value = '';
+            }
+        }
+
+        // ==============================================================================
+        // Feature 6: Master Host PC Direct Controls
+        // ==============================================================================
+        async function lockHostPC() {
+            try {
+                const res = await fetch('/api/admin/host/lock', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'LOCK', reason: 'Instructor Host Control Click' })
+                });
+                const d = await res.json();
+                alert(d.message || 'Host PC locked.');
+            } catch (e) {
+                alert('Lock Host PC error: ' + e.message);
+            }
+        }
+
+        async function unlockHostPC() {
+            try {
+                const res = await fetch('/api/admin/host/unlock', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'UNLOCK', reason: 'Instructor Host Control Click' })
+                });
+                const d = await res.json();
+                alert(d.message || 'Host PC unlocked.');
+            } catch (e) {
+                alert('Unlock Host PC error: ' + e.message);
+            }
+        }
+
+        async function sleepHostPC() {
+            if (!confirm('Put the Central Admin Host PC into sleep / standby mode?')) return;
+            try {
+                const res = await fetch('/api/admin/host/sleep', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'SLEEP', reason: 'Instructor Host Sleep Click' })
+                });
+                const d = await res.json();
+                alert(d.message || 'Host PC entering standby.');
+            } catch (e) {
+                alert('Sleep Host PC error: ' + e.message);
+            }
+        }
+
+        // ==============================================================================
+        // Feature 7: AI Voice Command Simulator Handlers
+        // ==============================================================================
+        async function sendVoiceSimulate(spokenText) {
+            const consoleOut = document.getElementById('telegramConsoleOutput');
+            consoleOut.innerText += `\n\n🎙️ [Voice Audio Received]: "${spokenText}"\n[Transcribing & Resolving Intent via AI...]`;
+            consoleOut.scrollTop = consoleOut.scrollHeight;
+            try {
+                const res = await fetch('/api/admin/telegram/voice-simulate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ spoken_text: spokenText, sender: 'Instructor Voice' })
+                });
+                const d = await res.json();
+                consoleOut.innerText += `\n${d.reply_message}`;
+                consoleOut.scrollTop = consoleOut.scrollHeight;
+            } catch (e) {
+                consoleOut.innerText += `\nVoice execution error: ${e.message}`;
+            }
+        }
+
+        function sendCustomVoiceText() {
+            const inp = document.getElementById('voiceTextInput');
+            const val = inp.value.trim();
+            if (val) {
+                sendVoiceSimulate(val);
+                inp.value = '';
+            }
+        }
+
+        let isRecording = false;
+        let recognition = null;
+
+        function toggleMicRecording() {
+            const micBtn = document.getElementById('micBtn');
+            const micLabel = document.getElementById('micLabel');
+            const inp = document.getElementById('voiceTextInput');
+
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert('Speech Recognition API is not supported in this browser. Please type your Bengali command in the box.');
+                return;
+            }
+
+            if (!isRecording) {
+                try {
+                    recognition = new SpeechRecognition();
+                    recognition.lang = 'bn-BD';
+                    recognition.interimResults = false;
+                    recognition.maxAlternatives = 1;
+
+                    recognition.onstart = () => {
+                        isRecording = true;
+                        micBtn.className = 'px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-xs font-bold text-white flex items-center gap-1 animate-pulse';
+                        micLabel.innerText = 'Listening...';
+                    };
+
+                    recognition.onresult = (event) => {
+                        const transcript = event.results[0][0].transcript;
+                        inp.value = transcript;
+                        sendVoiceSimulate(transcript);
+                    };
+
+                    recognition.onerror = (event) => {
+                        console.warn('Speech recognition error:', event.error);
+                        stopMic();
+                    };
+
+                    recognition.onend = () => {
+                        stopMic();
+                    };
+
+                    recognition.start();
+                } catch (err) {
+                    console.error('Failed to start speech recognition:', err);
+                    stopMic();
+                }
+            } else {
+                stopMic();
+            }
+        }
+
+        function stopMic() {
+            isRecording = false;
+            const micBtn = document.getElementById('micBtn');
+            const micLabel = document.getElementById('micLabel');
+            if (micBtn) micBtn.className = 'px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-sky-300 flex items-center gap-1 transition';
+            if (micLabel) micLabel.innerText = 'Speak';
+            if (recognition) {
+                try { recognition.stop(); } catch(e) {}
+                recognition = null;
+            }
+        }
+
+        // Start WS & Audit Load
+        window.addEventListener('DOMContentLoaded', () => {
+            
+        // Auto-start simulator on static hosting or file protocol
+        if (window.location.protocol === 'file:' || window.location.hostname.includes('github.io') || window.location.hostname.includes('mdmiraz.com')) {
+            setTimeout(startSimulation, 300);
+        } else {
+            initWebSocket();
+        }
+
+            refreshAuditLog();
+        });
+    </script>
+</body>
+</html>
