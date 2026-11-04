@@ -368,19 +368,21 @@ function initPageTransitions() {
   // do something after the transition finishes
   barba.hooks.after(() => {
     select('html').classList.remove('is-transitioning');
-    // reinit locomotive scroll
-    scroll.init();
-    scroll.stop();
-  });
-
-  // scroll to the top of the page
-  barba.hooks.enter(() => {
-    scroll.destroy();
+    if (scroll) {
+      scroll.scrollTo('top', {offset: 0, duration: 0, disableLerp: true});
+      scroll.update();
+      scroll.start();
+    }
   });
 
   // scroll to the top of the page
   barba.hooks.afterEnter(() => {
     window.scrollTo(0, 0);
+    if (scroll) {
+      scroll.scrollTo('top', {offset: 0, duration: 0, disableLerp: true});
+      scroll.update();
+      scroll.start();
+    }
     initCookieViews();
   });
 
@@ -415,11 +417,23 @@ function initPageTransitions() {
         // animate loading screen away
         pageTransitionOut(data.next);
         initNextWord(data);
+        if (scroll) {
+          scroll.scrollTo('top', {offset: 0, duration: 0, disableLerp: true});
+          scroll.update();
+          scroll.start();
+        }
       },
       async beforeEnter(data) {
         ScrollTrigger.getAll().forEach(t => t.kill());
-        scroll.destroy();
+        if (scroll) {
+          scroll.destroy();
+        }
+        window.scrollTo(0, 0);
         initSmoothScroll(data.next.container);
+        if (scroll) {
+          scroll.scrollTo('top', {offset: 0, duration: 0, disableLerp: true});
+          scroll.update();
+        }
         initScript(); 
       },
     }, 
